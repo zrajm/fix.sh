@@ -25,15 +25,18 @@ build() {
     # run buildscript
     [ -e "$TARGET_DIR" ] || mkdir -p -- "$TARGET_DIR"
     "$SCRIPT" >"$TARGET_TMP" <&-
-
-    # check buildscript status
-    local STATUS=$?
+    local STATUS=$?                            # check buildscript exit status
     if [ $STATUS -ne 0 ]; then
         error "build script '$SCRIPT' returned exit status $STATUS" \
             "Target unmodified; script output can be found in '$TARGET_TMP'."
-    else
-        mv -f -- "$TARGET_TMP" "$TARGET"
     fi
+    # new target is same as old target, keep old as-is
+    if diff "$TARGET" "$TARGET_TMP" >/dev/null; then
+        rm -f -- "$TARGET_TMP"
+        return
+    fi
+    # new target is different than old target, keep new
+    mv -f -- "$TARGET_TMP" "$TARGET"
 }
 
 ##############################################################################
