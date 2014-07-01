@@ -1,0 +1,61 @@
+Prereq
+------
+* No previous target 'HELLO'
+* No metadata entry for target 'HELLO'
+
+Do
+--
+./fix.sh HELLO
+
+Outcome
+-------
+* Exit status 0
+* New target should be created
+* New metadata for target entry should be created
+
+------------------------------------------------------------------------------
+
+Build target when previous target exist but target + buildscript are unmodified
+since last build
+
+* SUCCESS: old target kept (neither metadata nor target modified)
+
+------------------------------------------------------------------------------
+
+Build target when previous target exist and target is unmodified since last
+build, but buildscript now output something new
+
+* SUCCESS: target + metadata modified
+
+------------------------------------------------------------------------------
+
+Build target when previous target exist and is modified
+
+* fail (neither metadata nor target modified)
+
+------------------------------------------------------------------------------
+
+Build target when previous target exist and is modified, but new buildscript
+outputs target identical to modified target
+
+* SUCCESS: old target kept (metadata updated)
+
+------------------------------------------------------------------------------
+
+Build target A with dependency B
+
+------------------------------------------------------------------------------
+
+Build target when previous target exist but have no metadata stored, and the
+newly built target differs from the old target
+
+* FAIL
+
+------------------------------------------------------------------------------
+
+Build target when previous target exist but have no metadata stored, and the
+newly built target is the same as the old target
+
+* SUCCESS
+
+------------------------------------------------------------------------------

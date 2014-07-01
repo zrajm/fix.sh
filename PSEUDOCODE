@@ -1,0 +1,45 @@
+* ALWAYS
+
+  + Script and source files are never written to by fix (only target, temp and
+    metadata files are written to).
+
+* FAILURE
+
+  + Exit status: >0
+  + Failing target will not be modified (but a tempfile will be left).
+  + Failing target's metadata will not be modified.
+
+* SUCCESS
+
+  + Exit status: 0
+
+
+if (not exists script) {
+    FAILURE
+}
+
+run script (producing tempfile)
+if (script failed) {
+    FAILURE: script exited non-zero
+}
+
+if (targetfile does not exists) {
+    copy tempfile to target
+    SUCCESS
+} elsif (targetfile == tempfile) {
+    delete tempfile
+    SUCCESS
+} elsif (
+    targetfile metadata exist and
+    targetfile == targetfile metadata
+) {
+    copy tempfile to target
+    SUCCESS
+} elsif ('--force') {
+    copy tempfile to target
+    SUCCESS
+} else {
+    FAILURE: target externally modified
+}
+
+write metadata

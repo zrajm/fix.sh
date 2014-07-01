@@ -1,2 +1,14 @@
-build
-fix
+# -*- conf -*-
+\#*#
+.#*
+*~
+*.bak
+*.tmp
+
+# Fix files in working tree root.
+/.fix
+/.fixrc
+/build
+/fix
+
+#[eof]
