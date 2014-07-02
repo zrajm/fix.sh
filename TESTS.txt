@@ -1,17 +1,45 @@
-Prereq
-------
-* No previous target 'HELLO'
-* No metadata entry for target 'HELLO'
+FAILURE means:
+  + Exit status: >0
+  + Failing target will not be modified (but a tempfile will be created).
+  + Failing target's metadata will not be modified.
+  + Nota Bene: Successful dependencies will be built even on error.
 
-Do
---
-./fix.sh HELLO
+SUCCESS means:
+  + Exit status: 0
 
-Outcome
--------
-* Exit status 0
-* New target should be created
-* New metadata for target entry should be created
+------------------------------------------------------------------------------
+
+Attempt to build target when there is no source dir.
+
+* FAILURE
+
+------------------------------------------------------------------------------
+
+Attempt to build target when there is no script dir.
+
+* FAILURE
+
+------------------------------------------------------------------------------
+
+Attempt to build target when there is no build script for it.
+
+* FAILURE
+
+No files should be created. Not even 'TARGET--fixing'
+
+------------------------------------------------------------------------------
+
+Attempt to build when no previous target exist and build script returns
+non-zero exit status.
+
+* FAILURE
+
+------------------------------------------------------------------------------
+
+Attempt to build when no previous target exist and build script returns exit
+status zero.
+
+* SUCCESS
 
 ------------------------------------------------------------------------------
 

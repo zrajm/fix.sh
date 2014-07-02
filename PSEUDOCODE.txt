@@ -6,8 +6,9 @@
 * FAILURE
 
   + Exit status: >0
-  + Failing target will not be modified (but a tempfile will be left).
+  + Failing target will not be modified (but a tempfile will be created).
   + Failing target's metadata will not be modified.
+  + Nota Bene: Successful dependencies will be built even on error.
 
 * SUCCESS
 

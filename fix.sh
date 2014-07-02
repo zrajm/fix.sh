@@ -37,16 +37,14 @@ file_checksum() {
     echo "${CHECKSUM%% *}"                     # checksum without filename
 }
 
-run() {
-    local CMD="$1" STATUS=0
-
-    # check build script
+# Run buildscript, write tempfile. React to exit status.
+build_run() {
+    local CMD="$1" TMPFILE="$2" STATUS=0
     [ -e "$CMD" ] || error "Build script '$CMD' does not exist"
     [ -r "$CMD" ] || error "No read permission for build script '$CMD'"
     [ -x "$CMD" ] || error "No execute permission for build script '$CMD'"
 
-    # run buildscript
-    "$CMD"
+    "$CMD" >"$TMPFILE" <&-                     # run buildscript
     STATUS=$?                                  # check buildscript exit status
     if [ $STATUS -ne 0 ]; then
         error "Build script '$CMD' returned exit status $STATUS" \
@@ -54,9 +52,9 @@ run() {
     fi
 }
 
-store_result() {
+# After build: Overwrite target with tempfile, and store result in metadata.
+build_finalize() {
     local DBFILE="$1" TARGET="$2" TARGET_TMP="$3"
-
     local META_CHECKSUM="$(meta_checksum "$DBFILE")"
     local OLD_CHECKSUM="$(file_checksum "$TARGET")"
     local NEW_CHECKSUM="$(file_checksum "$TARGET_TMP")"
@@ -90,14 +88,13 @@ store_result() {
 }
 
 build() {
-    local DBFILE="$FIX_DIR/$1"
-    local SCRIPT="$FIX_SCRIPT_DIR/$1.fix"
-    local TARGET="$FIX_TARGET_DIR/$1"
+    local DBFILE="$FIX_DIR/$1" \
+        SCRIPT="$FIX_SCRIPT_DIR/$1.fix" \
+        TARGET="$FIX_TARGET_DIR/$1"
     mkpath "$TARGET" || error "Cannot create dir for target '$TARGET'"
-    run "$SCRIPT" >"$TARGET--fixing" <&-
-    store_result "$DBFILE" "$TARGET" "$TARGET--fixing"
+    build_run "$SCRIPT" "$TARGET--fixing"
+    build_finalize "$DBFILE" "$TARGET" "$TARGET--fixing"
 }
-
 
 ##############################################################################
 ##                                                                          ##
@@ -105,6 +102,7 @@ build() {
 ##                                                                          ##
 ##############################################################################
 
+[ $# = 0 ] && error "No target(s) specified"
 if [ ! "$FIX" ]; then                          # mother process
     # FIX_FORCE FIX_DEBUG
     export FIX="$(readlink -f $0)"
@@ -114,8 +112,8 @@ if [ ! "$FIX" ]; then                          # mother process
     export FIX_SCRIPT_DIR="fix"
     export FIX_SOURCE_DIR="src"
     export FIX_TARGET_DIR="build"
-    [ -d "$FIX_SOURCE_DIR" ] || error "source dir '$FIX_SOURCE_DIR' does not exist"
-    [ -d "$FIX_SCRIPT_DIR" ] || error "script dir '$FIX_SCRIPT_DIR' does not exist"
+    [ -d "$FIX_SOURCE_DIR" ] || error "Source dir '$FIX_SOURCE_DIR' does not exist"
+    [ -d "$FIX_SCRIPT_DIR" ] || error "Script dir '$FIX_SCRIPT_DIR' does not exist"
 else                                           # child
     FIX_LEVEL=$(( FIX_LEVEL + 1 ))
 fi
