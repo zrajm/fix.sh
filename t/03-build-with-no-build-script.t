@@ -10,7 +10,7 @@ CMD="../../fix.sh"
 cd ${0%.t}
 trap 'rm -fr stdout stderr build' 0
 $CMD TARGET >stdout 2>stderr
-has_exit_status 1                                       "Exit status"
+has_exit_status 10                                      "Exit status"
 file_is stderr "ERROR: Build script 'fix/TARGET.fix' does not exist" \
                                                         "Standard error"
 file_is stdout ""                                       "Standard output"

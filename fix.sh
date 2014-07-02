@@ -15,9 +15,10 @@ debug() {
 }
 
 error() {
-    echo "ERROR: $1" >&2
-    [ "$2" ] && echo "    ($2)" >&2
-    exit 1
+    local STATUS="$1" MSG="$2" EXTRA="$3"
+    echo "ERROR: $MSG" >&2
+    [ "$EXTRA" ] && echo "    ($EXTRA)" >&2
+    exit "$STATUS"
 }
 
 mkpath() {
@@ -40,14 +41,15 @@ file_checksum() {
 # Run buildscript, write tempfile. React to exit status.
 build_run() {
     local CMD="$1" TMPFILE="$2" STATUS=0
-    [ -e "$CMD" ] || error "Build script '$CMD' does not exist"
-    [ -r "$CMD" ] || error "No read permission for build script '$CMD'"
-    [ -x "$CMD" ] || error "No execute permission for build script '$CMD'"
+    [ -e "$CMD" ] || error 10 "Build script '$CMD' does not exist"
+    [ -r "$CMD" ] || error 10 "No read permission for build script '$CMD'"
+    [ -x "$CMD" ] || error 10 "No execute permission for build script '$CMD'"
 
+    # FIXME: Catch a failure to write to $TMPFILE (fail with exit status 6)
     "$CMD" >"$TMPFILE" <&-                     # run buildscript
     STATUS=$?                                  # check buildscript exit status
     if [ $STATUS -ne 0 ]; then
-        error "Build script '$CMD' returned exit status $STATUS" \
+        error 5 "Build script '$CMD' returned exit status $STATUS" \
             "Old target unchanged. New, failed target written to '$TARGET_TMP'."
     fi
 }
@@ -73,13 +75,14 @@ build_finalize() {
         debug "$TARGET: Target updated + external change, forced overwrite"
         mv -f -- "$TARGET_TMP" "$TARGET"
     else
-        error "Old target '$TARGET' modified by user, won't overwrite" \
+        error 1 "Old target '$TARGET' modified by user, won't overwrite" \
             "Erase old target before rebuild. New target kept in '$TARGET_TMP'."
     fi
 
     # update metadata
     if [ "$NEW_CHECKSUM" != "$META_CHECKSUM" ]; then
-        mkpath "$DBFILE" || error "Cannot create dir for metadata file '$DBFILE'"
+        mkpath "$DBFILE" \
+            || error 7 "Cannot create dir for metadata file '$DBFILE'"
         debug "$TARGET: Writing metadata"
         echo "$NEW_CHECKSUM $TARGET" >"$DBFILE"
     else
@@ -91,7 +94,7 @@ build() {
     local DBFILE="$FIX_DIR/$1" \
         SCRIPT="$FIX_SCRIPT_DIR/$1.fix" \
         TARGET="$FIX_TARGET_DIR/$1"
-    mkpath "$TARGET" || error "Cannot create dir for target '$TARGET'"
+    mkpath "$TARGET" || error 6 "Cannot create dir for target '$TARGET'"
     build_run "$SCRIPT" "$TARGET--fixing"
     build_finalize "$DBFILE" "$TARGET" "$TARGET--fixing"
 }
@@ -102,7 +105,7 @@ build() {
 ##                                                                          ##
 ##############################################################################
 
-[ $# = 0 ] && error "No target(s) specified"
+[ $# = 0 ] && error 15 "No target(s) specified"
 if [ ! "$FIX" ]; then                          # mother process
     # FIX_FORCE FIX_DEBUG
     export FIX="$(readlink -f $0)"
@@ -112,8 +115,12 @@ if [ ! "$FIX" ]; then                          # mother process
     export FIX_SCRIPT_DIR="fix"
     export FIX_SOURCE_DIR="src"
     export FIX_TARGET_DIR="build"
-    [ -d "$FIX_SOURCE_DIR" ] || error "Source dir '$FIX_SOURCE_DIR' does not exist"
-    [ -d "$FIX_SCRIPT_DIR" ] || error "Script dir '$FIX_SCRIPT_DIR' does not exist"
+    if [ ! -d "$FIX_SOURCE_DIR" ]; then
+        error 10 "Source dir '$FIX_SOURCE_DIR' does not exist"
+    fi
+    if [ ! -d "$FIX_SCRIPT_DIR" ]; then
+        error 10 "Script dir '$FIX_SCRIPT_DIR' does not exist"
+    fi
 else                                           # child
     FIX_LEVEL=$(( FIX_LEVEL + 1 ))
 fi

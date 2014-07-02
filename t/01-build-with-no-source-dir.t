@@ -10,7 +10,7 @@ CMD="../../fix.sh"
 cd ${0%.t}
 trap 'rm -f stdout stderr' 0
 $CMD TARGET >stdout 2>stderr
-has_exit_status 1                                       "Exit status"
+has_exit_status 10                                      "Exit status"
 file_is stderr "ERROR: Source dir 'src' does not exist" "Standard error"
 file_is stdout ""                                       "Standard output"
 

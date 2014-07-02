@@ -7,17 +7,33 @@ FAILURE means:
 SUCCESS means:
   + Exit status: 0
 
+Exit status:
+  0  = Success.
+  1  = Won't overwrite target (anything fixable by --force).
+  5  = Build failed (build script returned non-zero exit value).
+  6  = Failed to write target (even though build succeeded). E.g. target dir
+       could not be created, old target (or the target directory) was write
+       protected or similar.
+  7  = Failed to write metadata.
+  10 = Couldn't read buildscript or source (permission denied, or file
+       missing, or missing buildscript or source directories).
+  15 = Bad options provided.
+
 ------------------------------------------------------------------------------
 
 Attempt to build target when there is no source dir.
 
 * FAILURE
 
+Exit status: 10
+
 ------------------------------------------------------------------------------
 
 Attempt to build target when there is no script dir.
 
 * FAILURE
+
+Exit status: 10
 
 ------------------------------------------------------------------------------
 
