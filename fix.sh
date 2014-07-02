@@ -41,16 +41,16 @@ file_checksum() {
 # Run buildscript, write tempfile. React to exit status.
 build_run() {
     local CMD="$1" TMPFILE="$2" STATUS=0
-    [ -e "$CMD" ] || error 10 "Build script '$CMD' does not exist"
-    [ -r "$CMD" ] || error 10 "No read permission for build script '$CMD'"
-    [ -x "$CMD" ] || error 10 "No execute permission for build script '$CMD'"
+    [ -e "$CMD" ] || error 10 "Buildscript '$CMD' does not exist"
+    [ -r "$CMD" ] || error 10 "No read permission for buildscript '$CMD'"
+    [ -x "$CMD" ] || error 10 "No execute permission for buildscript '$CMD'"
 
     # FIXME: Catch a failure to write to $TMPFILE (fail with exit status 6)
     "$CMD" >"$TMPFILE" <&-                     # run buildscript
     STATUS=$?                                  # check buildscript exit status
     if [ $STATUS -ne 0 ]; then
-        error 5 "Build script '$CMD' returned exit status $STATUS" \
-            "Old target unchanged. New, failed target written to '$TARGET_TMP'."
+        error 5 "Buildscript '$CMD' returned exit status $STATUS" \
+            "Old target unchanged. New, failed target written to '$TMPFILE'."
     fi
 }
 

@@ -70,6 +70,16 @@ file_is() {
     is "$GOT" "$EXPECTED" "$NAME"
 }
 
+file_not_exist() {
+    local FILE="$1" NAME="$2"
+    if [ ! -e "$FILE" ]; then
+        success "$NAME"
+        return
+    fi
+    failure "$NAME"
+    note "File '$FILE' shouldn't exist, but it does"
+}
+
 # Output final test count.
 done_testing() {
     echo "1..$TEST_COUNT"

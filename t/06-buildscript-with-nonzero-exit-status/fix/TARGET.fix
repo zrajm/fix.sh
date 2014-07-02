@@ -1,0 +1,6 @@
+#!/bin/sh
+
+echo 'SOME OUTPUT'
+false                  # terminate with non-zero exit status
+
+#[eof]

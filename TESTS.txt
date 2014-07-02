@@ -10,7 +10,7 @@ SUCCESS means:
 Exit status:
   0  = Success.
   1  = Won't overwrite target (anything fixable by --force).
-  5  = Build failed (build script returned non-zero exit value).
+  5  = Build failed (buildscript returned non-zero exit value).
   6  = Failed to write target (even though build succeeded). E.g. target dir
        could not be created, old target (or the target directory) was write
        protected or similar.
@@ -21,7 +21,7 @@ Exit status:
 
 ------------------------------------------------------------------------------
 
-Attempt to build target when there is no source dir.
+01: Attempt to build target when there is no source dir.
 
 * FAILURE
 
@@ -29,7 +29,7 @@ Exit status: 10
 
 ------------------------------------------------------------------------------
 
-Attempt to build target when there is no script dir.
+02: Attempt to build target when there is no script dir.
 
 * FAILURE
 
@@ -37,52 +37,86 @@ Exit status: 10
 
 ------------------------------------------------------------------------------
 
-Attempt to build target when there is no build script for it.
+03: Attempt to build target when there is no buildscript for it.
 
 * FAILURE
 
-No files should be created. Not even 'TARGET--fixing'
+Exit status: 10
+
+No files should be created. Not even 'TARGET--fixing'.
 
 ------------------------------------------------------------------------------
 
-Attempt to build when no previous target exist and build script returns
-non-zero exit status.
+04: Attempt to build target with buildscript with read bits unset.
 
 * FAILURE
 
+Exit status: 10
+
+No files should be created. Not even 'TARGET--fixing'.
+
 ------------------------------------------------------------------------------
 
-Attempt to build when no previous target exist and build script returns exit
-status zero.
+05: Attempt to build target with buildscript with execute bits unset.
+
+* FAILURE
+
+Exit status: 10
+
+No files should be created. Not even 'TARGET--fixing'.
+
+------------------------------------------------------------------------------
+
+06: Attempt to build target with buildscript that returns non-zero exit status.
+
+* FAILURE
+
+Exit status: 5
+
+Generate tempfile, no target file generated.
+
+------------------------------------------------------------------------------
+
+07: Attempt to build target with buildscript that returns zero exit status.
 
 * SUCCESS
+
+Exit status: 0
 
 ------------------------------------------------------------------------------
 
 Build target when previous target exist but target + buildscript are unmodified
-since last build
+since last build.
 
 * SUCCESS: old target kept (neither metadata nor target modified)
+
+Exit status: 0
 
 ------------------------------------------------------------------------------
 
 Build target when previous target exist and target is unmodified since last
-build, but buildscript now output something new
+build, but buildscript now output something new.
 
 * SUCCESS: target + metadata modified
 
+Exit status: 0
+
 ------------------------------------------------------------------------------
 
-Build target when previous target exist and is modified
+Build target when previous target exist and is modified.
 
-* fail (neither metadata nor target modified)
+* FAILURE (neither metadata nor target modified)
+
+Exit status: 1
 
 ------------------------------------------------------------------------------
 
 Build target when previous target exist and is modified, but new buildscript
-outputs target identical to modified target
+outputs target identical to modified target.
 
 * SUCCESS: old target kept (metadata updated)
+
+Exit status: 0
 
 ------------------------------------------------------------------------------
 
@@ -93,7 +127,9 @@ Build target A with dependency B
 Build target when previous target exist but have no metadata stored, and the
 newly built target differs from the old target
 
-* FAIL
+* FAILURE
+
+Exit status: 1
 
 ------------------------------------------------------------------------------
 
@@ -101,5 +137,7 @@ Build target when previous target exist but have no metadata stored, and the
 newly built target is the same as the old target
 
 * SUCCESS
+
+Exit status: 0
 
 ------------------------------------------------------------------------------

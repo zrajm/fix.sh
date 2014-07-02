@@ -1,21 +1,22 @@
-* ALWAYS
+
+Always
+======
 
   + Script and source files are never written to by fix (only target, temp and
     metadata files are written to).
 
-* FAILURE
 
-  + Exit status: >0
-  + Failing target will not be modified (but a tempfile will be created).
-  + Failing target's metadata will not be modified.
-  + Nota Bene: Successful dependencies will be built even on error.
+Exit Status
+===========
 
-* SUCCESS
+The exit status reflects whether fix failed or succeeded with its build. More
+'severe' errors result in higher exit status value (though the scale is
+somewhat arbitrary). Notably, exit status 1 indicate that the build can be
+forced to pass (though using '--force' might also expose as underlying problem,
+[e.g. 'permission denied'] making the build fail again with a higher exit
+value).
 
-  + Exit status: 0
-
-
-* Exit status
+The following exit status values are used:
 
   0  = Success.
   1  = Won't overwrite target (anything fixable by --force).
@@ -27,6 +28,32 @@
   10 = Couldn't read buildscript or source (permission denied, or file
        missing, or missing buildscript or source directories).
   15 = Bad options provided.
+
+
+Failure
+-------
+Any exit status except 0 indicates a build failure. You should not trust the
+state of your target directory after a failed build -- dependencies are built
+first, and one or more of the dependencies may have been successfully built
+before the failure occurred leaving parts of your target tree updated, but not
+all of it.
+
+  * Exit status: >0
+  * Failing target will not be modified (but a tempfile will be created).
+  * Failing target's metadata will not be modified.
+  * Nota Bene: Successful dependencies will be built even on error.
+
+
+Success
+-------
+A successful build means that your target and all its dependencies were fully
+built.
+
+  * Exit status: 0
+  * All built targets guaranteed to be up-to-date.
+  * All build tempfiles removed.
+  * The current state of all build files stored in metadata.
+
 
 ------------------------------------------------------------------------------
 
