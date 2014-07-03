@@ -24,99 +24,150 @@ Exit status:
 01: Attempt to build target when there is no source dir.
 
 * FAILURE
-
-Exit status: 10
+  + Exit status: 10
+  + No tempfile created.
+  + No target file created.
 
 ------------------------------------------------------------------------------
 
 02: Attempt to build target when there is no script dir.
 
 * FAILURE
-
-Exit status: 10
+  + Exit status: 10
+  + No tempfile created.
+  + No target file created.
 
 ------------------------------------------------------------------------------
 
 03: Attempt to build target when there is no buildscript for it.
 
 * FAILURE
-
-Exit status: 10
-
-No files should be created. Not even 'TARGET--fixing'.
+  + Exit status: 10
+  + No tempfile created.
+  + No target file created.
 
 ------------------------------------------------------------------------------
 
 04: Attempt to build target with buildscript with read bits unset.
 
 * FAILURE
-
-Exit status: 10
-
-No files should be created. Not even 'TARGET--fixing'.
+  + Exit status: 10
+  + No tempfile created.
+  + No target file created.
 
 ------------------------------------------------------------------------------
 
 05: Attempt to build target with buildscript with execute bits unset.
 
 * FAILURE
-
-Exit status: 10
-
-No files should be created. Not even 'TARGET--fixing'.
+  + Exit status: 10
+  + No tempfile created.
+  + No target file created.
 
 ------------------------------------------------------------------------------
 
 06: Attempt to build target with buildscript that returns non-zero exit status.
 
 * FAILURE
-
-Exit status: 5
-
-Generate tempfile, no target file generated.
+  + Exit status: 5
+  + Tempfile created.
+  + No target file created.
 
 ------------------------------------------------------------------------------
 
 07: Attempt to build target with buildscript that returns zero exit status.
 
+This result in a base setup, with one successfully built target.
+
 * SUCCESS
-
-Exit status: 0
-
-------------------------------------------------------------------------------
-
-Build target when previous target exist but target + buildscript are unmodified
-since last build.
-
-* SUCCESS: old target kept (neither metadata nor target modified)
-
-Exit status: 0
+  + Exit status: 0
+  + No tempfile existing.
+  + Target file created.
+  + Metadata modified.
 
 ------------------------------------------------------------------------------
 
-Build target when previous target exist and target is unmodified since last
-build, but buildscript now output something new.
+08: Attempt to rebuild target that has already been built. (Based on 07.)
 
-* SUCCESS: target + metadata modified
+* SUCCESS
+  + Exit status: 0
+  + No tempfile existing.
+  + Target file unmodified.
+  + Metadata unmodified.
 
-Exit status: 0
+------------------------------------------------------------------------------
+
+Attempt to rebuild target that has already been built, after target file's
+    timestamp have been moved into the past. (Based on 07.)
+
+* SUCCESS
+  + Exit status: 0
+  + No tempfile existing.
+  + Target file unmodified.
+  + Metadata unmodified.
+
+------------------------------------------------------------------------------
+
+Attempt to rebuild target that has already been built, after target file's
+    timestamp have been moved into the future. (Based on 07.)
+
+* SUCCESS
+  + Exit status: 0
+  + No tempfile existing.
+  + Target file unmodified.
+  + Metadata unmodified.
+
+------------------------------------------------------------------------------
+
+Attempt to rebuild target that has already been built, after target's metadata
+    file's timestamp have been moved into the past. (Based on 07.)
+
+* SUCCESS
+  + Exit status: 0
+  + No tempfile existing.
+  + Target file unmodified.
+  + Metadata unmodified.
+
+------------------------------------------------------------------------------
+
+Attempt to rebuild target that has already been built, after target's metadata
+    file's timestamp have been moved into the future. (Based on 07.)
+
+* SUCCESS
+  + Exit status: 0
+  + No tempfile existing.
+  + Target file unmodified.
+  + Metadata unmodified.
+
+------------------------------------------------------------------------------
+
+Attempt to rebuild target after buildscript have been changed so that it
+    outputs something new. (Based on 07.)
+
+* SUCCESS
+  + Exit status: 0
+  + No tempfile existing.
+  + Target file updated.
+  + Metadata updated.
 
 ------------------------------------------------------------------------------
 
 Build target when previous target exist and is modified.
 
-* FAILURE (neither metadata nor target modified)
-
-Exit status: 1
+* FAILURE
+  + Exit status: 1
+  + Target file unmodified.
+  + Metadata unmodified.
 
 ------------------------------------------------------------------------------
 
 Build target when previous target exist and is modified, but new buildscript
 outputs target identical to modified target.
 
-* SUCCESS: old target kept (metadata updated)
-
-Exit status: 0
+* SUCCESS
+  + Exit status: 0
+  + Target file unmodified (old version kept).
+  + Metadata updated.
 
 ------------------------------------------------------------------------------
 
@@ -128,8 +179,7 @@ Build target when previous target exist but have no metadata stored, and the
 newly built target differs from the old target
 
 * FAILURE
-
-Exit status: 1
+  + Exit status: 1
 
 ------------------------------------------------------------------------------
 
@@ -137,7 +187,6 @@ Build target when previous target exist but have no metadata stored, and the
 newly built target is the same as the old target
 
 * SUCCESS
-
-Exit status: 0
+  + Exit status: 0
 
 ------------------------------------------------------------------------------
