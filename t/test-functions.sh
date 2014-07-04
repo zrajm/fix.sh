@@ -106,6 +106,27 @@ fail() {
     return 1
 }
 
+ok() {
+    local EXPR="$*" NAME="" ERRMSG="" RESULT=""
+    for NAME; do :; done                       # get last arg
+    [ "$NAME" = "]" ] && NAME=""               #   ignore if ']'
+    EXPR="${EXPR% $NAME}"                      #   strip last arg
+    if [ -n "${EXPR%\[*}" ]; then              # must start & have only one '['
+        echo "ok: Error in expression: 'missing or multiple ['" >&2
+        return 255
+    fi
+    ERRMSG="$(eval "$EXPR 2>&1")"; RESULT=$?
+    if [ -n "$ERRMSG" ]; then                  # error msg from eval
+        echo "ok: Error in expression: '${ERRMSG#* \[: }'" >&2
+        return 255
+    fi
+    if [ $RESULT = 0 ]; then
+        pass "$NAME"
+        return
+    fi
+    fail "$NAME" "    $EXPR is false"
+}
+
 is() {
     local GOT="$1" EXPECTED="$2" NAME="$3"
     if [ "$GOT" = "$EXPECTED" ]; then
@@ -165,9 +186,6 @@ is_unchanged() {
 	      Old timestamp: '$OLD_TIMESTAMP'
 	      New timestamp: '$NEW_TIMESTAMP'
 	EOF
-    note "File '$FILE' has been modified, but it shouldn't have"
-    note "  Old timestamp: '$OLD_TIMESTAMP'"
-    note "  New timestamp: '$NEW_TIMESTAMP'"
 }
 
 #[eof]
