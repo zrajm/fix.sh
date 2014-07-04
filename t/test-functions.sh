@@ -1,40 +1,49 @@
 # -*- sh -*-
 
+##
+## ENVIRONMENT VARIABLE OPTIONS
+## ----------------------------
+## Set these variables to a non-empty string to get the described effect.
+## (Variable names are chosen to be compatible with Test::Most.)
+##
+##   * BAIL_ON_FAIL - abort on first test fail
+##   *  DIE_ON_FAIL - skip remaining tests in file when test fail
+##
+
 ##############################################################################
 ##                                                                          ##
 ##  Test Functions                                                          ##
 ##                                                                          ##
 ##############################################################################
 
-TEST_COUNT=0
-TEST_FAIL_COUNT=0
-TEST_PLAN_COUNT=''
-
+TEST_COUNT=0                                   # tests performed
+TEST_FAILS=0                                   # failed tests
+TEST_PLANNED=-1                                # plan (set by done_testing)
 trap 'on_exit; trap - 0' 0                     # exit messages
 on_exit() {
-    if [ "$TEST_COUNT" = 0 ]; then
+    if [ $TEST_COUNT = 0 ]; then
         diag "No tests run!"
         exit 255
     fi
-    if [ -z "$TEST_PLAN_COUNT" ]; then
+    if [ $TEST_PLANNED = -1 ]; then
         diag "Tests were run but done_testing() was not seen."
         exit 255
     fi
-    [ $TEST_PLAN_COUNT = $TEST_COUNT -a $TEST_FAIL_COUNT = 0 ] && exit 0
-    if [ $TEST_COUNT != $TEST_PLAN_COUNT ]; then
-        diag "Looks like you planned $TEST_PLAN_COUNT test(s) but ran $TEST_COUNT."
+    [ $TEST_PLANNED = $TEST_COUNT -a $TEST_FAILS = 0 ] && exit 0
+    if [ $TEST_COUNT != $TEST_PLANNED ]; then
+        diag "Looks like you planned $TEST_PLANNED test(s) but ran $TEST_COUNT."
     fi
-    if [ $TEST_FAIL_COUNT -gt 0 ]; then
-        diag "Looks like you failed $TEST_FAIL_COUNT test(s) of $TEST_COUNT."
+    if [ $TEST_FAILS -gt 0 ]; then
+        diag "Looks like you failed $TEST_FAILS test(s) of $TEST_COUNT."
     fi
-    [ $TEST_FAIL_COUNT -gt 254 ] && TEST_FAIL_COUNT=254
-    exit $TEST_FAIL_COUNT
+    [ $TEST_FAILS -gt 254 ] && TEST_FAILS=254
+    exit $TEST_FAILS
 }
 
 done_testing() {
-    if [ -z "$TEST_PLAN_COUNT" ]; then
+    if [ $TEST_PLANNED = -1 ]; then
         echo "1..$TEST_COUNT"
-        TEST_PLAN_COUNT=$TEST_COUNT
+        TEST_PLANNED=$TEST_COUNT
         return 0
     fi
     fail "done_testing() already called"
@@ -42,19 +51,16 @@ done_testing() {
 
 skip_all() {
     local REASON="$1"
-    if [ -n "$TEST_PLAN_COUNT" ]; then
+    if [ $TEST_PLANNED = -1 ]; then
+        echo "1..0 # SKIP $REASON"
+    else
         echo "skip_all() called after done_testing()" >&2
     fi
-    if [ -z "$TEST_PLAN_COUNT" ]; then
-        echo "1..0 # SKIP $REASON"
-        #TEST_PLAN_COUNT=$TEST_COUNT
-    fi
-    exit $TEST_FAIL_COUNT
+    exit $TEST_FAILS
 }
 
-bail_out() {
+BAIL_OUT() {
     echo "Bail out!${1:+ $1}"
-    trap - 0                                   # disable exit messages
     exit 255
 }
 
@@ -65,11 +71,11 @@ diag() {
 }
 
 note() {
-    [ -n "$*" ] && echo "# $*"
+    local MSG="$*"
+    [ -n "$MSG" ] && echo "# $MSG"
     [ -t 0 ] && return
-    local LINE
-    while IFS='' read -r LINE; do
-        echo "#${LINE:+ $LINE}"
+    while IFS='' read -r MSG; do
+        echo "#${MSG:+ $MSG}"
     done
 }
 
@@ -88,10 +94,11 @@ pass() {
 
 fail() {
     local NAME="$1"
-    TEST_FAIL_COUNT=$(( TEST_FAIL_COUNT + 1 ))
+    TEST_FAILS=$(( TEST_FAILS + 1 ))
     result "not ok" "$NAME"; shift
     # Insert extra newline when piped (so 'prove' output looks ok).
-    [ -t 1 ] || echo >&2
+    # (Skip this if we're bailing out after the failure.)
+    [ -n "$BAIL_ON_FAIL" -o -t 1 ] || echo >&2
     if [ -z "$NAME" ]; then
         diag <<-EOF
 	  Failed test in '$0'
@@ -103,6 +110,8 @@ fail() {
 	EOF
     fi
     diag "$@"
+    [ -n "$BAIL_ON_FAIL" ] && BAIL_OUT
+    [ -n  "$DIE_ON_FAIL" ] && exit 255
     return 1
 }
 
@@ -128,21 +137,21 @@ ok() {
 }
 
 is() {
-    local GOT="$1" EXPECTED="$2" NAME="$3"
-    if [ "$GOT" = "$EXPECTED" ]; then
+    local GOT="$1" WANTED="$2" NAME="$3"
+    if [ "$GOT" = "$WANTED" ]; then
         pass "$NAME"
         return
     fi
     fail "$NAME" <<-EOF
-	    GOT     : '$GOT'
-	    EXPECTED: '$EXPECTED'
+	    GOT   : '$GOT'
+	    WANTED: '$WANTED'
 	EOF
 }
 
 file_is() {
-    local GOT_FILE="$1" EXPECTED="$2" NAME="$3"
+    local GOT_FILE="$1" WANTED="$2" NAME="$3"
     local GOT="$(cat "$GOT_FILE")"
-    is "$GOT" "$EXPECTED" "$NAME"
+    is "$GOT" "$WANTED" "$NAME"
 }
 
 file_exist() {
