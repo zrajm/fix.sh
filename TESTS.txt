@@ -66,7 +66,8 @@ Exit status:
 
 ------------------------------------------------------------------------------
 
-06: Attempt to build target with buildscript that returns non-zero exit status.
+06: Attempt to build target with buildscript that returns non-zero exit
+    status.
 
 * FAILURE
   + Exit status: 5
@@ -87,7 +88,23 @@ This result in a base setup, with one successfully built target.
 
 ------------------------------------------------------------------------------
 
-08: Attempt to rebuild target that has already been built. (Based on 07.)
+08: Attempt to run two copies of fix at once. First instance should build,
+    second instance should detect lockfile and refuse to start.
+
+* 1st instance: SUCCESS
+  + Exit status: 0
+  + No tempfile existing.
+  + Target file created.
+  + Metadata modified.
+
+* 2nd instance: FAILURE
+  + Exit status: 8
+  + No tempfile created.
+  + No target file created.
+
+------------------------------------------------------------------------------
+
+Attempt to rebuild target that has already been built. (Based on 07.)
 
 * SUCCESS
   + Exit status: 0

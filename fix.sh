@@ -38,6 +38,17 @@ file_checksum() {
     echo "${CHECKSUM%% *}"                     # checksum without filename
 }
 
+establish_lock() {
+    local LOCKFILE="$1" SIG
+    mkpath "$LOCKFILE" || error 7 "Cannot create dir for lockfile '$LOCKFILE'"
+    ({ set -o noclobber; echo "$$" >"$LOCKFILE"; } 2>/dev/null) || return 1
+    trap "rm -f '$LOCKFILE'" EXIT
+    for SIG in HUP INT TERM; do
+        # remove lockfile, then re-kill myself without trapping the signal
+        trap "rm -f '$LOCKFILE'; trap - EXIT $SIG; kill -$SIG $$" $SIG
+    done
+}
+
 # Run buildscript, write tempfile. React to exit status.
 build_run() {
     local CMD="$1" TMPFILE="$2" STATUS=0
@@ -112,15 +123,17 @@ if [ ! "$FIX" ]; then                          # mother process
     export FIX_LEVEL=0
     export FIX_PID=$$
     export FIX_DIR=".fix"
+    export FIX_LOCK="$FIX_DIR/lock.pid"
     export FIX_SCRIPT_DIR="fix"
     export FIX_SOURCE_DIR="src"
     export FIX_TARGET_DIR="build"
-    if [ ! -d "$FIX_SOURCE_DIR" ]; then
-        error 10 "Source dir '$FIX_SOURCE_DIR' does not exist"
-    fi
-    if [ ! -d "$FIX_SCRIPT_DIR" ]; then
-        error 10 "Script dir '$FIX_SCRIPT_DIR' does not exist"
-    fi
+    [ -d "$FIX_SOURCE_DIR" ] \
+        || error 10 "Source dir '$FIX_SOURCE_DIR' does not exist"
+    [ -d "$FIX_SCRIPT_DIR" ] \
+        || error 10 "Script dir '$FIX_SCRIPT_DIR' does not exist"
+    establish_lock "$FIX_LOCK" \
+        || error 8 "Cannot create lockfile '$FIX_LOCK'" \
+        "Is ${FIX##*/} is already running? Is lockfile dir writeable?"
 else                                           # child
     FIX_LEVEL=$(( FIX_LEVEL + 1 ))
 fi

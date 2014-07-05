@@ -18,17 +18,26 @@ value).
 
 The following exit status values are used:
 
-  0  = Success.
-  1  = Won't overwrite target (anything fixable by --force).
-  5  = Build failed (build script returned non-zero exit value).
-  6  = Failed to write target (even though build succeeded). E.g. target dir
-       could not be created, old target (or the target directory) was write
-       protected or similar.
-  7  = Failed to write metadata.
-  10 = Couldn't read buildscript or source (permission denied, or file
-       missing, or missing buildscript or source directories).
-  15 = Bad options provided.
-
+    0 = Success.
+    1 = Won't overwrite target (anything fixable by --force).
+    5 = Build failed (build script returned non-zero exit value).
+    6 = Failed to write target (even though build succeeded). E.g. target dir
+        could not be created, old target (or the target directory) was write
+        protected or similar.
+    7 = Failed to write metadata.
+    8 = Failed to create lockfile. (Most likely this means that another copy of
+        fix is currently running, but it could also be caused by lack of write
+        permissions bits, or a stale lockfile if a previous instance of fix was
+        terminated by 'kill -KILL' or somehow failed to remove its lockfile.)
+   10 = Couldn't read buildscript or source (permission denied, or file
+        missing, or missing buildscript or source directories).
+   15 = Bad options provided.
+ >128 = Terminated by 'kill' or ctrl-c (subtract 128 from exit status to find
+        out which signal was received). NOTA BENE: When stopping fix with
+        'kill', use the negated PID of the mother process. The mother process
+        is the process group leader, and using a negative PID sends the signal
+        to all process group members, thereby making sure all child processes
+        are signaled too (ctrl-c does this automatically).
 
 Failure
 -------
