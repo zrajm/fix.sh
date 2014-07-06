@@ -102,7 +102,7 @@ build_finalize() {
 }
 
 build() {
-    local DBFILE="$FIX_DIR/$1" \
+    local DBFILE="$FIX_DIR/state/$1" \
         SCRIPT="$FIX_SCRIPT_DIR/$1.fix" \
         TARGET="$FIX_TARGET_DIR/$1"
     mkpath "$TARGET" || error 6 "Cannot create dir for target '$TARGET'"

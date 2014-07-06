@@ -44,7 +44,7 @@ file_is         stdout1              ""            "Standard output"
 file_is         stderr1              ""            "Standard error"
 file_not_exist  build/TARGET--fixing               "Target tempfile shouldn't exist"
 file_is         build/TARGET         "PIPED"       "Target"
-file_exist      .fix/TARGET                        "Metadata file"
+file_exist      .fix/state/TARGET                  "Metadata file"
 
 done_testing
 

@@ -21,7 +21,8 @@ Exit status:
        missing, or missing buildscript or source directories).
   15 = Bad options provided.
 
-
+* VAGUE FUTURE IDEAS
+** Garbage collecting of metadata files?
 * Unreadable source/buildscript files
 ** 01-missing-source-dir
    01: Attempt to build target when there is no source dir.
@@ -236,6 +237,7 @@ This signal should be sent to fix's process group by means of a negative PID
     + Exit status: 0
     + Neither target modified.
     + Neither metadata file modified.
+** Rebuild target with modified dependency
 ** XXX
 Build target when previous target exist but have no metadata stored, and the
 newly built target differs from the old target

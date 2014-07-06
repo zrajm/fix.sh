@@ -19,7 +19,7 @@ file_is         stdout               ""            "Standard output"
 file_is         stderr               "$ERRMSG"     "Standard error"
 file_not_exist  build/TARGET--fixing               "Target tempfile shouldn't exist"
 file_is         build/TARGET         "OUTPUT"      "Target"
-file_exist      .fix/TARGET                        "Metadata file"
+file_exist      .fix/state/TARGET                  "Metadata file"
 
 done_testing
 
