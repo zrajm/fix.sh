@@ -1,3 +1,5 @@
+-*- org -*-
+
 FAILURE means:
   + Exit status: >0
   + Failing target will not be modified (but a tempfile will be created).
@@ -19,191 +21,236 @@ Exit status:
        missing, or missing buildscript or source directories).
   15 = Bad options provided.
 
-------------------------------------------------------------------------------
 
-01: Attempt to build target when there is no source dir.
+* Unreadable source/buildscript files
+** 01-missing-source-dir
+   01: Attempt to build target when there is no source dir.
 
-* FAILURE
-  + Exit status: 10
-  + No tempfile created.
-  + No target file created.
+   * FAILURE
+     + Exit status: 10
+     + No tempfile created.
+     + No target file created.
+** 02-missing-script-dir
+   02: Attempt to build target when there is no script dir.
 
-------------------------------------------------------------------------------
-
-02: Attempt to build target when there is no script dir.
-
-* FAILURE
-  + Exit status: 10
-  + No tempfile created.
-  + No target file created.
-
-------------------------------------------------------------------------------
-
+   * FAILURE
+     + Exit status: 10
+     + No tempfile created.
+     + No target file created.
+** 03-missing-build-script
 03: Attempt to build target when there is no buildscript for it.
 
-* FAILURE
-  + Exit status: 10
-  + No tempfile created.
-  + No target file created.
-
-------------------------------------------------------------------------------
-
+   * FAILURE
+     + Exit status: 10
+     + No tempfile created.
+     + No target file created.
+** 04-buildscript-with-unset-read-bits
 04: Attempt to build target with buildscript with read bits unset.
 
-* FAILURE
-  + Exit status: 10
-  + No tempfile created.
-  + No target file created.
-
-------------------------------------------------------------------------------
-
+   * FAILURE
+     + Exit status: 10
+     + No tempfile created.
+     + No target file created.
+** 05-buildscript-with-unset-execute-bits
 05: Attempt to build target with buildscript with execute bits unset.
 
-* FAILURE
-  + Exit status: 10
-  + No tempfile created.
-  + No target file created.
-
-------------------------------------------------------------------------------
-
+   * FAILURE
+     + Exit status: 10
+     + No tempfile created.
+     + No target file created.
+* One target with no dependencies
+** 06-buildscript-with-nonzero-exit-status
 06: Attempt to build target with buildscript that returns non-zero exit
     status.
 
-* FAILURE
-  + Exit status: 5
-  + Tempfile created.
-  + No target file created.
-
-------------------------------------------------------------------------------
-
+   * FAILURE
+     + Exit status: 5
+     + Tempfile created.
+     + No target file created.
+** 07-buildscript-with-zero-exit-status
 07: Attempt to build target with buildscript that returns zero exit status.
 
 This result in a base setup, with one successfully built target.
 
-* SUCCESS
-  + Exit status: 0
-  + No tempfile existing.
-  + Target file created.
-  + Metadata modified.
-
-------------------------------------------------------------------------------
-
-08: Attempt to run two copies of fix at once. First instance should build,
-    second instance should detect lockfile and refuse to start.
-
-* 1st instance: SUCCESS
-  + Exit status: 0
-  + No tempfile existing.
-  + Target file created.
-  + Metadata modified.
-
-* 2nd instance: FAILURE
-  + Exit status: 8
-  + No tempfile created.
-  + No target file created.
-
-------------------------------------------------------------------------------
-
+   * SUCCESS
+     + Exit status: 0
+     + No tempfile existing.
+     + Target file created.
+     + Metadata modified.
+** Rebuild an unchanged target
 Attempt to rebuild target that has already been built. (Based on 07.)
 
-* SUCCESS
-  + Exit status: 0
-  + No tempfile existing.
-  + Target file unmodified.
-  + Metadata unmodified.
-
-------------------------------------------------------------------------------
-
+   * SUCCESS
+     + Exit status: 0
+     + No tempfile existing.
+     + Target file unmodified.
+     + Metadata unmodified.
+** Rebuild with target timestamp in past
 Attempt to rebuild target that has already been built, after target file's
     timestamp have been moved into the past. (Based on 07.)
 
-* SUCCESS
-  + Exit status: 0
-  + No tempfile existing.
-  + Target file unmodified.
-  + Metadata unmodified.
-
-------------------------------------------------------------------------------
-
+   * SUCCESS
+     + Exit status: 0
+     + No tempfile existing.
+     + Target file unmodified.
+     + Metadata unmodified.
+** Rebuild with target timestamp in future
 Attempt to rebuild target that has already been built, after target file's
     timestamp have been moved into the future. (Based on 07.)
 
-* SUCCESS
-  + Exit status: 0
-  + No tempfile existing.
-  + Target file unmodified.
-  + Metadata unmodified.
+   * SUCCESS
+     + Exit status: 0
+     + No tempfile existing.
+     + Target file unmodified.
+     + Metadata unmodified.
+** Rebuild with buildscript timestamp in past
+Attempt to rebuild target that has already been built, after target's
+    buildscript's timestamp have been moved into the past. (Based on 07.)
 
-------------------------------------------------------------------------------
+   * SUCCESS
+     + Exit status: 0
+     + No tempfile existing.
+     + Target file unmodified.
+     + Metadata unmodified.
+** Rebuild with buildscript timestamp in future
+Attempt to rebuild target that has already been built, after target's
+    buildscript's timestamp have been moved into the future. (Based on 07.)
 
+   * SUCCESS
+     + Exit status: 0
+     + No tempfile existing.
+     + Target file unmodified.
+     + Metadata unmodified.
+** Rebuild with metadata timestamp in past
 Attempt to rebuild target that has already been built, after target's metadata
     file's timestamp have been moved into the past. (Based on 07.)
 
-* SUCCESS
-  + Exit status: 0
-  + No tempfile existing.
-  + Target file unmodified.
-  + Metadata unmodified.
-
-------------------------------------------------------------------------------
-
+   * SUCCESS
+     + Exit status: 0
+     + No tempfile existing.
+     + Target file unmodified.
+     + Metadata unmodified.
+** Rebuild with metadata timestamp in future
 Attempt to rebuild target that has already been built, after target's metadata
     file's timestamp have been moved into the future. (Based on 07.)
 
-* SUCCESS
-  + Exit status: 0
-  + No tempfile existing.
-  + Target file unmodified.
-  + Metadata unmodified.
+   * SUCCESS
+     + Exit status: 0
+     + No tempfile existing.
+     + Target file unmodified.
+     + Metadata unmodified.
+** Rebuild with modified buildscript producing same output
+Attempt to rebuild target after buildscript modified (by a comment or similar)
+    in such a way that it still produces the same output as it previously did.
+    (Base 07.)
 
-------------------------------------------------------------------------------
-
+   * SUCCESS
+     + Exit status: 0
+     + No tempfile existing.
+     + Target file not updated.
+     + Metadata updated (to contain new buildscript checksum)
+** Rebuild with modified buildscript
 Attempt to rebuild target after buildscript have been changed so that it
     outputs something new. (Based on 07.)
 
-* SUCCESS
-  + Exit status: 0
-  + No tempfile existing.
-  + Target file updated.
-  + Metadata updated.
-
-------------------------------------------------------------------------------
-
+   * SUCCESS
+     + Exit status: 0
+     + No tempfile existing.
+     + Target file updated.
+     + Metadata updated.
+** Rebuild with modified target file
 Build target when previous target exist and is modified.
 
-* FAILURE
-  + Exit status: 1
-  + Target file unmodified.
-  + Metadata unmodified.
-
-------------------------------------------------------------------------------
-
+   * FAILURE
+     + Exit status: 1
+     + Target file unmodified.
+     + Metadata unmodified.
+** Rebuild with modified target & buildscript outputting same
 Build target when previous target exist and is modified, but new buildscript
 outputs target identical to modified target.
 
-* SUCCESS
-  + Exit status: 0
-  + Target file unmodified (old version kept).
-  + Metadata updated.
+   * SUCCESS
+     + Exit status: 0
+     + Target file unmodified (old version kept).
+     + Metadata updated.
+* Catching signal/parallel execution
+** 08-run-two-simultaneous-instances-of-fix
+08: Attempt to run two copies of fix at once. First instance should build,
+    second instance should detect lockfile and refuse to start.
 
-------------------------------------------------------------------------------
+   * 1st instance: SUCCESS
+     + Exit status: 0
+     + No tempfile existing.
+     + Target file created.
+     + Metadata modified.
 
-Build target A with dependency B
+   * 2nd instance: FAILURE
+     + Exit status: 8
+     + No tempfile created.
+     + No target file created.
+** Receiving Ctrl-C (SIGTERM)
+Send ctrl-c (SIGINT) to fix as its building and see that it returns correct
+exit code and clears its lockfile.
 
-------------------------------------------------------------------------------
+This signal should be sent to fix's process group by means of a negative PID
+(in order to kill all subprocesses).
 
+   * FAILURE
+     + Exit status: 130 (128 + 2 = INT)
+     + No lockfile exists.
+** Normal kill (SIGINT)
+Send SIGTERM to fix as its building and see that it returns correct exit code
+and clears its lockfile.
+
+This signal should be sent to fix's process group by means of a negative PID
+(in order to kill all subprocesses).
+
+   * FAILURE
+     + Exit status: 143 (128 + 15 = TERM)
+     + No lockfile exists.
+** Terminal hangup (SIGHUP)
+Send SIGHUP to fix as its building and see that it returns correct exit code
+and clears its lockfile.
+
+This signal should be sent to fix's process group by means of a negative PID
+(in order to kill all subprocesses).
+
+   * FAILURE
+     + Exit status: 129 (128 + 1 = HUP)
+     + No lockfile exists.
+* Automatic buildscript dependency
+* Source dependency
+** Source file dependency
+** Source file dependency with timestamp in the past
+** Source file dependency with timestamp in the future
+** Source file dependency
+* Target dependency
+** Build target with one dependency
+   Build target A with dependency B
+   * SUCCESS
+     + Exit status: 0
+     + Both targets created.
+     + Both metadata files created.
+** Rebuild target with one dependency
+  * SUCCESS
+    + Exit status: 0
+    + Neither target modified.
+    + Neither metadata file modified.
+** XXX
 Build target when previous target exist but have no metadata stored, and the
 newly built target differs from the old target
 
-* FAILURE
-  + Exit status: 1
-
-------------------------------------------------------------------------------
-
+   * FAILURE
+     + Exit status: 1
+** XXX
 Build target when previous target exist but have no metadata stored, and the
 newly built target is the same as the old target
 
-* SUCCESS
-  + Exit status: 0
-
-------------------------------------------------------------------------------
+   * SUCCESS
+     + Exit status: 0
+** XXX
+Build target using default.fix.
+** XXX
+Rebuild target that was previously build by default.fix, with a new
+TARGET.fix.
+* [eof]

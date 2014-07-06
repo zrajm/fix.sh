@@ -1,6 +1,0 @@
-#!/bin/sh
-
-read LINE <fifo
-echo $LINE
-
-#[eof]

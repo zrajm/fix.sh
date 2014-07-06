@@ -1,0 +1,14 @@
+-*- org -*-
+
+* Program
+** TODO Dependencies
+** TODO Automatic unlocking of stale lockfile
+** TODO Eliminate name collision with lockfile                          :BUG:
+   Right now if a target was to be named lock.pid its metadata file would
+   overwrite the lockfile.
+* Tests
+** TODO Mooooaaar test cases!
+** TODO Test killing of fix
+* DONE
+** DONE Tests should be run in tempdir
+   CLOSED: [2014-07-07 Mon 00:28]

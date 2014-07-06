@@ -197,4 +197,50 @@ is_unchanged() {
 	EOF
 }
 
+##############################################################################
+##                                                                          ##
+##  Test Initialization                                                     ##
+##                                                                          ##
+##############################################################################
+
+##
+## These functions are specific for the fix.sh tests. They are used to set up
+## a test case before running it, and do not perform any actual testing.
+##
+
+# Usage: init_test [DIR...]
+#
+# Initializes a tempdir, and changes directory to it. If any DIR(s) are
+# specified they will be created inside the tempdir (relative paths will be
+# interpreted relative to the tempdir).
+#
+# Also sets the TESTCMD variable to the full path of 'fix.sh' (it should be
+# used in tests instead of refering to any literal executable).
+init_test() {
+    readonly TESTCMD="$PWD/fix.sh"
+    local TESTFILE="$PWD/$0" TESTDIR="$PWD/${0%.t}"
+    local TMPDIR="$(mktemp -dt "fix-test-${TESTDIR##*/}.XXXXXX")"
+    cd "$TMPDIR"
+    note "DIR: $TMPDIR"
+    [ $# -gt 0 ] && mkdir -p "$@"
+}
+
+# Usage: write_file FILE [BITS] [<<EOF
+#            CONTENT
+#        EOF]
+# Creates FILE, and writes CONTENT to it (if specified), thereafter chmod FILE
+# to set permissions to BITS (if specified). If no CONTENT is specified a
+# zero-byte file is created.
+write_file() {
+    local FILE="$1" BITS="$2" LINE=""
+    if [ -t 0 ]; then
+        echo -n >"$FILE"
+    else
+        while IFS='' read -r LINE; do
+            echo "$LINE"
+        done >"$FILE"
+    fi
+    [ -n "$BITS" ] && chmod "$BITS" "$FILE"
+}
+
 #[eof]
