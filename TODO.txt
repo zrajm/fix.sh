@@ -4,10 +4,6 @@
 ** TODO Dependencies
 ** TODO Automatic unlocking of stale lockfile
 * Tests
-** TODO Tests which uses pre-defined metadata
-   I.e. a whole bunch of tests are based on a state where a target has already
-   been built once. This should use stored metadata (which could be easily
-   re-built in case the metadata format changes).
 ** TODO Mooooaaar test cases!
 ** TODO Test killing of fix
 * DONE
@@ -17,3 +13,8 @@
    CLOSED: [2014-07-07 Mon 00:36]
    Moved build state metadata into dir '.fix/state', while the lockfile
    continues to be called 'lock.pid'.
+** DONE Tests which uses pre-defined metadata
+   CLOSED: [2014-07-07 Mon 09:11]
+   I.e. a whole bunch of tests are based on a state where a target has already
+   been built once. This should use stored metadata (which could be easily
+   re-built in case the metadata format changes).

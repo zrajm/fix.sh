@@ -214,6 +214,10 @@ is_unchanged() {
 # specified they will be created inside the tempdir (relative paths will be
 # interpreted relative to the tempdir).
 #
+# If there is a directory (or symlink) called the same thing as the test file
+# (but without the '.t' extension) that directory is taken to contain a '.fix'
+# state dir, which is then copied to '.fix' in the tempdir.
+#
 # Also sets the TESTCMD variable to the full path of 'fix.sh' (it should be
 # used in tests instead of refering to any literal executable).
 init_test() {
@@ -223,6 +227,7 @@ init_test() {
     cd "$TMPDIR"
     note "DIR: $TMPDIR"
     [ $# -gt 0 ] && mkdir -p "$@"
+    [ -e "$TESTDIR" ] && cp -rH "$TESTDIR" .fix
 }
 
 # Usage: write_file FILE [BITS] [<<EOF

@@ -72,18 +72,19 @@ Exit status:
      + Exit status: 5
      + Tempfile created.
      + No target file created.
-** DONE 07-buildscript-with-zero-exit-status
-07: Attempt to build target with buildscript that returns zero exit status.
+** DONE 07. Successful build
+   Build target with buildscript that returns zero exit status.
 
-This result in a base setup, with one successfully built target.
+   This result in a base setup, with one successfully built target.
 
    * SUCCESS
      + Exit status: 0
      + No tempfile existing.
      + Target file created.
      + Metadata modified.
-** TODO Rebuild an unchanged target
-Attempt to rebuild target that has already been built. (Based on 07.)
+** DONE 09. Rebuilding successful build
+   CLOSED: [2014-07-07 Mon 09:04]
+   Rebuild target that has already been built. (Based on 07.)
 
    * SUCCESS
      + Exit status: 0
