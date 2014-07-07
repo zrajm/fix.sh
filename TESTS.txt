@@ -22,37 +22,39 @@ Exit status:
   15 = Bad options provided.
 
 * VAGUE FUTURE IDEAS
-** Garbage collecting of metadata files?
-* Unreadable source/buildscript files
-** 01-missing-source-dir
+** TODO Garbage collecting of metadata files?
+** TODO Handling of circular dependencies
+* Early error messages
+  Check early error messages (missing files, bad options) are emitted properly.
+** DONE 01-missing-source-dir
    01: Attempt to build target when there is no source dir.
 
    * FAILURE
      + Exit status: 10
      + No tempfile created.
      + No target file created.
-** 02-missing-script-dir
+** DONE 02-missing-script-dir
    02: Attempt to build target when there is no script dir.
 
    * FAILURE
      + Exit status: 10
      + No tempfile created.
      + No target file created.
-** 03-missing-build-script
+** DONE 03-missing-build-script
 03: Attempt to build target when there is no buildscript for it.
 
    * FAILURE
      + Exit status: 10
      + No tempfile created.
      + No target file created.
-** 04-buildscript-with-unset-read-bits
+** DONE 04-buildscript-with-unset-read-bits
 04: Attempt to build target with buildscript with read bits unset.
 
    * FAILURE
      + Exit status: 10
      + No tempfile created.
      + No target file created.
-** 05-buildscript-with-unset-execute-bits
+** DONE 05-buildscript-with-unset-execute-bits
 05: Attempt to build target with buildscript with execute bits unset.
 
    * FAILURE
@@ -60,7 +62,9 @@ Exit status:
      + No tempfile created.
      + No target file created.
 * One target with no dependencies
-** 06-buildscript-with-nonzero-exit-status
+  Check buildscript return values, that target and metadata files are only
+  updated when they should, and that file timestamps does not affect this.
+** DONE 06-buildscript-with-nonzero-exit-status
 06: Attempt to build target with buildscript that returns non-zero exit
     status.
 
@@ -68,7 +72,7 @@ Exit status:
      + Exit status: 5
      + Tempfile created.
      + No target file created.
-** 07-buildscript-with-zero-exit-status
+** DONE 07-buildscript-with-zero-exit-status
 07: Attempt to build target with buildscript that returns zero exit status.
 
 This result in a base setup, with one successfully built target.
@@ -78,7 +82,7 @@ This result in a base setup, with one successfully built target.
      + No tempfile existing.
      + Target file created.
      + Metadata modified.
-** Rebuild an unchanged target
+** TODO Rebuild an unchanged target
 Attempt to rebuild target that has already been built. (Based on 07.)
 
    * SUCCESS
@@ -86,7 +90,7 @@ Attempt to rebuild target that has already been built. (Based on 07.)
      + No tempfile existing.
      + Target file unmodified.
      + Metadata unmodified.
-** Rebuild with target timestamp in past
+** TODO Rebuild with target timestamp in past
 Attempt to rebuild target that has already been built, after target file's
     timestamp have been moved into the past. (Based on 07.)
 
@@ -95,7 +99,7 @@ Attempt to rebuild target that has already been built, after target file's
      + No tempfile existing.
      + Target file unmodified.
      + Metadata unmodified.
-** Rebuild with target timestamp in future
+** TODO Rebuild with target timestamp in future
 Attempt to rebuild target that has already been built, after target file's
     timestamp have been moved into the future. (Based on 07.)
 
@@ -104,7 +108,7 @@ Attempt to rebuild target that has already been built, after target file's
      + No tempfile existing.
      + Target file unmodified.
      + Metadata unmodified.
-** Rebuild with buildscript timestamp in past
+** TODO Rebuild with buildscript timestamp in past
 Attempt to rebuild target that has already been built, after target's
     buildscript's timestamp have been moved into the past. (Based on 07.)
 
@@ -113,7 +117,7 @@ Attempt to rebuild target that has already been built, after target's
      + No tempfile existing.
      + Target file unmodified.
      + Metadata unmodified.
-** Rebuild with buildscript timestamp in future
+** TODO Rebuild with buildscript timestamp in future
 Attempt to rebuild target that has already been built, after target's
     buildscript's timestamp have been moved into the future. (Based on 07.)
 
@@ -122,7 +126,7 @@ Attempt to rebuild target that has already been built, after target's
      + No tempfile existing.
      + Target file unmodified.
      + Metadata unmodified.
-** Rebuild with metadata timestamp in past
+** TODO Rebuild with metadata timestamp in past
 Attempt to rebuild target that has already been built, after target's metadata
     file's timestamp have been moved into the past. (Based on 07.)
 
@@ -131,7 +135,7 @@ Attempt to rebuild target that has already been built, after target's metadata
      + No tempfile existing.
      + Target file unmodified.
      + Metadata unmodified.
-** Rebuild with metadata timestamp in future
+** TODO Rebuild with metadata timestamp in future
 Attempt to rebuild target that has already been built, after target's metadata
     file's timestamp have been moved into the future. (Based on 07.)
 
@@ -140,7 +144,7 @@ Attempt to rebuild target that has already been built, after target's metadata
      + No tempfile existing.
      + Target file unmodified.
      + Metadata unmodified.
-** Rebuild with modified buildscript producing same output
+** TODO Rebuild with modified buildscript producing same output
 Attempt to rebuild target after buildscript modified (by a comment or similar)
     in such a way that it still produces the same output as it previously did.
     (Base 07.)
@@ -150,7 +154,7 @@ Attempt to rebuild target after buildscript modified (by a comment or similar)
      + No tempfile existing.
      + Target file not updated.
      + Metadata updated (to contain new buildscript checksum)
-** Rebuild with modified buildscript
+** TODO Rebuild with modified buildscript
 Attempt to rebuild target after buildscript have been changed so that it
     outputs something new. (Based on 07.)
 
@@ -159,14 +163,14 @@ Attempt to rebuild target after buildscript have been changed so that it
      + No tempfile existing.
      + Target file updated.
      + Metadata updated.
-** Rebuild with modified target file
+** TODO Rebuild with modified target file
 Build target when previous target exist and is modified.
 
    * FAILURE
      + Exit status: 1
      + Target file unmodified.
      + Metadata unmodified.
-** Rebuild with modified target & buildscript outputting same
+** TODO Rebuild with modified target & buildscript outputting same
 Build target when previous target exist and is modified, but new buildscript
 outputs target identical to modified target.
 
@@ -174,8 +178,10 @@ outputs target identical to modified target.
      + Exit status: 0
      + Target file unmodified (old version kept).
      + Metadata updated.
-* Catching signal/parallel execution
-** 08-run-two-simultaneous-instances-of-fix
+* Lockfile-related stuff
+  Check that lockfile is cleared on non-normal termination. And that it works
+  to avert parallel execution of fix.
+** DONE 08-run-two-simultaneous-instances-of-fix
 08: Attempt to run two copies of fix at once. First instance should build,
     second instance should detect lockfile and refuse to start.
 
@@ -189,7 +195,7 @@ outputs target identical to modified target.
      + Exit status: 8
      + No tempfile created.
      + No target file created.
-** Receiving Ctrl-C (SIGTERM)
+** TODO Receiving Ctrl-C (SIGTERM)
 Send ctrl-c (SIGINT) to fix as its building and see that it returns correct
 exit code and clears its lockfile.
 
@@ -199,7 +205,7 @@ This signal should be sent to fix's process group by means of a negative PID
    * FAILURE
      + Exit status: 130 (128 + 2 = INT)
      + No lockfile exists.
-** Normal kill (SIGINT)
+** TODO Normal kill (SIGINT)
 Send SIGTERM to fix as its building and see that it returns correct exit code
 and clears its lockfile.
 
@@ -209,7 +215,7 @@ This signal should be sent to fix's process group by means of a negative PID
    * FAILURE
      + Exit status: 143 (128 + 15 = TERM)
      + No lockfile exists.
-** Terminal hangup (SIGHUP)
+** TODO Terminal hangup (SIGHUP)
 Send SIGHUP to fix as its building and see that it returns correct exit code
 and clears its lockfile.
 
@@ -220,39 +226,44 @@ This signal should be sent to fix's process group by means of a negative PID
      + Exit status: 129 (128 + 1 = HUP)
      + No lockfile exists.
 * Automatic buildscript dependency
+  Checks to see that the automatically added dependency on the buildscript
+  works as it should.
 * Source dependency
-** Source file dependency
-** Source file dependency with timestamp in the past
+** TODO Source file dependency
+** TODO Source file dependency with timestamp in the past
 ** Source file dependency with timestamp in the future
 ** Source file dependency
 * Target dependency
-** Build target with one dependency
+** TODO Build target with one dependency
    Build target A with dependency B
    * SUCCESS
      + Exit status: 0
      + Both targets created.
      + Both metadata files created.
-** Rebuild target with one dependency
+** TODO Rebuild target with one dependency
   * SUCCESS
     + Exit status: 0
     + Neither target modified.
     + Neither metadata file modified.
-** Rebuild target with modified dependency
-** XXX
+** TODO Rebuild target with modified dependency
+** TODO Rebuild target with erased metadata and modified buildscript
 Build target when previous target exist but have no metadata stored, and the
-newly built target differs from the old target
+newly built target differs from the old target.
 
    * FAILURE
      + Exit status: 1
-** XXX
+** TODO Rebuild target with erased metadata
 Build target when previous target exist but have no metadata stored, and the
-newly built target is the same as the old target
+newly built target is the same as the old target.
 
    * SUCCESS
      + Exit status: 0
-** XXX
+* 'default.fix' target dependency
+** TODO Build using default buildscript ('default.fix')
 Build target using default.fix.
-** XXX
+** TODO Build using default buildscript in parent dir
+Build target using '../default.fix'.
+** TODO Rebuild target built by default buildscript, now by target
 Rebuild target that was previously build by default.fix, with a new
 TARGET.fix.
 * [eof]
