@@ -174,6 +174,9 @@ file_not_exist() {
         "File '$FILE' shouldn't exist, but it does"
 }
 
+# Usage: TIMESTAMP="$(timestamp FILE)"
+#
+# Stats FILE to get a timestamp (for passing on to is_unchanged, later).
 timestamp() {
     local FILE="$1"
     if [ -e "$FILE" ]; then
@@ -183,8 +186,14 @@ timestamp() {
     fi
 }
 
+# Usage: is_unchanged TIMESTAMP
+#
+# Compares TIMESTAMP with the file from which the TIMESTAMP was originally
+# gotten, return false if the files mtime or other metadata have been modified
+# TIMESTAMP was obtained, true if it has not changed.
 is_unchanged() {
-    local OLD_TIMESTAMP="$1" FILE="$2" NAME="$3"
+    local OLD_TIMESTAMP="$1" NAME="$2"
+    local FILE="${OLD_TIMESTAMP##* }"
     local NEW_TIMESTAMP="$(timestamp "$FILE")"
     if [ "$NEW_TIMESTAMP" = "$OLD_TIMESTAMP" ]; then
         pass "$NAME"
@@ -192,8 +201,8 @@ is_unchanged() {
     fi
     fail "$NAME" <<-EOF
 	    File '$FILE' has been modified, but it shouldn't have
-	      Old timestamp: '$OLD_TIMESTAMP'
-	      New timestamp: '$NEW_TIMESTAMP'
+	    Old timestamp: '$OLD_TIMESTAMP'
+	    New timestamp: '$NEW_TIMESTAMP'
 	EOF
 }
 
@@ -230,22 +239,38 @@ init_test() {
     [ -e "$TESTDIR" ] && cp -rH "$TESTDIR" .fix
 }
 
-# Usage: write_file FILE [BITS] [<<EOF
+mkpath() {
+    local DIR="${1%/*}"                        # strip trailing filename
+    [ -d "$DIR" ] || mkdir -p -- "$DIR"
+}
+
+# Usage: write_file FILE [YYYY-MM-DD] [BITS] [<<EOF
 #            CONTENT
 #        EOF]
-# Creates FILE, and writes CONTENT to it (if specified), thereafter chmod FILE
-# to set permissions to BITS (if specified). If no CONTENT is specified a
-# zero-byte file is created.
+#
+# Creates FILE and writes CONTENT (if no CONTENT is give on standard input,
+# then a zero byte file is created), thereafter chmod(1)s FILE to set file
+# permissions to BITS, and touch(1)es to set its mtime to YYYY-MM-DD (if any of
+# those are specified).
 write_file() {
-    local FILE="$1" BITS="$2" LINE=""
+    local FILE="$1" DATE="" BITS="" LINE=""; shift
+    for LINE; do
+        case "$1" in
+            ????-??-??) DATE="$(echo "$1"|tr -d -)0000" ;;
+            *[a-z])     BITS="$1" ;;
+            *) echo "write_file: bad arg '$LINE'" >&2; exit 255 ;;
+        esac; shift
+    done
+    mkpath "$FILE"
     if [ -t 0 ]; then
-        echo -n >"$FILE"
+        : >"$FILE"
     else
         while IFS='' read -r LINE; do
             echo "$LINE"
         done >"$FILE"
     fi
     [ -n "$BITS" ] && chmod "$BITS" "$FILE"
+    [ -n "$DATE" ] && touch -t"$DATE" "$FILE"
 }
 
 #[eof]

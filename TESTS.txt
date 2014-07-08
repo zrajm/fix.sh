@@ -82,7 +82,7 @@ Exit status:
      + No tempfile existing.
      + Target file created.
      + Metadata modified.
-** DONE 09. Rebuilding successful build
+** DONE 08. Rebuilding successful build
    CLOSED: [2014-07-07 Mon 09:04]
    Rebuild target that has already been built. (Based on 07.)
 
@@ -91,18 +91,24 @@ Exit status:
      + No tempfile existing.
      + Target file unmodified.
      + Metadata unmodified.
-** TODO Rebuild with target timestamp in past
-Attempt to rebuild target that has already been built, after target file's
-    timestamp have been moved into the past. (Based on 07.)
+** DONE 09. Rebuild with target timestamp in past
+   CLOSED: [2014-07-08 Tue 08:44]
+   Attempt to rebuild target that has already been built, after target file's
+   timestamp have been moved into the past. (Based on 07.)
+
+   Target timestamp is set to: 2000-01-01
 
    * SUCCESS
      + Exit status: 0
      + No tempfile existing.
      + Target file unmodified.
      + Metadata unmodified.
-** TODO Rebuild with target timestamp in future
-Attempt to rebuild target that has already been built, after target file's
-    timestamp have been moved into the future. (Based on 07.)
+** DONE 10. Rebuild with target timestamp in future
+   CLOSED: [2014-07-08 Tue 08:44]
+   Attempt to rebuild target that has already been built, after target file's
+   timestamp have been moved into the future. (Based on 07.)
+
+   Target timestamp is set to: 2030-01-01
 
    * SUCCESS
      + Exit status: 0
@@ -110,8 +116,10 @@ Attempt to rebuild target that has already been built, after target file's
      + Target file unmodified.
      + Metadata unmodified.
 ** TODO Rebuild with buildscript timestamp in past
-Attempt to rebuild target that has already been built, after target's
-    buildscript's timestamp have been moved into the past. (Based on 07.)
+   Attempt to rebuild target that has already been built, after target's
+   buildscript's timestamp have been moved into the past. (Based on 07.)
+
+   Target timestamp is set to: 2000-01-01
 
    * SUCCESS
      + Exit status: 0
@@ -119,8 +127,10 @@ Attempt to rebuild target that has already been built, after target's
      + Target file unmodified.
      + Metadata unmodified.
 ** TODO Rebuild with buildscript timestamp in future
-Attempt to rebuild target that has already been built, after target's
-    buildscript's timestamp have been moved into the future. (Based on 07.)
+   Attempt to rebuild target that has already been built, after target's
+   buildscript's timestamp have been moved into the future. (Based on 07.)
+
+   Target timestamp is set to: 2030-01-01
 
    * SUCCESS
      + Exit status: 0
@@ -128,8 +138,10 @@ Attempt to rebuild target that has already been built, after target's
      + Target file unmodified.
      + Metadata unmodified.
 ** TODO Rebuild with metadata timestamp in past
-Attempt to rebuild target that has already been built, after target's metadata
-    file's timestamp have been moved into the past. (Based on 07.)
+   Attempt to rebuild target that has already been built, after target's
+   metadata file's timestamp have been moved into the past. (Based on 07.)
+
+   Target timestamp is set to: 2000-01-01
 
    * SUCCESS
      + Exit status: 0
@@ -137,8 +149,10 @@ Attempt to rebuild target that has already been built, after target's metadata
      + Target file unmodified.
      + Metadata unmodified.
 ** TODO Rebuild with metadata timestamp in future
-Attempt to rebuild target that has already been built, after target's metadata
-    file's timestamp have been moved into the future. (Based on 07.)
+   Attempt to rebuild target that has already been built, after target's
+   metadata file's timestamp have been moved into the future. (Based on 07.)
+
+   Target timestamp is set to: 2030-01-01
 
    * SUCCESS
      + Exit status: 0
@@ -182,9 +196,9 @@ outputs target identical to modified target.
 * Lockfile-related stuff
   Check that lockfile is cleared on non-normal termination. And that it works
   to avert parallel execution of fix.
-** DONE 08-run-two-simultaneous-instances-of-fix
-08: Attempt to run two copies of fix at once. First instance should build,
-    second instance should detect lockfile and refuse to start.
+** DONE xx-run-two-simultaneous-instances-of-fix
+   Attempt to run two copies of fix at once. First instance should build,
+   second instance should detect lockfile and refuse to start.
 
    * 1st instance: SUCCESS
      + Exit status: 0

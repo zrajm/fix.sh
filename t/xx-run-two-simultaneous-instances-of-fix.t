@@ -2,8 +2,8 @@
 # -*- sh -*-
 . "t/test-functions.sh"
 note <<EOF
-08: Attempt to run two copies of fix at once. First instance should build,
-    second instance should detect lockfile and refuse to start.
+Attempt to run two copies of fix at once. First instance should build, second
+instance should detect lockfile and refuse to start.
 EOF
 
 init_test fix src .fix
