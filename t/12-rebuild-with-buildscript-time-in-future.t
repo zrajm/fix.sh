@@ -2,16 +2,16 @@
 # -*- sh -*-
 . "t/test-functions.sh"
 note <<EOF
-Attempt to rebuild target that has already been built after target file's
-timestamp have been moved into the past. (Based on 07.)
+Attempt to rebuild target that has already been built after target's
+buildscript's timestamp have been moved into the future. (Based on 07.)
 EOF
 
 init_test fix src
-write_file fix/TARGET.fix a+x <<-"END_SCRIPT"
+write_file fix/TARGET.fix a+x 2030-01-01 <<-"END_SCRIPT"
 	#!/bin/sh
 	echo "OUTPUT"
 END_SCRIPT
-write_file build/TARGET 2000-01-01 <<-"END_TARGET"
+write_file build/TARGET <<-"END_TARGET"
 	OUTPUT
 END_TARGET
 

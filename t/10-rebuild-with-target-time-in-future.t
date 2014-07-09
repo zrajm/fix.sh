@@ -2,7 +2,8 @@
 # -*- sh -*-
 . "t/test-functions.sh"
 note <<EOF
-Rebuild target that has already been built. (Based on 07.)
+Attempt to rebuild target that has already been built after target file's
+timestamp have been moved into the future. (Based on 07.)
 EOF
 
 init_test fix src
@@ -17,6 +18,9 @@ END_TARGET
 ERRMSG=""
 TARG_STAT="$(timestamp build/TARGET)"
 META_STAT="$(timestamp .fix/state/TARGET)"
+
+# FIXME: don't sleep if timestamp has sub-second precision
+sleep 1
 
 "$TESTCMD" TARGET >stdout 2>stderr
 is              $?                   0             "Exit status"

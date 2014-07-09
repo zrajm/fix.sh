@@ -18,6 +18,9 @@ ERRMSG=""
 TARG_STAT="$(timestamp build/TARGET)"
 META_STAT="$(timestamp .fix/state/TARGET)"
 
+# FIXME: don't sleep if timestamp has sub-second precision
+sleep 1
+
 "$TESTCMD" TARGET >stdout 2>stderr
 is              $?                   0             "Exit status"
 file_is         stdout               ""            "Standard output"

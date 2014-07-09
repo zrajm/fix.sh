@@ -4,6 +4,17 @@
 ** TODO Dependencies
 ** TODO Automatic unlocking of stale lockfile
 * Tests
+** TODO Eliminate need for 'sleep 1'
+   Instead move timestamp backwards for all relevant files. (Is this really
+   needed, or covered by the current test cases?) Modify chtime function to
+   work for this.
+** TODO test_init should set state dir root
+   '.fix/state' is the current state dir root, this should be exported in a
+   variable from test_init so we won't have to change it in a hundred different
+   test files if it ever changes.
+** TODO change write_file argument order
+   Permission bits & date should come *before* filename (to be consistent with
+   touch and chmod).
 ** TODO Mooooaaar test cases!
 ** TODO Test killing of fix
 * DONE

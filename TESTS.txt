@@ -93,7 +93,7 @@ Exit status:
      + Metadata unmodified.
 ** DONE 09. Rebuild with target timestamp in past
    CLOSED: [2014-07-08 Tue 08:44]
-   Attempt to rebuild target that has already been built, after target file's
+   Attempt to rebuild target that has already been built after target file's
    timestamp have been moved into the past. (Based on 07.)
 
    Target timestamp is set to: 2000-01-01
@@ -105,7 +105,7 @@ Exit status:
      + Metadata unmodified.
 ** DONE 10. Rebuild with target timestamp in future
    CLOSED: [2014-07-08 Tue 08:44]
-   Attempt to rebuild target that has already been built, after target file's
+   Attempt to rebuild target that has already been built after target file's
    timestamp have been moved into the future. (Based on 07.)
 
    Target timestamp is set to: 2030-01-01
@@ -115,8 +115,9 @@ Exit status:
      + No tempfile existing.
      + Target file unmodified.
      + Metadata unmodified.
-** TODO Rebuild with buildscript timestamp in past
-   Attempt to rebuild target that has already been built, after target's
+** DONE 11. Rebuild with buildscript timestamp in past
+   CLOSED: [2014-07-08 Tue 14:13]
+   Attempt to rebuild target that has already been built after target's
    buildscript's timestamp have been moved into the past. (Based on 07.)
 
    Target timestamp is set to: 2000-01-01
@@ -126,8 +127,9 @@ Exit status:
      + No tempfile existing.
      + Target file unmodified.
      + Metadata unmodified.
-** TODO Rebuild with buildscript timestamp in future
-   Attempt to rebuild target that has already been built, after target's
+** DONE 12. Rebuild with buildscript timestamp in future
+   CLOSED: [2014-07-08 Tue 14:29]
+   Attempt to rebuild target that has already been built after target's
    buildscript's timestamp have been moved into the future. (Based on 07.)
 
    Target timestamp is set to: 2030-01-01
@@ -137,8 +139,9 @@ Exit status:
      + No tempfile existing.
      + Target file unmodified.
      + Metadata unmodified.
-** TODO Rebuild with metadata timestamp in past
-   Attempt to rebuild target that has already been built, after target's
+** DONE 13. Rebuild with metadata timestamp in past
+   CLOSED: [2014-07-09 Wed 09:12]
+   Attempt to rebuild target that has already been built after target's
    metadata file's timestamp have been moved into the past. (Based on 07.)
 
    Target timestamp is set to: 2000-01-01
@@ -148,8 +151,9 @@ Exit status:
      + No tempfile existing.
      + Target file unmodified.
      + Metadata unmodified.
-** TODO Rebuild with metadata timestamp in future
-   Attempt to rebuild target that has already been built, after target's
+** DONE 14. Rebuild with metadata timestamp in future
+   CLOSED: [2014-07-09 Wed 09:11]
+   Attempt to rebuild target that has already been built after target's
    metadata file's timestamp have been moved into the future. (Based on 07.)
 
    Target timestamp is set to: 2030-01-01
