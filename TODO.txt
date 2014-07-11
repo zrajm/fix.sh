@@ -3,6 +3,30 @@
 * Program
 ** TODO Dependencies
 ** TODO Automatic unlocking of stale lockfile
+* Test framework
+** TODO 'seteval' should test that variable name given is valid
+* Test framework tests
+** TODO Test framework function on_exit()
+** TODO Test framework function done_testing()
+** TODO Test framework function skip_all()
+** TODO Test framework function BAIL_OUT()
+** TODO Test framework function diag()
+** TODO Test framework function note()
+** TODO Test framework function result()
+** TODO Test framework function pass()
+** TODO Test framework function fail()
+** TODO Test framework function ok()
+** TODO Test framework function is()
+** TODO Test framework function file_is()
+** TODO Test framework function file_exist()
+** TODO Test framework function file_not_exist()
+** TODO Test framework function timestamp()
+** TODO Test framework function is_unchanged()
+** TODO Test framework function init_test()
+** TODO Test framework function mkpath()
+** TODO Test framework function chtime()
+** TODO Test framework function write_file()
+** TODO Test that all framework functions have tests
 * Tests
 ** TODO Eliminate need for 'sleep 1'
    Instead move timestamp backwards for all relevant files. (Is this really
@@ -29,3 +53,7 @@
    I.e. a whole bunch of tests are based on a state where a target has already
    been built once. This should use stored metadata (which could be easily
    re-built in case the metadata format changes).
+** DONE Test framework function indent()
+   CLOSED: [2014-07-11 Fri 10:19]
+** DONE Test framework function evalset()
+   CLOSED: [2014-07-11 Fri 13:22]

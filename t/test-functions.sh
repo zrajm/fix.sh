@@ -2,12 +2,76 @@
 
 ##
 ## ENVIRONMENT VARIABLE OPTIONS
-## ----------------------------
+## ============================
 ## Set these variables to a non-empty string to get the described effect.
 ## (Variable names are chosen to be compatible with Test::Most.)
 ##
 ##   * BAIL_ON_FAIL - abort on first test fail
 ##   *  DIE_ON_FAIL - skip remaining tests in file when test fail
+##
+## SHELL TESTING CAVEATS
+## =====================
+## 1. Don't use $(...)/`...` to produce strings that are to be tested!
+##
+##    The shell $(...)/`...` construct STRIPS ALL TRAILING NEWLINES, which
+##    makes it too inaccurate for testing purposes. (Texts which differ only in
+##    the number of trailing newlines will be considered the same in tests, and
+##    be indistinguishable from each other in user messages -- leading to
+##    errors that are very hard to track down.) The following code is therefore
+##    (subtly) broken:
+##
+##        # BROKEN EXAMPLE -- DON'T USE
+##        fail "$NAME" <<-EOF
+##                $(indent "GOT   :" "$GOT")
+##                $(indent "WANTED:" "$WANTED")
+##        EOF
+##
+##    This innocently looking example is also broken. (It looks as if the test
+##    is carefully matching against a newline ['\n'] at the end of $A, but the
+##    $(...) construct strip trailing newlines, so actually the comparison
+##    checks that $A = "a" [without newline]!)
+##
+##        # BROKEN EXAMPLE -- DON'T USE
+##        is "$A" "$(printf 'a\n')"
+##
+##    You can mitigate this problem by adding a non-newline (e.g. a period)
+##    character to the end of the strings to be compared, but this leaves you
+##    with an extra unwanted character in any error messages output to the
+##    user. :(
+##
+##        # Ugly, but working example (leaves extra '.' in error output)
+##        is "$A." "$(printf 'a\n.')"
+##
+##    For a better solution, see below.
+##
+## 2. Don't put a test function (inside or) after a pipe!
+##
+##    Each part of a pipe is executed in its own subshell, meaning that
+##    variables set inside a command pipeline CANNOT be seen by the surrounding
+##    shell. This means that if you put your test function (any function that
+##    call 'pass' or 'fail') in a pipe, it cannot update the global $TEST_COUNT
+##    variable, meaning that your test count will not agree with the number of
+##    'ok' (and 'not ok') in your TAP output. The following code is therefore
+##    also (subtly) broken:
+##
+##        # BROKEN EXAMPLE -- DON'T USE
+##        {
+##            indent "GOT   :" "$GOT"
+##            indent "WANTED:" "$WANTED"
+##        } | fail "$NAME"
+##
+## Workaround
+## ----------
+##     The helper function 'seteval' can be used to avoid the above constructs,
+##     and preserve any trailing newlines (see 'seteval' below), while still
+##     give you neat and accurate error messages. E.g.
+##
+##         seteval GOT    'indent "GOT   :" "$GOT"'
+##         seteval WANTED 'indent "WANTED:" "$WANTED"'
+##         fail "$NAME" <<-EOF
+##                 $GOT
+##                 $WANTED
+##                 EOF
 ##
 
 ##############################################################################
@@ -193,20 +257,60 @@ ok() {
         return
     fi
     fail "$NAME" <<-EOF
-	Expression should be true, but it isn't
+	Expression should evaluate to true, but it isn't
 	$EXPR
 	EOF
 }
 
+# Usage: seteval VARNAME [+] STATEMENTS
+#
+# Evaluates shell STATEMENTS and capture the output thereof into the variable
+# named VARNAME. Normally the very last newline is stripped, but if '+' is
+# given as the second argument no stripping is done at all. (This differs from
+# the '$(...)' construct which strips all trailing newlines.) If no newline was
+# could be stripped then the string '\No newline at end' is appended instead.
+#
+#     seteval X   'echo hello'         # set X to "hello"
+#     seteval X + 'echo hello'         # set X to "hello" + newline
+seteval() {
+    # FIXME: test that $VARNAME is valid variable name, error otherwise
+
+    # NOTA BENE: Only positional parameters ($1, $2, etc) are used in this
+    # function, no other variables. THIS IS AN INTENTIONAL WORKAROUND to avoid
+    # a namespace collision with variable name specified by the user. I.e. if a
+    # variable $X was used in the function (and therefore declared with 'local
+    # X') it could not be set for the global scope from within the function,
+    # and should the user ever try set that same variable (with 'seteval X
+    # <something>') $X would always remain unchanged for the user.
+    if [ "$2" = "+" ]; then
+        set "$1" "$(eval "$3; echo .")"
+        eval $1='${2%.}'
+        return
+    fi
+    set "$1" "$(eval "$2; echo .")"
+    set "$1" "${2%.}" "
+"   # NB: intentional newline
+    if [ "$2" = "${2%$3}" ]; then
+        set "$1" "$2\No newline at end" "$3"
+    fi
+    eval $1='${2%$3}'
+}
+
 is() {
-    local GOT="$1" WANTED="$2" NAME="$3"
+    local GOT="$1" WANTED="$2" NAME="$3" NL="
+"   # NB: intentional newline
+    if [ $# -gt 3 ]; then
+        error "is: Too many arguments (Did you forget to quote a variable?)"
+    fi
     if [ "$GOT" = "$WANTED" ]; then
         pass "$NAME"
         return
     fi
+    seteval GOT    'indent "GOT   :" "$GOT"'
+    seteval WANTED 'indent "WANTED:" "$WANTED"'
     fail "$NAME" <<-EOF
-	$(indent "GOT   :" "$GOT")
-	$(indent "WANTED:" "$WANTED")
+	$GOT
+	$WANTED
 	EOF
 }
 
@@ -264,10 +368,12 @@ is_unchanged() {
         pass "$NAME"
         return
     fi
+    seteval OLD_TIMESTAMP 'indent OLD: "$OLD_TIMESTAMP"'
+    seteval NEW_TIMESTAMP 'indent NEW: "$NEW_TIMESTAMP"'
     fail "$NAME" <<-EOF
 	File '$FILE' has been modified, but it shouldn't have
-	$(indent "OLD:" "$OLD_TIMESTAMP")
-	$(indent "NEW:" "$NEW_TIMESTAMP")
+	$OLD_TIMESTAMP
+	$NEW_TIMESTAMP
 	EOF
 }
 
