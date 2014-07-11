@@ -87,11 +87,11 @@ trap 'on_exit; trap - 0' 0                     # exit messages
 on_exit() {
     if [ $TEST_COUNT = 0 ]; then
         diag "No tests run!"
-        exit 255
+        error
     fi
     if [ $TEST_PLANNED = -1 ]; then
         diag "Tests were run but done_testing() was not seen."
-        exit 255
+        error
     fi
     [ $TEST_PLANNED = $TEST_COUNT -a $TEST_FAILS = 0 ] && exit 0
     if [ $TEST_COUNT != $TEST_PLANNED ]; then
@@ -102,6 +102,11 @@ on_exit() {
     fi
     [ $TEST_FAILS -gt 254 ] && TEST_FAILS=254
     exit $TEST_FAILS
+}
+
+error() {
+    [ $# = 1 ] && echo "$1" >&2
+    exit 255
 }
 
 # Usage: indent PROMPT [MSG] [<<EOF
@@ -163,7 +168,7 @@ skip_all() {
 
 BAIL_OUT() {
     echo "Bail out!${1:+ $1}"
-    exit 255
+    error
 }
 
 # Usage: diag [MSG] [<<EOF
@@ -234,7 +239,7 @@ fail() {
     fi
     indent "   " "$MSG" | diag                 # diagnostic message + stdin
     [ -n "$BAIL_ON_FAIL" ] && BAIL_OUT
-    [ -n  "$DIE_ON_FAIL" ] && exit 255
+    [ -n  "$DIE_ON_FAIL" ] && error
     return 1
 }
 
@@ -420,10 +425,7 @@ mkpath() {
 # Change mtime of FILE to YYYY-MM-DD.
 chtime() {
     local DATE="$(echo "$1"|tr -d -)0000" FILE="$2"
-    touch -t"$DATE" "$FILE" || {
-        echo "chtime: 'touch' failed to update '$FILE'" >&2
-        exit 255
-    }
+    touch -t"$DATE" "$FILE" || error "chtime: 'touch' cannot update '$FILE'"
 }
 
 # Usage: write_file FILE [YYYY-MM-DD] [BITS] [<<EOF
@@ -440,7 +442,7 @@ write_file() {
         case "$1" in
             ????-??-??) DATE="$1" ;;
             *[a-z])     BITS="$1" ;;
-            *) echo "write_file: bad arg '$LINE'" >&2; exit 255 ;;
+            *) error "write_file: bad arg '$LINE'"
         esac; shift
     done
     mkpath "$FILE"

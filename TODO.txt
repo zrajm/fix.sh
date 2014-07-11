@@ -27,6 +27,7 @@
 ** TODO Test framework function chtime()
 ** TODO Test framework function write_file()
 ** TODO Test that all framework functions have tests
+** TODO Test whether each function return or exit
 * Tests
 ** TODO Eliminate need for 'sleep 1'
    Instead move timestamp backwards for all relevant files. (Is this really
@@ -57,3 +58,5 @@
    CLOSED: [2014-07-11 Fri 10:19]
 ** DONE Test framework function evalset()
    CLOSED: [2014-07-11 Fri 13:22]
+** DONE Test framework function error()
+   CLOSED: [2014-07-11 Fri 16:53]
