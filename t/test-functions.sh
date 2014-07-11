@@ -360,6 +360,28 @@ timestamp() {
     fi
 }
 
+# Usage: is_changed TIMESTAMP
+#
+# Compares TIMESTAMP with the file from which the TIMESTAMP was originally
+# gotten, return false if the files mtime or other metadata have been modified
+# TIMESTAMP was obtained, true if it has not changed.
+is_changed() {
+    local OLD_TIMESTAMP="$1" NAME="$2"
+    local FILE="${OLD_TIMESTAMP##* }"
+    local NEW_TIMESTAMP="$(timestamp "$FILE")"
+    if [ "$NEW_TIMESTAMP" != "$OLD_TIMESTAMP" ]; then
+        pass "$NAME"
+        return
+    fi
+    seteval OLD_TIMESTAMP 'indent OLD: "$OLD_TIMESTAMP"'
+    seteval NEW_TIMESTAMP 'indent NEW: "$NEW_TIMESTAMP"'
+    fail "$NAME" <<-EOF
+	File '$FILE' has been modified, but it shouldn't have
+	$OLD_TIMESTAMP
+	$NEW_TIMESTAMP
+	EOF
+}
+
 # Usage: is_unchanged TIMESTAMP
 #
 # Compares TIMESTAMP with the file from which the TIMESTAMP was originally

@@ -5,7 +5,9 @@
 ** TODO Automatic unlocking of stale lockfile
 * Test framework
 ** TODO 'seteval' should test that variable name given is valid
-* Test framework tests
+** TODO Merge 'is_changed' and 'is_unchanged' to follow DRY
+** TODO Add TODO tests
+* Testing of test framework
 ** TODO Test framework function on_exit()
 ** TODO Test framework function done_testing()
 ** TODO Test framework function skip_all()
@@ -26,7 +28,7 @@
 ** TODO Test framework function mkpath()
 ** TODO Test framework function chtime()
 ** TODO Test framework function write_file()
-** TODO Test that all framework functions have tests
+** TODO Test that each framework function have tests
 ** TODO Test whether each function return or exit
 * Tests
 ** TODO Eliminate need for 'sleep 1'

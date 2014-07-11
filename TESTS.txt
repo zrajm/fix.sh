@@ -163,40 +163,56 @@ Exit status:
      + No tempfile existing.
      + Target file unmodified.
      + Metadata unmodified.
-** TODO Rebuild with modified buildscript producing same output
-Attempt to rebuild target after buildscript modified (by a comment or similar)
-    in such a way that it still produces the same output as it previously did.
-    (Base 07.)
+** DONE 15. Rebuild, buildscript producing same output
+   CLOSED: [2014-07-11 Fri 17:15]
+   Rebuild target after buildscript modified (by a comment or similar) in such
+   a way that it still produces the same output as it previously did. (Based on
+   07.)
 
    * SUCCESS
      + Exit status: 0
-     + No tempfile existing.
-     + Target file not updated.
-     + Metadata updated (to contain new buildscript checksum)
-** TODO Rebuild with modified buildscript
-Attempt to rebuild target after buildscript have been changed so that it
-    outputs something new. (Based on 07.)
+     + Target: not modified
+     + Metadata: updated (to contain new buildscript checksum)
+     + Tempfile: not existing
+** DONE 16. Rebuild, buildscript failing
+   CLOSED: [2014-07-11 Fri 17:32]
+   Rebuild target after buildscript have been changed so that it now fails.
+   (Based on 07.)
+
+   * SUCCESS
+     + Exit status: 5
+     + Target: unmodified
+     + Metadata: unmodified
+     + Tempfile: existing
+** DONE 17. Rebuild, buildscript producing new output
+   CLOSED: [2014-07-11 Fri 17:23]
+   Rebuild target after buildscript have been changed so that it outputs
+   something new. (Based on 07.)
 
    * SUCCESS
      + Exit status: 0
-     + No tempfile existing.
-     + Target file updated.
-     + Metadata updated.
-** TODO Rebuild with modified target file
-Build target when previous target exist and is modified.
+     + Target: modified
+     + Metadata: modified
+     + Tempfile: not existing
+** DONE 18. Rebuild, target changed
+   CLOSED: [2014-07-11 Fri 17:46]
+   Build target when previous target exist and is modified.
 
    * FAILURE
      + Exit status: 1
-     + Target file unmodified.
-     + Metadata unmodified.
-** TODO Rebuild with modified target & buildscript outputting same
-Build target when previous target exist and is modified, but new buildscript
-outputs target identical to modified target.
+     + Target: unmodified
+     + Metadata: unmodified
+     + Tempfile: existing
+** DONE 19. Rebuild, buildscript+target changed but same
+   CLOSED: [2014-07-11 Fri 19:40]
+   Rebuild target when previous target exist and is modified, but buildscript
+   is also modified and builds a target identical to modified the modified one.
 
    * SUCCESS
      + Exit status: 0
-     + Target file unmodified (old version kept).
-     + Metadata updated.
+     + Target: unmodified (old version kept)
+     + Metadata: modified
+     + Tempfile: not existing
 * Lockfile-related stuff
   Check that lockfile is cleared on non-normal termination. And that it works
   to avert parallel execution of fix.
