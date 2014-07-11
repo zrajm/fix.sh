@@ -25,10 +25,11 @@ sleep 1
 is              $?                   0             "Exit status"
 file_is         stdout               ""            "Standard output"
 file_is         stderr               ""            "Standard error"
-file_not_exist  build/TARGET--fixing               "Target tempfile shouldn't exist"
+file_is         build/TARGET         "OUTPUT2"     "Target"
 is_unchanged    "$TARGET"                          "Target timestamp"
 file_exist      .fix/state/TARGET                  "Metadata file"
 is_changed      "$METADATA"                        "Metadata timestamp"
+file_not_exist  build/TARGET--fixing               "Target tempfile shouldn't exist"
 
 done_testing
 

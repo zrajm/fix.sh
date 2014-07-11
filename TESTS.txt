@@ -26,72 +26,77 @@ Exit status:
 ** TODO Handling of circular dependencies
 * Early error messages
   Check early error messages (missing files, bad options) are emitted properly.
-** DONE 01-missing-source-dir
-   01: Attempt to build target when there is no source dir.
+** DONE 01. Build, no source dir
+   Attempt to build target when there is no source dir.
 
    * FAILURE
      + Exit status: 10
-     + No tempfile created.
-     + No target file created.
-** DONE 02-missing-script-dir
-   02: Attempt to build target when there is no script dir.
+     + Target: not existing
+     + Metadata: not existing
+     + Tempfile: not existing
+** DONE 02. Build, no script dir
+   Attempt to build target when there is no script dir.
 
    * FAILURE
      + Exit status: 10
-     + No tempfile created.
-     + No target file created.
-** DONE 03-missing-build-script
-03: Attempt to build target when there is no buildscript for it.
+     + Target: not existing
+     + Metadata: not existing
+     + Tempfile: not existing
+** DONE 03. Build, no buildscript
+   Attempt to build target when there is no buildscript for it.
 
    * FAILURE
      + Exit status: 10
-     + No tempfile created.
-     + No target file created.
-** DONE 04-buildscript-with-unset-read-bits
-04: Attempt to build target with buildscript with read bits unset.
+     + Target: not existing
+     + Metadata: not existing
+     + Tempfile: not existing
+** DONE 04. Build, buildscript no read bits
+   Attempt to build target with buildscript with read bits unset.
 
    * FAILURE
      + Exit status: 10
-     + No tempfile created.
-     + No target file created.
-** DONE 05-buildscript-with-unset-execute-bits
-05: Attempt to build target with buildscript with execute bits unset.
+     + Target: not existing
+     + Metadata: not existing
+     + Tempfile: not existing
+** DONE 05. Build, buildscript no execute bits
+   Attempt to build target with buildscript with execute bits unset.
 
    * FAILURE
      + Exit status: 10
-     + No tempfile created.
-     + No target file created.
+     + Target: not existing
+     + Metadata: not existing
+     + Tempfile: not existing
 * One target with no dependencies
   Check buildscript return values, that target and metadata files are only
   updated when they should, and that file timestamps does not affect this.
-** DONE 06-buildscript-with-nonzero-exit-status
-06: Attempt to build target with buildscript that returns non-zero exit
-    status.
+** DONE 06. Build, buildscript failing
+   Attempt to build target with buildscript that returns non-zero exit status.
 
    * FAILURE
      + Exit status: 5
-     + Tempfile created.
-     + No target file created.
-** DONE 07. Successful build
+     + Target: not existing
+     + Metadata: not existing
+     + Tempfile: existing
+** DONE 07. Build, buildscript successful
    Build target with buildscript that returns zero exit status.
 
    This result in a base setup, with one successfully built target.
 
    * SUCCESS
      + Exit status: 0
-     + No tempfile existing.
-     + Target file created.
-     + Metadata modified.
-** DONE 08. Rebuilding successful build
+     + Target: existing
+     + Metadata: existing
+     + Tempfile: not existing
+** DONE 08. Rebuild, no change
    CLOSED: [2014-07-07 Mon 09:04]
    Rebuild target that has already been built. (Based on 07.)
 
    * SUCCESS
      + Exit status: 0
-     + No tempfile existing.
-     + Target file unmodified.
-     + Metadata unmodified.
-** DONE 09. Rebuild with target timestamp in past
+     + Target: unmodified
+     + Metadata: unmodified
+     + Tempfile: not existing
+** DONE 09. Rebuild, target time in past
    CLOSED: [2014-07-08 Tue 08:44]
    Attempt to rebuild target that has already been built after target file's
    timestamp have been moved into the past. (Based on 07.)
@@ -100,10 +105,10 @@ Exit status:
 
    * SUCCESS
      + Exit status: 0
-     + No tempfile existing.
-     + Target file unmodified.
-     + Metadata unmodified.
-** DONE 10. Rebuild with target timestamp in future
+     + Target: unmodified
+     + Metadata: unmodified
+     + Tempfile: not existing
+** DONE 10. Rebuild, target time in future
    CLOSED: [2014-07-08 Tue 08:44]
    Attempt to rebuild target that has already been built after target file's
    timestamp have been moved into the future. (Based on 07.)
@@ -112,10 +117,10 @@ Exit status:
 
    * SUCCESS
      + Exit status: 0
-     + No tempfile existing.
-     + Target file unmodified.
-     + Metadata unmodified.
-** DONE 11. Rebuild with buildscript timestamp in past
+     + Target: unmodified
+     + Metadata: unmodified
+     + Tempfile: not existing
+** DONE 11. Rebuild, buildscript time in past
    CLOSED: [2014-07-08 Tue 14:13]
    Attempt to rebuild target that has already been built after target's
    buildscript's timestamp have been moved into the past. (Based on 07.)
@@ -124,10 +129,10 @@ Exit status:
 
    * SUCCESS
      + Exit status: 0
-     + No tempfile existing.
-     + Target file unmodified.
-     + Metadata unmodified.
-** DONE 12. Rebuild with buildscript timestamp in future
+     + Target: unmodified
+     + Metadata: unmodified
+     + Tempfile: not existing
+** DONE 12. Rebuild, buildscript time in future
    CLOSED: [2014-07-08 Tue 14:29]
    Attempt to rebuild target that has already been built after target's
    buildscript's timestamp have been moved into the future. (Based on 07.)
@@ -136,10 +141,10 @@ Exit status:
 
    * SUCCESS
      + Exit status: 0
-     + No tempfile existing.
-     + Target file unmodified.
-     + Metadata unmodified.
-** DONE 13. Rebuild with metadata timestamp in past
+     + Target: unmodified
+     + Metadata: unmodified
+     + Tempfile: not existing
+** DONE 13. Rebuild, metadata time in past
    CLOSED: [2014-07-09 Wed 09:12]
    Attempt to rebuild target that has already been built after target's
    metadata file's timestamp have been moved into the past. (Based on 07.)
@@ -148,10 +153,10 @@ Exit status:
 
    * SUCCESS
      + Exit status: 0
-     + No tempfile existing.
-     + Target file unmodified.
-     + Metadata unmodified.
-** DONE 14. Rebuild with metadata timestamp in future
+     + Target: unmodified
+     + Metadata: unmodified
+     + Tempfile: not existing
+** DONE 14. Rebuild, metadata time in future
    CLOSED: [2014-07-09 Wed 09:11]
    Attempt to rebuild target that has already been built after target's
    metadata file's timestamp have been moved into the future. (Based on 07.)
@@ -160,31 +165,33 @@ Exit status:
 
    * SUCCESS
      + Exit status: 0
-     + No tempfile existing.
-     + Target file unmodified.
-     + Metadata unmodified.
-** DONE 15. Rebuild, buildscript producing same output
+     + Target: unmodified
+     + Metadata: unmodified
+     + Tempfile: not existing
+** DONE 15. Rebuild, buildscript with same output
    CLOSED: [2014-07-11 Fri 17:15]
    Rebuild target after buildscript modified (by a comment or similar) in such
    a way that it still produces the same output as it previously did. (Based on
    07.)
 
+   FIXME: TODO test - Metadata should be updated to contain buildscript checksum
+
    * SUCCESS
      + Exit status: 0
-     + Target: not modified
-     + Metadata: updated (to contain new buildscript checksum)
+     + Target: unmodified
+     + Metadata: unmodified 
      + Tempfile: not existing
 ** DONE 16. Rebuild, buildscript failing
    CLOSED: [2014-07-11 Fri 17:32]
-   Rebuild target after buildscript have been changed so that it now fails.
-   (Based on 07.)
+   Attempt to rebuild target after buildscript have been changed so that it now
+   fails. (Based on 07.)
 
    * SUCCESS
      + Exit status: 5
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: existing
-** DONE 17. Rebuild, buildscript producing new output
+** DONE 17. Rebuild, buildscript with new output
    CLOSED: [2014-07-11 Fri 17:23]
    Rebuild target after buildscript have been changed so that it outputs
    something new. (Based on 07.)
@@ -196,7 +203,8 @@ Exit status:
      + Tempfile: not existing
 ** DONE 18. Rebuild, target changed
    CLOSED: [2014-07-11 Fri 17:46]
-   Build target when previous target exist and is modified.
+   Attempt to rebuild target when previous target exist and is modified. (Based
+   on 07.)
 
    * FAILURE
      + Exit status: 1
@@ -210,7 +218,7 @@ Exit status:
 
    * SUCCESS
      + Exit status: 0
-     + Target: unmodified (old version kept)
+     + Target: unmodified
      + Metadata: modified
      + Tempfile: not existing
 * Lockfile-related stuff
@@ -222,14 +230,14 @@ Exit status:
 
    * 1st instance: SUCCESS
      + Exit status: 0
-     + No tempfile existing.
-     + Target file created.
+     + Target: existing
      + Metadata modified.
+     + Tempfile: not existing
 
    * 2nd instance: FAILURE
      + Exit status: 8
-     + No tempfile created.
-     + No target file created.
+     + Target: not existing
+     + Tempfile: not existing
 ** TODO Receiving Ctrl-C (SIGTERM)
 Send ctrl-c (SIGINT) to fix as its building and see that it returns correct
 exit code and clears its lockfile.

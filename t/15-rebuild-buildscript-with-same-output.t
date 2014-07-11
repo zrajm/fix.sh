@@ -16,9 +16,8 @@ write_file build/TARGET <<-"END_TARGET"
 	OUTPUT
 END_TARGET
 
-ERRMSG=""
-TARG_STAT="$(timestamp build/TARGET)"
-META_STAT="$(timestamp .fix/state/TARGET)"
+TARGET="$(timestamp build/TARGET)"
+METADATA="$(timestamp .fix/state/TARGET)"
 
 # FIXME: don't sleep if timestamp has sub-second precision
 sleep 1
@@ -26,12 +25,12 @@ sleep 1
 "$TESTCMD" TARGET >stdout 2>stderr
 is              $?                   0             "Exit status"
 file_is         stdout               ""            "Standard output"
-file_is         stderr               "$ERRMSG"     "Standard error"
-file_not_exist  build/TARGET--fixing               "Target tempfile shouldn't exist"
+file_is         stderr               ""            "Standard error"
 file_is         build/TARGET         "OUTPUT"      "Target"
-is_unchanged    "$TARG_STAT"                       "Target timestamp"
+is_unchanged    "$TARGET"                          "Target timestamp"
 file_exist      .fix/state/TARGET                  "Metadata file"
-is_unchanged    "$META_STAT"                       "Metadata timestamp"
+is_unchanged    "$METADATA"                        "Metadata timestamp"
+file_not_exist  build/TARGET--fixing               "Target tempfile shouldn't exist"
 
 done_testing
 

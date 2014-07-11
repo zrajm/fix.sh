@@ -62,3 +62,7 @@
    CLOSED: [2014-07-11 Fri 13:22]
 ** DONE Test framework function error()
    CLOSED: [2014-07-11 Fri 16:53]
+
+** DONE Clean up and systematize test scripts
+   CLOSED: [2014-07-11 Fri 21:19]
+   Descriptions in TESTS.txt as well as the scripts themselves.
