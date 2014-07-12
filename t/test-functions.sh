@@ -83,6 +83,7 @@
 TEST_COUNT=0                                   # tests performed
 TEST_FAILS=0                                   # failed tests
 TEST_PLANNED=-1                                # plan (set by done_testing)
+TEST_MODE=""                                   # TODO string (if any)
 trap 'on_exit; trap - 0' 0                     # exit messages
 on_exit() {
     if [ $TEST_COUNT = 0 ]; then
@@ -166,6 +167,40 @@ skip_all() {
     exit $TEST_FAILS
 }
 
+# Usage: TODO [REASON]
+#        ...              # tests
+#        [END_TODO]
+#
+# Marks the following tests as TODO, optionally providing a REASON (to be
+# displayed in the test output). -- TODO tests are used for features which you
+# have not yet implemented, but which you plan to add later on (features on
+# your TODO list).
+#
+# These TODO test are expected to FAIL and therefore, to avoid cluttering up
+# the output, no detailed diagnostics will we shown (just a single 'not ok'
+# line per test).
+#
+# A good TAP test runner (e.g. the prove(1) command that comes with Perl) will
+# notify you if any of your TODO tests suddenly start passing (which most
+# likely mean that you have implemented the related feature and that you should
+# now turn the test in question into a regular, non-TODO test).
+#
+# NOTE: Another way of marking a test as TODO is to append "# TODO [<REASON>]"
+# to its test name. (This is might be more convenient if you need to mark a
+# single test as TODO.)
+TODO() {
+    [ $# -gt 1 ] && error "TODO: Too many arguments"
+    TEST_MODE=" # TODO${1:+ $1}"
+}
+
+# Usage: END_TODO
+#
+# Turn off TODO mode. Takes no arguments.
+END_TODO() {
+    [ $# != 0 ] && error "END_TODO: No arguments allowed"
+    TEST_MODE=""
+}
+
 BAIL_OUT() {
     echo "Bail out!${1:+ $1}"
     error
@@ -214,16 +249,17 @@ result() {
 }
 
 pass() {
-    local NAME="$1"; shift
+    local NAME="$1$TEST_MODE"; shift
     result "ok" "$NAME"
     note "$@"
     return 0
 }
 
 fail() {
-    local NAME="$1" MSG="$2"
-    TEST_FAILS=$(( TEST_FAILS + 1 ))
+    local NAME="$1$TEST_MODE" MSG="$2"
     result "not ok" "$NAME"
+    [ "${NAME%# TODO*}" != "$NAME" ] && return 0
+    TEST_FAILS=$(( TEST_FAILS + 1 ))
     # Insert extra newline when piped (so 'prove' output looks ok).
     # (Skip this if we're bailing out after the failure.)
     [ -n "$BAIL_ON_FAIL" -o -t 1 ] || echo >&2
@@ -300,6 +336,16 @@ seteval() {
     fi
     eval $1='${2%$3}'
 }
+
+##############################################################################
+##                                                                          ##
+##  Test Functions                                                          ##
+##                                                                          ##
+##############################################################################
+
+##
+## Below are test functions, intended to be used it test scripts.
+##
 
 is() {
     local GOT="$1" WANTED="$2" NAME="$3" NL="
