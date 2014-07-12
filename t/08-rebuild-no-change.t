@@ -1,6 +1,6 @@
 #!/usr/bin/env dash
 # -*- sh -*-
-. "t/test-functions.sh"
+. "t/dashtap.sh"
 note <<EOF
 Rebuild target that has already been built. (Based on 07.)
 EOF

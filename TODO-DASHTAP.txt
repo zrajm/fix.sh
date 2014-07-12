@@ -1,0 +1,50 @@
+-*- org -*-
+
+* Program
+** TODO Separate docs from source code
+   Using Markdown?
+** TODO Separate Fix.sh test helper functions from Dashtap
+** TODO Put Dashtap in its own GitHub repo
+   This would have to be automatically cloned and built by the Fix.sh build
+   system. (Or at least have a very simple way of doing this described in the
+   README.)
+** TODO Change 'write_file' argument order
+   Permission bits & date should come *before* filename (to be consistent with
+   touch and chmod).
+** TODO 'seteval' should test that variable name given is valid
+** TODO Merge 'is_changed' and 'is_unchanged' to follow DRY
+** TODO Add SKIP tests
+* Testing
+** TODO Test 'on_exit'
+** TODO Test 'done_testing'
+** TODO Test 'skip_all'
+** TODO Test 'TODO'
+** TODO Test 'END_TODO'
+** TODO Test 'BAIL_OUT'
+** TODO Test 'diag'
+** TODO Test 'note'
+** TODO Test 'result'
+** TODO Test 'pass'
+** TODO Test 'fail'
+** TODO Test 'ok'
+** TODO Test 'is'
+** TODO Test 'file_is'
+** TODO Test 'file_exist'
+** TODO Test 'file_not_exist'
+** TODO Test 'timestamp'
+** TODO Test 'is_unchanged'
+** TODO Test 'init_test'
+** TODO Test 'mkpath'
+** TODO Test 'chtime'
+** TODO Test 'write_file'
+** TODO Test that each function is tested
+** TODO Test whether each function returns or exits
+* DONE
+** DONE Test 'indent'
+   CLOSED: [2014-07-11 Fri 10:19]
+** DONE Test 'evalset'
+   CLOSED: [2014-07-11 Fri 13:22]
+** DONE Test 'error'
+   CLOSED: [2014-07-11 Fri 16:53]
+** DONE Add TODO tests
+   CLOSED: [2014-07-12 Sat 18:18]

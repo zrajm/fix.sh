@@ -1,6 +1,6 @@
 #!/usr/bin/env dash
 # -*- sh -*-
-. "t/test-functions.sh"
+. "t/dashtap.sh"
 note <<EOF
 Attempt to run two copies of fix at once. First instance should build, second
 instance should detect lockfile and refuse to start.

@@ -3,39 +3,7 @@
 * Program
 ** TODO Dependencies
 ** TODO Automatic unlocking of stale lockfile
-* Test framework
-** TODO change write_file argument order
-   Permission bits & date should come *before* filename (to be consistent with
-   touch and chmod).
-** TODO 'seteval' should test that variable name given is valid
-** TODO Merge 'is_changed' and 'is_unchanged' to follow DRY
-** TODO Add SKIP test to test framework
-* Testing of test framework
-** TODO Test framework function on_exit
-** TODO Test framework function done_testing
-** TODO Test framework function skip_all
-** TODO Test framework function TODO
-** TODO Test framework function END_TODO
-** TODO Test framework function BAIL_OUT
-** TODO Test framework function diag
-** TODO Test framework function note
-** TODO Test framework function result
-** TODO Test framework function pass
-** TODO Test framework function fail
-** TODO Test framework function ok
-** TODO Test framework function is
-** TODO Test framework function file_is
-** TODO Test framework function file_exist
-** TODO Test framework function file_not_exist
-** TODO Test framework function timestamp
-** TODO Test framework function is_unchanged
-** TODO Test framework function init_test
-** TODO Test framework function mkpath
-** TODO Test framework function chtime
-** TODO Test framework function write_file
-** TODO Test that each framework function have tests
-** TODO Test whether each function return or exit
-* Tests
+* Testing
 ** TODO Eliminate need for 'sleep 1'
    Instead move timestamp backwards for all relevant files. (Is this really
    needed, or covered by the current test cases?) Modify chtime function to
@@ -58,14 +26,6 @@
    I.e. a whole bunch of tests are based on a state where a target has already
    been built once. This should use stored metadata (which could be easily
    re-built in case the metadata format changes).
-** DONE Test framework function indent
-   CLOSED: [2014-07-11 Fri 10:19]
-** DONE Test framework function evalset
-   CLOSED: [2014-07-11 Fri 13:22]
-** DONE Test framework function error
-   CLOSED: [2014-07-11 Fri 16:53]
 ** DONE Clean up and systematize test scripts
    CLOSED: [2014-07-11 Fri 21:19]
    Descriptions in TESTS.txt as well as the scripts themselves.
-** DONE Add TODO tests to test framework
-   CLOSED: [2014-07-12 Sat 18:18]

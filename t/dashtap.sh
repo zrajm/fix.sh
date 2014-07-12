@@ -1,5 +1,22 @@
 # -*- sh -*-
 
+## DASHTAP
+## =======
+## This is the Dashtap testing system. Written in dash (Debian Almquist SHell)
+## and featuring TAP (the Test Anything Protocol) of Perl fame.
+##
+## This test system strives to as similar to the Perl Test::More module as
+## possible, while still making the writing of reliable tests easy and fun
+## using shellscripts only. You may find it useful for end-to-end test of
+## command line tools (written in any language), or maybe to write unit tests
+## of shellscripts (which would have to rely heavily on functions for this to
+## work, and also have some way of suppressing the execution of the 'main' part
+## of the code when sourcing it).
+##
+## I wrote this since I needed something lightingly fast to test my 'fix' build
+## system with, and since TAP is such a nice and easy-to-work with format for
+## test output (with plenty of useful tools readily available, most important
+## of which is prove(1) that comes with the standard Perl distribution).
 ##
 ## ENVIRONMENT VARIABLE OPTIONS
 ## ============================

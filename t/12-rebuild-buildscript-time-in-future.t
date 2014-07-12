@@ -1,6 +1,6 @@
 #!/usr/bin/env dash
 # -*- sh -*-
-. "t/test-functions.sh"
+. "t/dashtap.sh"
 note <<EOF
 Attempt to rebuild target that has already been built after target's
 buildscript's timestamp have been moved into the future. (Based on 07.)

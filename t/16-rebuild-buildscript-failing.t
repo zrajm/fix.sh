@@ -1,6 +1,6 @@
 #!/usr/bin/env dash
 # -*- sh -*-
-. "t/test-functions.sh"
+. "t/dashtap.sh"
 note <<EOF
 Attempt to rebuild target after buildscript have been changed so that it now
 fails. (Based on 07.)
