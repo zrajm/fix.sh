@@ -9,9 +9,7 @@
 ## possible, while still making the writing of reliable tests easy and fun
 ## using shellscripts only. You may find it useful for end-to-end test of
 ## command line tools (written in any language), or maybe to write unit tests
-## of shellscripts (which would have to rely heavily on functions for this to
-## work, and also have some way of suppressing the execution of the 'main' part
-## of the code when sourcing it).
+## for shell scripts (see also "WRITING SHELL SCRIPT UNIT TESTS" below).
 ##
 ## I wrote this since I needed something lightingly fast to test my 'fix' build
 ## system with, and since TAP is such a nice and easy-to-work with format for
@@ -90,6 +88,53 @@
 ##                 $WANTED
 ##                 EOF
 ##
+## WRITING SHELL SCRIPT UNIT TESTS
+## ===============================
+##
+## When writing unit tests (as opposed to end-to-end tests) for shell scripts
+## the shell script needs to be broken down into smaller, testable parts. This
+## is done by breaking the script into functions, and then writing the script
+## in such a way that it is possible both to (a) run it normally and (b) get
+## access to all its functions without actually running the script itself.
+##
+## There are two ways of running a shell script, one is by 'sourcing' it --
+## this is done by the '.' command (in newer shells 'source' is also a command
+## which does the same thing). When you source a shellscript, it runs in the
+## environment of a parent shell, and all its functions and (non-local)
+## variables will remain in that shell, even after the shell is done running.
+## (Normally you don't source shell scripts, except for your shell shartup
+## files, which configure aliases and other convenient stuff.)
+##
+## The other way is by executing the script (this in the most common way). You
+## execute a script by either specifying which shell to use ('bash SCRIPTNAME')
+## or, if the script has its 'x' bit set, you can rely on the scripts shebang
+## line and execute the script directly ('./SCRIPTNAME').
+##
+## Now we add a small piece of code that will execute the script's main
+## function only if it is executed, but not if it is sourced. (This is similar
+## to brian d foy's "modulino" trick used by many Perl hackers to simplify unit
+## testing.)
+##
+## Since sourcing exports all its functions is ideal to use when testing, while
+## executing is better suited to the everyday running the script in question.
+## To make this work however, the actual script functionality should only be
+## invoked when executed, but not when sourced.
+##
+## This can be done by looking at the $0 variable (which contains the name of
+## the running process) to see whether it contains the script name or not, like
+## this:
+##
+##     # call main function script was executed (not sourced)
+##     [ "${0##*/}" = SCRIPTNAME ] && main "$@"
+##
+## NOTE: At first sight it might seem that checking to see whether $0 is equal
+## to bash/dash/zsh would be a good idea, but doing that will fail if the
+## script is sourced from inside another script. (Such as when using Dashtap.)
+##
+## NOTE II: In zsh the option FUNCTION_ARGZERO must be unset for $0 to be set
+## so that the above code will work.
+##
+
 
 ##############################################################################
 ##                                                                          ##
