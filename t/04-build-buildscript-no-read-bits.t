@@ -6,7 +6,7 @@ Attempt to build target with buildscript with read bits unset.
 EOF
 
 init_test fix src
-write_file fix/TARGET.fix a-r
+write_file a-r fix/TARGET.fix
 ERRMSG="ERROR: No read permission for buildscript 'fix/TARGET.fix'"
 
 "$TESTCMD" TARGET >stdout 2>stderr

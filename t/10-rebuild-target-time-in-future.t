@@ -7,11 +7,11 @@ timestamp have been moved into the future. (Based on 07.)
 EOF
 
 init_test fix src
-write_file fix/TARGET.fix -1sec a+x <<-"END_SCRIPT"
+write_file a+x -1sec fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
 	echo "OUTPUT"
 END_SCRIPT
-write_file build/TARGET 2030-01-01 <<-"END_TARGET"
+write_file 2030-01-01 build/TARGET <<-"END_TARGET"
 	OUTPUT
 END_TARGET
 

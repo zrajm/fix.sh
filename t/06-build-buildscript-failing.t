@@ -6,7 +6,7 @@ Attempt to build target with buildscript that returns non-zero exit status.
 EOF
 
 init_test fix src
-write_file fix/TARGET.fix a+x <<-"END_SCRIPT"
+write_file a+x fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
 	echo "OUTPUT"
 	exit 1

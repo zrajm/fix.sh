@@ -8,9 +8,6 @@
    This would have to be automatically cloned and built by the Fix.sh build
    system. (Or at least have a very simple way of doing this described in the
    README.)
-** TODO Change 'write_file' argument order
-   Permission bits & date should come *before* filename (to be consistent with
-   touch and chmod).
 ** TODO 'seteval' should test that variable name given is valid
 ** TODO Merge 'is_changed' and 'is_unchanged' to follow DRY
 ** TODO Add SKIP tests
@@ -48,3 +45,7 @@
    CLOSED: [2014-07-11 Fri 16:53]
 ** DONE Add TODO tests
    CLOSED: [2014-07-12 Sat 18:18]
+** DONE Change 'write_file' argument order
+   CLOSED: [2014-07-13 Sun 06:27]
+   Permission bits & date should come *before* filename (to be consistent with
+   touch and chmod).

@@ -8,7 +8,7 @@ EOF
 
 init_test fix src .fix
 mkfifo fifo                                        # buildscript reads fifo
-write_file fix/TARGET.fix a+x <<"END_SCRIPT"
+write_file a+x fix/TARGET.fix <<"END_SCRIPT"
 	#!/bin/sh
 	read LINE <fifo
 	echo "$LINE"

@@ -565,25 +565,47 @@ chtime() {
     touch -t"$TIME" "$FILE" || error "chtime: 'touch' cannot update '$FILE'"
 }
 
-# Usage: write_file FILE [YYYY-MM-DD] [BITS] [<<EOF
+# Usage: write_file [BITS] [TIME] FILE [<<EOF
 #            CONTENT
 #        EOF]
 #
-# Creates FILE and writes CONTENT (if no CONTENT is give on standard input,
-# then a zero byte file is created), thereafter chmod(1)s FILE to set file
-# permissions to BITS, and touch(1)es to set its mtime to YYYY-MM-DD (if any of
-# those are specified).
+# Creates FILE and writes CONTENT to it (if no CONTENT is give then a zero byte
+# file is written), thereafter, for the arguments specified, touch(1) the FILE
+# to set its mtime to TIME, and chmod(1) it to set its permissions to BITS.
+#
+# The last argument as always taken to be FILE, TIME and BITS can come in any
+# order and is recognized by their syntax. TIME is one of:
+#
+#   * YYYY-MM-DD
+#   * string starting with '+' or '-', follow by digit and ending in letter
+#     (e.g. '-1second' or '+1 month') see info page for touch(1) '-d' option
+#     for more info (unfortunately manpage is only rudimentary)
+#
+# BITS is one of:
+#
+#   * 3 octal digits (e.g. '755', '644')
+#   * anything that contains '-', '+' or '=' followed by one of 'rwxXstugo'
+#     (this may optionally be preceeded or followed by other letters, making
+#     all of the normal chmod(1) arguments available, e.g. 'a-r', 'u+x', '-w'
+#     etc.)
+#
 write_file() {
-    local FILE="$1" DATE="" BITS="" LINE=""; shift
-    for LINE; do
+    local DATE="" BITS="" FILE="" LINE=""
+    while :; do
+        [ $# = 1 ] && { FILE="$1"; break; }
         case "$1" in
-            [-+][0-9]*[a-z]|????-??-??)      DATE="$1" ;;
-            [ugoa][-+][rwx]|[0-7][0-7][0-7]) BITS="$1" ;;
-            *) error "write_file: bad arg '$LINE'"
-        esac; shift
+            [-+][0-9]*[a-z]|????-??-??)
+                [ -n "$DATE" ] && error "write_file: Too many DATE arguments!"
+                DATE="$1" ;;
+            *[-+=][rwxXstugo]*|[0-7][0-7][0-7])
+                [ -n "$BITS" ] && error "write_file: Too many BITS arguments!"
+                BITS="$1" ;;
+            *) error "write_file: Bad arg '$1'"
+        esac
+        shift
     done
     mkpath "$FILE" 2>/dev/null \
-        || error "Cannot create dir for file '$FILE'"
+        || error "write_file: Cannot create dir for file '$FILE'"
     {
         [ -t 0 ] || while IFS='' read -r LINE; do
             echo "$LINE"

@@ -7,11 +7,11 @@ also modified and builds a target identical to modified the modified one.
 EOF
 
 init_test fix src
-write_file fix/TARGET.fix -1sec a+x <<-"END_SCRIPT"
+write_file a+x -1sec fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
 	echo "OUTPUT2"
 END_SCRIPT
-write_file build/TARGET -1sec <<-"END_TARGET"
+write_file -1sec build/TARGET <<-"END_TARGET"
 	OUTPUT2
 END_TARGET
 

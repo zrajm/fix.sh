@@ -7,11 +7,11 @@ buildscript's timestamp have been moved into the future. (Based on 07.)
 EOF
 
 init_test fix src
-write_file fix/TARGET.fix a+x 2030-01-01 <<-"END_SCRIPT"
+write_file a+x 2030-01-01 fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
 	echo "OUTPUT"
 END_SCRIPT
-write_file build/TARGET -1sec <<-"END_TARGET"
+write_file -1sec build/TARGET <<-"END_TARGET"
 	OUTPUT
 END_TARGET
 
