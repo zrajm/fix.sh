@@ -36,7 +36,7 @@
 ##    (subtly) broken:
 ##
 ##        # BROKEN EXAMPLE -- DON'T USE
-##        fail "$NAME" <<-EOF
+##        fail "$DESCR" <<-EOF
 ##                $(indent "GOT   :" "$GOT")
 ##                $(indent "WANTED:" "$WANTED")
 ##        EOF
@@ -73,7 +73,7 @@
 ##        {
 ##            indent "GOT   :" "$GOT"
 ##            indent "WANTED:" "$WANTED"
-##        } | fail "$NAME"
+##        } | fail "$DESCR"
 ##
 ## Workaround
 ## ----------
@@ -83,7 +83,7 @@
 ##
 ##         seteval GOT    'indent "GOT   :" "$GOT"'
 ##         seteval WANTED 'indent "WANTED:" "$WANTED"'
-##         fail "$NAME" <<-EOF
+##         fail "$DESCR" <<-EOF
 ##                 $GOT
 ##                 $WANTED
 ##                 EOF
@@ -145,7 +145,7 @@
 TEST_COUNT=0                                   # tests performed
 TEST_FAILS=0                                   # failed tests
 TEST_PLANNED=-1                                # plan (set by done_testing)
-TEST_MODE=""                                   # TODO string (if any)
+TEST_TODO=""                                   # TODO string (if any)
 trap 'on_exit; trap - 0' 0                     # exit messages
 on_exit() {
     if [ $TEST_COUNT = 0 ]; then
@@ -252,7 +252,7 @@ skip_all() {
 # single test as TODO.)
 TODO() {
     [ $# -gt 1 ] && error "TODO: Too many arguments"
-    TEST_MODE=" # TODO${1:+ $1}"
+    TEST_TODO=" # TODO${1:+ $1}"
 }
 
 # Usage: END_TODO
@@ -260,7 +260,7 @@ TODO() {
 # Turn off TODO mode. Takes no arguments.
 END_TODO() {
     [ $# != 0 ] && error "END_TODO: No arguments allowed"
-    TEST_MODE=""
+    TEST_TODO=""
 }
 
 BAIL_OUT() {
@@ -305,33 +305,33 @@ note() {
 }
 
 result() {
-    local MSG="$1" NAME="$2"
+    local MSG="$1" DESCR="$2"
     TEST_COUNT="$(( TEST_COUNT + 1 ))"
-    echo "$MSG $TEST_COUNT${NAME:+ - $NAME}"
+    echo "$MSG $TEST_COUNT${DESCR:+ - $DESCR}"
 }
 
 pass() {
-    local NAME="$1$TEST_MODE"; shift
-    result "ok" "$NAME"
+    local DESCR="$1$TEST_TODO"; shift
+    result "ok" "$DESCR"
     note "$@"
     return 0
 }
 
 fail() {
-    local NAME="$1$TEST_MODE" MSG="$2"
-    result "not ok" "$NAME"
-    [ "${NAME%# TODO*}" != "$NAME" ] && return 0
+    local DESCR="$1$TEST_TODO" MSG="$2"
+    result "not ok" "$DESCR"
+    [ "${DESCR%# TODO*}" != "$DESCR" ] && return 0
     TEST_FAILS=$(( TEST_FAILS + 1 ))
     # Insert extra newline when piped (so 'prove' output looks ok).
     # (Skip this if we're bailing out after the failure.)
     [ -n "$BAIL_ON_FAIL" -o -t 1 ] || echo >&2
-    if [ -z "$NAME" ]; then
+    if [ -z "$DESCR" ]; then
         diag <<-EOF
 	  Failed test in '$0'
 	EOF
     else
         diag <<-EOF
-	  Failed test '$NAME'
+	  Failed test '$DESCR'
 	  in '$0'
 	EOF
     fi
@@ -342,24 +342,22 @@ fail() {
 }
 
 ok() {
-    local EXPR="$*" NAME="" ERRMSG="" RESULT=""
-    for NAME; do :; done                       # get last arg
-    [ "$NAME" = "]" ] && NAME=""               #   ignore if ']'
-    EXPR="${EXPR% $NAME}"                      #   strip last arg
+    local EXPR="$*" DESCR="" ERRMSG="" RESULT=""
+    for DESCR; do :; done                      # get last arg
+    [ "$DESCR" = "]" ] && DESCR=""             #   unset DESCR if ']'
+    EXPR="${EXPR% $DESCR}"                     #   EXPR = all but DESCR
     if [ -n "${EXPR%\[*}" ]; then              # must start & have only one '['
-        echo "ok: Error in expression: 'missing or multiple ['" >&2
-        return 255
+        error "ok: Error in expression: 'missing or multiple ['"
     fi
     ERRMSG="$(eval "$EXPR 2>&1")"; RESULT=$?
     if [ -n "$ERRMSG" ]; then                  # error msg from eval
-        echo "ok: Error in expression: '${ERRMSG#* \[: }'" >&2
-        return 255
+        error "ok: Error in expression: '${ERRMSG#* \[: }'"
     fi
     if [ $RESULT = 0 ]; then
-        pass "$NAME"
+        pass "$DESCR"
         return
     fi
-    fail "$NAME" <<-EOF
+    fail "$DESCR" <<-EOF
 	Expression should evaluate to true, but it isn't
 	$EXPR
 	EOF
@@ -410,47 +408,47 @@ seteval() {
 ##
 
 is() {
-    local GOT="$1" WANTED="$2" NAME="$3" NL="
+    local GOT="$1" WANTED="$2" DESCR="$3" NL="
 "   # NB: intentional newline
     if [ $# -gt 3 ]; then
         error "is: Too many arguments (Did you forget to quote a variable?)"
     fi
     if [ "$GOT" = "$WANTED" ]; then
-        pass "$NAME"
+        pass "$DESCR"
         return
     fi
     seteval GOT    'indent "GOT   :" "$GOT"'
     seteval WANTED 'indent "WANTED:" "$WANTED"'
-    fail "$NAME" <<-EOF
+    fail "$DESCR" <<-EOF
 	$GOT
 	$WANTED
 	EOF
 }
 
 file_is() {
-    local FILE="$1" WANTED="$2" NAME="$3"
+    local FILE="$1" WANTED="$2" DESCR="$3"
     local GOT="$(cat "$FILE")"
-    is "$GOT" "$WANTED" "$NAME"
+    is "$GOT" "$WANTED" "$DESCR"
 }
 
 file_exist() {
-    local FILE="$1" NAME="$2"
+    local FILE="$1" DESCR="$2"
     if [ -e "$FILE" ]; then
-        pass "$NAME"
+        pass "$DESCR"
         return
     fi
-    fail "$NAME" <<-EOF
+    fail "$DESCR" <<-EOF
 	File '$FILE' should exist, but it does not
 	EOF
 }
 
 file_not_exist() {
-    local FILE="$1" NAME="$2"
+    local FILE="$1" DESCR="$2"
     if [ ! -e "$FILE" ]; then
-        pass "$NAME"
+        pass "$DESCR"
         return
     fi
-    fail "$NAME" <<-EOF
+    fail "$DESCR" <<-EOF
 	File '$FILE' should not exist, but it does
 	EOF
 }
@@ -474,16 +472,16 @@ timestamp() {
 # gotten, return false if the files mtime or other metadata have been modified
 # TIMESTAMP was obtained, true if it has not changed.
 is_changed() {
-    local OLD_TIMESTAMP="$1" NAME="$2"
+    local OLD_TIMESTAMP="$1" DESCR="$2"
     local FILE="${OLD_TIMESTAMP##* }"
     local NEW_TIMESTAMP="$(timestamp "$FILE")"
     if [ "$NEW_TIMESTAMP" != "$OLD_TIMESTAMP" ]; then
-        pass "$NAME"
+        pass "$DESCR"
         return
     fi
     seteval OLD_TIMESTAMP 'indent OLD: "$OLD_TIMESTAMP"'
     seteval NEW_TIMESTAMP 'indent NEW: "$NEW_TIMESTAMP"'
-    fail "$NAME" <<-EOF
+    fail "$DESCR" <<-EOF
 	File '$FILE' has been modified, but it shouldn't have
 	$OLD_TIMESTAMP
 	$NEW_TIMESTAMP
@@ -496,16 +494,16 @@ is_changed() {
 # gotten, return false if the files mtime or other metadata have been modified
 # TIMESTAMP was obtained, true if it has not changed.
 is_unchanged() {
-    local OLD_TIMESTAMP="$1" NAME="$2"
+    local OLD_TIMESTAMP="$1" DESCR="$2"
     local FILE="${OLD_TIMESTAMP##* }"
     local NEW_TIMESTAMP="$(timestamp "$FILE")"
     if [ "$NEW_TIMESTAMP" = "$OLD_TIMESTAMP" ]; then
-        pass "$NAME"
+        pass "$DESCR"
         return
     fi
     seteval OLD_TIMESTAMP 'indent OLD: "$OLD_TIMESTAMP"'
     seteval NEW_TIMESTAMP 'indent NEW: "$NEW_TIMESTAMP"'
-    fail "$NAME" <<-EOF
+    fail "$DESCR" <<-EOF
 	File '$FILE' has been modified, but it shouldn't have
 	$OLD_TIMESTAMP
 	$NEW_TIMESTAMP
