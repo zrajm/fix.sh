@@ -554,8 +554,15 @@ mkpath() {
 #
 # Change mtime of FILE to YYYY-MM-DD.
 chtime() {
-    local DATE="$(echo "$1"|tr -d -)0000" FILE="$2"
-    touch -t"$DATE" "$FILE" || error "chtime: 'touch' cannot update '$FILE'"
+    local TIME="$1" FILE="$2"
+    [ -e "$FILE" ] || error "chtime: file '$FILE' not found"
+    if [ "${TIME#+}" != "${TIME#-}" ]; then    # plus/minus time
+        touch -r"$FILE" -d"$TIME" "$FILE" \
+            || error "chtime: cannot set file '$FILE' time to '$TIME'"
+        return
+    fi
+    TIME="$(echo "$TIME"|tr -d -)0000"
+    touch -t"$TIME" "$FILE" || error "chtime: 'touch' cannot update '$FILE'"
 }
 
 # Usage: write_file FILE [YYYY-MM-DD] [BITS] [<<EOF
@@ -570,19 +577,18 @@ write_file() {
     local FILE="$1" DATE="" BITS="" LINE=""; shift
     for LINE; do
         case "$1" in
-            ????-??-??) DATE="$1" ;;
-            *[a-z])     BITS="$1" ;;
+            [-+][0-9]*[a-z]|????-??-??)      DATE="$1" ;;
+            [ugoa][-+][rwx]|[0-7][0-7][0-7]) BITS="$1" ;;
             *) error "write_file: bad arg '$LINE'"
         esac; shift
     done
-    mkpath "$FILE"
-    if [ -t 0 ]; then
-        : >"$FILE"
-    else
-        while IFS='' read -r LINE; do
+    mkpath "$FILE" 2>/dev/null \
+        || error "Cannot create dir for file '$FILE'"
+    {
+        [ -t 0 ] || while IFS='' read -r LINE; do
             echo "$LINE"
-        done >"$FILE"
-    fi
+        done
+    } >"$FILE"
     [ -n "$BITS" ] && chmod  "$BITS" "$FILE"
     [ -n "$DATE" ] && chtime "$DATE" "$FILE"
 }

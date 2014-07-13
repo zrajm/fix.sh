@@ -7,7 +7,7 @@ timestamp have been moved into the future. (Based on 07.)
 EOF
 
 init_test fix src
-write_file fix/TARGET.fix a+x <<-"END_SCRIPT"
+write_file fix/TARGET.fix -1sec a+x <<-"END_SCRIPT"
 	#!/bin/sh
 	echo "OUTPUT"
 END_SCRIPT
@@ -17,9 +17,6 @@ END_TARGET
 
 TARGET="$(timestamp build/TARGET)"
 METADATA="$(timestamp .fix/state/TARGET)"
-
-# FIXME: don't sleep if timestamp has sub-second precision
-sleep 1
 
 "$TESTCMD" TARGET >stdout 2>stderr
 is              $?                   0             "Exit status"

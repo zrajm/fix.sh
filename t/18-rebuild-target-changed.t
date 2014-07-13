@@ -7,11 +7,11 @@ Attempt to rebuild target when previous target exist and is modified. (Based on
 EOF
 
 init_test fix src
-write_file fix/TARGET.fix a+x <<-"END_SCRIPT"
+write_file fix/TARGET.fix -1sec a+x <<-"END_SCRIPT"
 	#!/bin/sh
 	echo "OUTPUT"
 END_SCRIPT
-write_file build/TARGET <<-"END_TARGET"
+write_file build/TARGET -1sec <<-"END_TARGET"
 	OUTPUT2
 END_TARGET
 
@@ -20,9 +20,6 @@ ERRMSG="ERROR: Old target 'build/TARGET' modified by user, won't overwrite
 
 TARGET="$(timestamp build/TARGET)"
 METADATA="$(timestamp .fix/state/TARGET)"
-
-# FIXME: don't sleep if timestamp has sub-second precision
-sleep 1
 
 "$TESTCMD" TARGET >stdout 2>stderr
 is              $?                   1             "Exit status"

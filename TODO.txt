@@ -4,10 +4,6 @@
 ** TODO Dependencies
 ** TODO Automatic unlocking of stale lockfile
 * Testing
-** TODO Eliminate need for 'sleep 1'
-   Instead move timestamp backwards for all relevant files. (Is this really
-   needed, or covered by the current test cases?) Modify chtime function to
-   work for this.
 ** TODO test_init should set state dir root
    '.fix/state' is the current state dir root, this should be exported in a
    variable from test_init so we won't have to change it in a hundred different
@@ -29,3 +25,10 @@
 ** DONE Clean up and systematize test scripts
    CLOSED: [2014-07-11 Fri 21:19]
    Descriptions in TESTS.txt as well as the scripts themselves.
+** DONE Eliminate need for 'sleep 1'
+   CLOSED: [2014-07-13 Sun 05:04]
+   Instead move timestamp backwards for all relevant files. (Is this really
+   needed, or covered by the current test cases?) Modify chtime function to
+   work for this.
+
+   Test time went down from 14 seconds to 2 seconds (with 20 tests).

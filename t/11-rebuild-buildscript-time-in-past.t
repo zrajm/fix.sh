@@ -7,19 +7,16 @@ buildscript's timestamp have been moved into the past. (Based on 07.)
 EOF
 
 init_test fix src
-write_file fix/TARGET.fix a+x 2000-01-01 <<-"END_SCRIPT"
+write_file fix/TARGET.fix -1sec a+x 2000-01-01 <<-"END_SCRIPT"
 	#!/bin/sh
 	echo "OUTPUT"
 END_SCRIPT
-write_file build/TARGET <<-"END_TARGET"
+write_file build/TARGET -1sec <<-"END_TARGET"
 	OUTPUT
 END_TARGET
 
 TARGET="$(timestamp build/TARGET)"
 METADATA="$(timestamp .fix/state/TARGET)"
-
-# FIXME: don't sleep if timestamp has sub-second precision
-sleep 1
 
 "$TESTCMD" TARGET >stdout 2>stderr
 file_is         stdout               ""            "Standard output"
