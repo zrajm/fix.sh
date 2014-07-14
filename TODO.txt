@@ -10,6 +10,8 @@
    test files if it ever changes.
 ** TODO Mooooaaar test cases!
 ** TODO Test killing of fix
+** TODO Profiling the code (using Devel::NYTProf)
+** TODO Test code coverage (Devel::Cover)
 * DONE
 ** DONE Tests should be run in tempdir
    CLOSED: [2014-07-07 Mon 00:28]

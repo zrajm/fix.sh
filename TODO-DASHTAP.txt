@@ -1,6 +1,7 @@
 -*- org -*-
 
 * Program
+** TODO Add SKIP tests
 ** TODO Separate docs from source code
    Using Markdown?
 ** TODO Separate Fix.sh test helper functions from Dashtap
@@ -10,7 +11,6 @@
    README.)
 ** TODO 'seteval' should test that variable name given is valid
 ** TODO Merge 'is_changed' and 'is_unchanged' to follow DRY
-** TODO Add SKIP tests
 * Testing
 ** TODO Test 'on_exit'
 ** TODO Test 'done_testing'

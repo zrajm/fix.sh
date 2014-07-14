@@ -2,8 +2,8 @@
 # -*- sh -*-
 . "t/dashtap.sh"
 note <<EOF
-Attempt to rebuild target after buildscript have been changed so that it now
-fails. (Based on 07.)
+Rebuild target after buildscript have been changed so that it now fails. (Based
+on 07.)
 EOF
 
 init_test fix src

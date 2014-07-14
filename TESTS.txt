@@ -26,7 +26,7 @@ Exit status:
 ** TODO Handling of circular dependencies
 * Early error messages
   Check early error messages (missing files, bad options) are emitted properly.
-** DONE 01. Build, no source dir
+** DONE 01. Build, missing sourcedir
    Attempt to build target when there is no source dir.
 
    * FAILURE
@@ -34,7 +34,7 @@ Exit status:
      + Target: not existing
      + Metadata: not existing
      + Tempfile: not existing
-** DONE 02. Build, no script dir
+** DONE 02. Build, missing scriptdir
    Attempt to build target when there is no script dir.
 
    * FAILURE
@@ -42,7 +42,7 @@ Exit status:
      + Target: not existing
      + Metadata: not existing
      + Tempfile: not existing
-** DONE 03. Build, no buildscript
+** DONE 03. Build, missing buildscript
    Attempt to build target when there is no buildscript for it.
 
    * FAILURE
@@ -50,7 +50,7 @@ Exit status:
      + Target: not existing
      + Metadata: not existing
      + Tempfile: not existing
-** DONE 04. Build, buildscript no read bits
+** DONE 04. Build, buildscript missing read bits
    Attempt to build target with buildscript with read bits unset.
 
    * FAILURE
@@ -58,7 +58,7 @@ Exit status:
      + Target: not existing
      + Metadata: not existing
      + Tempfile: not existing
-** DONE 05. Build, buildscript no execute bits
+** DONE 05. Build, buildscript missing execute bits
    Attempt to build target with buildscript with execute bits unset.
 
    * FAILURE
@@ -87,7 +87,7 @@ Exit status:
      + Target: existing
      + Metadata: existing
      + Tempfile: not existing
-** DONE 08. Rebuild, no change
+** DONE 08. Rebuild, unmodified
    CLOSED: [2014-07-07 Mon 09:04]
    Rebuild target that has already been built. (Based on 07.)
 
@@ -98,8 +98,8 @@ Exit status:
      + Tempfile: not existing
 ** DONE 09. Rebuild, target time in past
    CLOSED: [2014-07-08 Tue 08:44]
-   Attempt to rebuild target that has already been built after target file's
-   timestamp have been moved into the past. (Based on 07.)
+   Rebuild target that has already been built after target file's timestamp
+   have been moved into the past. (Based on 07.)
 
    Target timestamp is set to: 2000-01-01
 
@@ -110,8 +110,8 @@ Exit status:
      + Tempfile: not existing
 ** DONE 10. Rebuild, target time in future
    CLOSED: [2014-07-08 Tue 08:44]
-   Attempt to rebuild target that has already been built after target file's
-   timestamp have been moved into the future. (Based on 07.)
+   Rebuild target that has already been built after target file's timestamp
+   have been moved into the future. (Based on 07.)
 
    Target timestamp is set to: 2030-01-01
 
@@ -122,8 +122,8 @@ Exit status:
      + Tempfile: not existing
 ** DONE 11. Rebuild, buildscript time in past
    CLOSED: [2014-07-08 Tue 14:13]
-   Attempt to rebuild target that has already been built after target's
-   buildscript's timestamp have been moved into the past. (Based on 07.)
+   Rebuild target that has already been built after target's buildscript's
+   timestamp have been moved into the past. (Based on 07.)
 
    Target timestamp is set to: 2000-01-01
 
@@ -134,8 +134,8 @@ Exit status:
      + Tempfile: not existing
 ** DONE 12. Rebuild, buildscript time in future
    CLOSED: [2014-07-08 Tue 14:29]
-   Attempt to rebuild target that has already been built after target's
-   buildscript's timestamp have been moved into the future. (Based on 07.)
+   Rebuild target that has already been built after target's buildscript's
+   timestamp have been moved into the future. (Based on 07.)
 
    Target timestamp is set to: 2030-01-01
 
@@ -146,8 +146,8 @@ Exit status:
      + Tempfile: not existing
 ** DONE 13. Rebuild, metadata time in past
    CLOSED: [2014-07-09 Wed 09:12]
-   Attempt to rebuild target that has already been built after target's
-   metadata file's timestamp have been moved into the past. (Based on 07.)
+   Rebuild target that has already been built after target's metadata file's
+   timestamp have been moved into the past. (Based on 07.)
 
    Target timestamp is set to: 2000-01-01
 
@@ -158,8 +158,8 @@ Exit status:
      + Tempfile: not existing
 ** DONE 14. Rebuild, metadata time in future
    CLOSED: [2014-07-09 Wed 09:11]
-   Attempt to rebuild target that has already been built after target's
-   metadata file's timestamp have been moved into the future. (Based on 07.)
+   Rebuild target that has already been built after target's metadata file's
+   timestamp have been moved into the future. (Based on 07.)
 
    Target timestamp is set to: 2030-01-01
 
@@ -168,7 +168,7 @@ Exit status:
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: not existing
-** DONE 15. Rebuild, buildscript with same output
+** DONE 15. Rebuild, buildscript same output
    CLOSED: [2014-07-11 Fri 17:15]
    Rebuild target after buildscript modified (by a comment or similar) in such
    a way that it still produces the same output as it previously did. (Based on
@@ -179,19 +179,19 @@ Exit status:
    * SUCCESS
      + Exit status: 0
      + Target: unmodified
-     + Metadata: unmodified 
+     + Metadata: unmodified
      + Tempfile: not existing
 ** DONE 16. Rebuild, buildscript failing
    CLOSED: [2014-07-11 Fri 17:32]
-   Attempt to rebuild target after buildscript have been changed so that it now
-   fails. (Based on 07.)
+   Rebuild target after buildscript have been changed so that it now fails.
+   (Based on 07.)
 
    * SUCCESS
      + Exit status: 5
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: existing
-** DONE 17. Rebuild, buildscript with new output
+** DONE 17. Rebuild, buildscript new output
    CLOSED: [2014-07-11 Fri 17:23]
    Rebuild target after buildscript have been changed so that it outputs
    something new. (Based on 07.)
@@ -201,7 +201,7 @@ Exit status:
      + Target: modified
      + Metadata: modified
      + Tempfile: not existing
-** DONE 18. Rebuild, target changed
+** DONE 18. Rebuild, target modified
    CLOSED: [2014-07-11 Fri 17:46]
    Attempt to rebuild target when previous target exist and is modified. (Based
    on 07.)
@@ -211,7 +211,20 @@ Exit status:
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: existing
-** DONE 19. Rebuild, buildscript+target changed but same
+
+** TODO ##. Rebuild, target modified but time same
+   Attempt to rebuild target when previous target exist and is modified, but
+   its timestamp remains unchanged. (Based on 07.)
+
+   FIXME: Preferably its entire stat fingerprint should be the same, i.e. the
+   filesize should remain the same (and its inode number?).
+
+   * FAILURE
+     + Exit status: 1
+     + Target: unmodified
+     + Metadata: unmodified
+     + Tempfile: existing
+** DONE 19. Rebuild, buildscript+target modified but same
    CLOSED: [2014-07-11 Fri 19:40]
    Rebuild target when previous target exist and is modified, but buildscript
    is also modified and builds a target identical to modified the modified one.
@@ -221,6 +234,8 @@ Exit status:
      + Target: unmodified
      + Metadata: modified
      + Tempfile: not existing
+** TODO 20. Rebuild, buildscript modified
+** TODO 20. Rebuild, buildscript modified but time same
 * Lockfile-related stuff
   Check that lockfile is cleared on non-normal termination. And that it works
   to avert parallel execution of fix.
@@ -239,31 +254,31 @@ Exit status:
      + Target: not existing
      + Tempfile: not existing
 ** TODO Receiving Ctrl-C (SIGTERM)
-Send ctrl-c (SIGINT) to fix as its building and see that it returns correct
-exit code and clears its lockfile.
+   Send ctrl-c (SIGINT) to fix as its building and see that it returns correct
+   exit code and clears its lockfile.
 
-This signal should be sent to fix's process group by means of a negative PID
-(in order to kill all subprocesses).
+   This signal should be sent to fix's process group by means of a negative PID
+   (in order to kill all subprocesses).
 
    * FAILURE
      + Exit status: 130 (128 + 2 = INT)
      + No lockfile exists.
 ** TODO Normal kill (SIGINT)
-Send SIGTERM to fix as its building and see that it returns correct exit code
-and clears its lockfile.
+   Send SIGTERM to fix as its building and see that it returns correct exit
+   code and clears its lockfile.
 
-This signal should be sent to fix's process group by means of a negative PID
-(in order to kill all subprocesses).
+   This signal should be sent to fix's process group by means of a negative PID
+   (in order to kill all subprocesses).
 
    * FAILURE
      + Exit status: 143 (128 + 15 = TERM)
      + No lockfile exists.
 ** TODO Terminal hangup (SIGHUP)
-Send SIGHUP to fix as its building and see that it returns correct exit code
-and clears its lockfile.
+   Send SIGHUP to fix as its building and see that it returns correct exit code
+   and clears its lockfile.
 
-This signal should be sent to fix's process group by means of a negative PID
-(in order to kill all subprocesses).
+   This signal should be sent to fix's process group by means of a negative PID
+   (in order to kill all subprocesses).
 
    * FAILURE
      + Exit status: 129 (128 + 1 = HUP)
@@ -272,10 +287,30 @@ This signal should be sent to fix's process group by means of a negative PID
   Checks to see that the automatically added dependency on the buildscript
   works as it should.
 * Source dependency
-** TODO Source file dependency
-** TODO Source file dependency with timestamp in the past
-** Source file dependency with timestamp in the future
-** Source file dependency
+** TODO Build, missing sourcedep
+   Attempt to build a target for which there is a missing source dependency.
+** TODO Build, sourcedep missing read bits
+   Attempt to build target with source dependency with read bits unset.
+** TODO Build, sourcedep
+   Build target with source dependency.
+
+   The target should include the source dependency, and checks should see that
+   it's included.
+** TODO Rebuild, sourcedep unmodified
+   Rebuild target with source dependency that has already been built.
+** TODO Rebuild, sourcedep time in past
+   Rebuild target with source dependency that has already been built after the
+   source dependency file's timestamp have been moved into the past.
+
+   Source dependency timestamp is set to: 2000-01-01
+** TODO Rebuild, sourcedep time in future
+   Rebuild target with source dependency that has already been built after
+   source dependency file's timestamp have been moved into the future. (Based
+   on 07.)
+
+   Source dependency timestamp is set to: 2030-01-01
+** TODO Rebuild, sourcedep modified
+** TODO Rebuild, sourcedep modified but time same
 * Target dependency
 ** TODO Build target with one dependency
    Build target A with dependency B
@@ -290,23 +325,23 @@ This signal should be sent to fix's process group by means of a negative PID
     + Neither metadata file modified.
 ** TODO Rebuild target with modified dependency
 ** TODO Rebuild target with erased metadata and modified buildscript
-Build target when previous target exist but have no metadata stored, and the
-newly built target differs from the old target.
+   Attempt to rebuild target when previous target exist but have no metadata
+   stored, and the newly built target differs from the old target.
 
    * FAILURE
      + Exit status: 1
 ** TODO Rebuild target with erased metadata
-Build target when previous target exist but have no metadata stored, and the
-newly built target is the same as the old target.
+   Rebuild target when previous target exist but have no metadata stored, and
+   the newly built target is the same as the old target.
 
    * SUCCESS
      + Exit status: 0
 * 'default.fix' target dependency
 ** TODO Build using default buildscript ('default.fix')
-Build target using default.fix.
+   Build target using default.fix.
 ** TODO Build using default buildscript in parent dir
-Build target using '../default.fix'.
+   Build target using '../default.fix'.
 ** TODO Rebuild target built by default buildscript, now by target
-Rebuild target that was previously build by default.fix, with a new
-TARGET.fix.
+   Rebuild target that was previously build by default.fix, with a new
+   TARGET.fix.
 * [eof]
