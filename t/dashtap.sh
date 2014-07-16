@@ -135,7 +135,6 @@
 ## so that the above code will work.
 ##
 
-
 ##############################################################################
 ##                                                                          ##
 ##  Test Functions                                                          ##
@@ -145,7 +144,7 @@
 TEST_COUNT=0                                   # tests performed
 TEST_FAILS=0                                   # failed tests
 TEST_PLANNED=-1                                # plan (set by done_testing)
-TEST_TODO=""                                   # TODO string (if any)
+TEST_TODO=""                                   # TODO reason (if any)
 trap 'on_exit; trap - 0' 0                     # exit messages
 on_exit() {
     if [ $TEST_COUNT = 0 ]; then
@@ -304,12 +303,24 @@ note() {
     done
 }
 
+# Usage: result RESULT [DESCR]
+#
+# Outputs RESULT (which must be either 'ok' or 'not ok'), followed by the test
+# counter and test description DESCR (if any). The test counter as also
+# automatically increased.
 result() {
     local MSG="$1" DESCR="$2"
     TEST_COUNT="$(( TEST_COUNT + 1 ))"
     echo "$MSG $TEST_COUNT${DESCR:+ - $DESCR}"
 }
 
+# Usage: pass [DESCR] [MSG]
+#
+# Call this for each passing test. Outputs the TAP protocol 'ok' line for the
+# test together with the test description DESCR (if any). If message MSG is
+# provided, it will be outputted after the 'ok' line in such a fashion that it
+# will only be visible if you're running your test harness in 'verbose' mode
+# (just as if you would've called 'note' just after 'pass').
 pass() {
     local DESCR="$1$TEST_TODO"; shift
     result "ok" "$DESCR"
@@ -317,6 +328,14 @@ pass() {
     return 0
 }
 
+# Usage: pass [DESCR] [MSG]
+#
+# Call this for each failing test. Ouptuts the TAP protocol 'not ok' line for
+# the test together with the test description DESCR (if any). If message MSG is
+# provided it will be outputted as a diagnostic message to the user and care
+# should be taken to make MSG as informative as possible. MSG is (like 'diag'
+# messages) always displayed (regardless of whether the test harness is in
+# 'verbose' mode or not).
 fail() {
     local DESCR="$1$TEST_TODO" MSG="$2"
     result "not ok" "$DESCR"
