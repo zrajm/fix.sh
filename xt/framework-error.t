@@ -14,9 +14,9 @@ cd "$(mktemp -d)"
     exit $STATUS
 )
 is        $?        255        "Exit status"
-file_is   STDOUT    ""         "Standard output"
-file_is   STDERR    "AA BB"    "Standard error"
-file_is   TRAPOUT   "EXITED"   "Call exit (don't return)"
+file_is   stdout    ""         "Standard output"
+file_is   stderr    "AA BB"    "Standard error"
+file_is   trapout   "EXITED"   "Call exit (don't return)"
 
 ##############################################################################
 
@@ -28,9 +28,9 @@ file_is   TRAPOUT   "EXITED"   "Call exit (don't return)"
     exit $STATUS
 )
 is        $?        255        "Exit status"
-file_is   STDOUT    ""         "Standard output"
-file_is   STDERR    ""         "Standard error"
-file_is   TRAPOUT   "EXITED"   "Call exit (don't return)"
+file_is   stdout    ""         "Standard output"
+file_is   stderr    ""         "Standard error"
+file_is   trapout   "EXITED"   "Call exit (don't return)"
 
 ##############################################################################
 
