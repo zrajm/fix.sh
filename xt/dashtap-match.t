@@ -28,11 +28,11 @@ is "$(type match)" "match is a shell function" "Function 'match' exists"
 
 run_function "match '*' 'ABC*'" trapout
 is           $?         0            "Exit status with match"
-file_is      trapout    "RETURN"     "Returned"
+file_is      trapout    "FULL"       "Returned"
 
 run_function "match '*' 'ABC'" trapout
 is           $?         1            "Exit status without match"
-file_is      trapout    "RETURN"     "Returned"
+file_is      trapout    "FULL"       "Returned"
 
 done_testing
 
