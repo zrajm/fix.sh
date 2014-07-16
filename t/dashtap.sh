@@ -171,6 +171,11 @@ error() {
     exit 255
 }
 
+# Usage: match SUBSTR STRING
+#
+# Returns true if SUBSTR is found in STRING, false otherwise.
+match() { [ "${2%"$1"*}" != "$2" ]; }
+
 # Usage: indent PROMPT [MSG] [<<EOF
 #            CONTENT
 #        EOF]
@@ -339,7 +344,7 @@ pass() {
 fail() {
     local DESCR="$1$TEST_TODO" MSG="$2"
     result "not ok" "$DESCR"
-    [ "${DESCR%# TODO*}" != "$DESCR" ] && return 0
+    match "# TODO" "$DESCR" && return 0        # no diagnostics for TODO tests
     TEST_FAILS=$(( TEST_FAILS + 1 ))
     # Insert extra newline when piped (so 'prove' output looks ok).
     # (Skip this if we're bailing out after the failure.)
