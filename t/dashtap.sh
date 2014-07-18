@@ -145,6 +145,7 @@ TEST_COUNT=0                                   # tests performed
 TEST_FAILS=0                                   # failed tests
 TEST_PLANNED=-1                                # plan (set by done_testing)
 TEST_TODO=""                                   # TODO reason (if any)
+TEST_SKIP=""                                   # SKIP reason (if any)
 trap 'on_exit; trap - 0' 0                     # exit messages
 on_exit() {
     if [ $TEST_COUNT = 0 ]; then
@@ -233,6 +234,22 @@ skip_all() {
     exit $TEST_FAILS
 }
 
+# Usage: $(descr MODE [DESCR])
+#
+# Returns the test description DESCR, and if there is a string defined for the
+# specified test MODE, appends that as well. E.g. if the test is running in
+# SKIP mode, and 'descr' was called as 'descr SKIP "Return value"' then descr
+# will return "Return value # SKIP <REASON>" (see also SKIP/END_SKIP and
+# TODO/END_TODO).
+descr() {
+    local MODE="$1" DESCR="$2" REASON="$(eval "echo \"\$TEST_$1\"")"
+    case "$REASON" in
+        "") echo "$DESCR" ;;
+        .)  echo "${DESCR:+$DESCR }# $MODE" ;;
+        *)  echo "${DESCR:+$DESCR }# $MODE $REASON" ;;
+    esac
+}
+
 # Usage: TODO [REASON]
 #        ...              # tests
 #        [END_TODO]
@@ -256,7 +273,7 @@ skip_all() {
 # single test as TODO.)
 TODO() {
     [ $# -gt 1 ] && error "TODO: Too many arguments"
-    TEST_TODO=" # TODO${1:+ $1}"
+    TEST_TODO="${1:-.}"
 }
 
 # Usage: END_TODO
@@ -265,6 +282,16 @@ TODO() {
 END_TODO() {
     [ $# != 0 ] && error "END_TODO: No arguments allowed"
     TEST_TODO=""
+}
+
+SKIP() {
+    [ $# -gt 1 ] && error "SKIP: Too many arguments"
+    TEST_SKIP="${1:-.}"
+}
+
+END_SKIP() {
+    [ $# != 0 ] && error "END_SKIP: No arguments allowed"
+    TEST_SKIP=""
 }
 
 BAIL_OUT() {
@@ -314,9 +341,13 @@ note() {
 # counter and test description DESCR (if any). The test counter as also
 # automatically increased.
 result() {
-    local MSG="$1" DESCR="$2"
+    local RESULT="$1" DESCR="$2"
     TEST_COUNT="$(( TEST_COUNT + 1 ))"
-    echo "$MSG $TEST_COUNT${DESCR:+ - $DESCR}"
+    case "$DESCR" in
+        "")  echo "$RESULT $TEST_COUNT" ;;
+        \#*) echo "$RESULT $TEST_COUNT $DESCR" ;;
+        *)   echo "$RESULT $TEST_COUNT - $DESCR" ;;
+    esac
 }
 
 # Usage: pass [DESCR] [MSG]
@@ -327,9 +358,9 @@ result() {
 # will only be visible if you're running your test harness in 'verbose' mode
 # (just as if you would've called 'note' just after 'pass').
 pass() {
-    local DESCR="$1$TEST_TODO"; shift
+    local DESCR="$(descr TODO "$1")" MSG="$2"
     result "ok" "$DESCR"
-    note "$@"
+    note "$MSG"
     return 0
 }
 
@@ -342,7 +373,7 @@ pass() {
 # messages) always displayed (regardless of whether the test harness is in
 # 'verbose' mode or not).
 fail() {
-    local DESCR="$1$TEST_TODO" MSG="$2"
+    local DESCR="$(descr TODO "$1")" MSG="$2"
     result "not ok" "$DESCR"
     match "# TODO" "$DESCR" && return 0        # no diagnostics for TODO tests
     TEST_FAILS=$(( TEST_FAILS + 1 ))
@@ -431,9 +462,43 @@ seteval() {
 ## Below are test functions, intended to be used it test scripts.
 ##
 
+##
+## WRITING NEW TEST FUNCTIONS
+## ==========================
+##
+## Skipping of Tests
+## -----------------
+## User can skip tests in one of two ways: Either by enabling skip mode (using
+## the SKIP and END_SKIP functions), or by adding "# SKIP <REASON>" to the
+## description of an individual test. A skipped test is not run, but always
+## report "ok" in the TAP output.
+##
+## For this to work each individual test function must check to see if it
+## should be skipped. This is done by:
+##
+##     1. Appending SKIP mode string (if set) to the test description
+##     2. Immediately passing if the test description contain '# SKIP'
+##
+## The code look like this:
+##
+##     local ... DESCR="$(descr SKIP "$3")"
+##     match "# SKIP" "$DESCR" && pass "$DESCR" && return
+##
+## 'TODO' mode is handed in a similar fashion, but by the 'fail' and 'pass'
+## functions, so this need not be handled by the individual test functions.
+##
+## Passing/Failing of Tests
+## ------------------------
+## Each test function should end in either calling 'pass' or 'fail'. Both of
+## these functions take a description, plus an extra diagnostic message as
+## argument (though the diagnostic message is seldom needed with the 'pass'
+## function).
+##
+
 is() {
-    local GOT="$1" WANTED="$2" DESCR="$3" NL="
+    local GOT="$1" WANTED="$2" DESCR="$(descr SKIP "$3")" NL="
 "   # NB: intentional newline
+    match "# SKIP" "$DESCR" && pass "$DESCR" && return
     if [ $# -gt 3 ]; then
         error "is: Too many arguments (Did you forget to quote a variable?)"
     fi
@@ -450,13 +515,16 @@ is() {
 }
 
 file_is() {
-    local FILE="$1" WANTED="$2" DESCR="$3"
+    local FILE="$1" WANTED="$2" DESCR="$(descr SKIP "$3")"
+    match "# SKIP" "$DESCR" && pass "$DESCR" && return
+    # FIXME: don't ignore trailing newlines
     local GOT="$(cat "$FILE")"
     is "$GOT" "$WANTED" "$DESCR"
 }
 
 file_exist() {
-    local FILE="$1" DESCR="$2"
+    local FILE="$1" DESCR="$(descr SKIP "$2")"
+    match "# SKIP" "$DESCR" && pass "$DESCR" && return
     if [ -e "$FILE" ]; then
         pass "$DESCR"
         return
@@ -467,7 +535,8 @@ file_exist() {
 }
 
 file_not_exist() {
-    local FILE="$1" DESCR="$2"
+    local FILE="$1" DESCR="$(descr SKIP "$2")"
+    match "# SKIP" "$DESCR" && pass "$DESCR" && return
     if [ ! -e "$FILE" ]; then
         pass "$DESCR"
         return
@@ -496,7 +565,8 @@ timestamp() {
 # gotten, return false if the files mtime or other metadata have been modified
 # TIMESTAMP was obtained, true if it has not changed.
 is_changed() {
-    local OLD_TIMESTAMP="$1" DESCR="$2"
+    local OLD_TIMESTAMP="$1" DESCR="$(descr SKIP "$2")"
+    match "# SKIP" "$DESCR" && pass "$DESCR" && return
     local FILE="${OLD_TIMESTAMP##* }"
     local NEW_TIMESTAMP="$(timestamp "$FILE")"
     if [ "$NEW_TIMESTAMP" != "$OLD_TIMESTAMP" ]; then
@@ -518,7 +588,8 @@ is_changed() {
 # gotten, return false if the files mtime or other metadata have been modified
 # TIMESTAMP was obtained, true if it has not changed.
 is_unchanged() {
-    local OLD_TIMESTAMP="$1" DESCR="$2"
+    local OLD_TIMESTAMP="$1" DESCR="$(descr SKIP "$2")"
+    match "# SKIP" "$DESCR" && pass "$DESCR" && return
     local FILE="${OLD_TIMESTAMP##* }"
     local NEW_TIMESTAMP="$(timestamp "$FILE")"
     if [ "$NEW_TIMESTAMP" = "$OLD_TIMESTAMP" ]; then
@@ -565,6 +636,34 @@ init_test() {
     note "DIR: $TMPDIR"
     [ $# -gt 0 ] && mkdir -p "$@"
     [ -e "$TESTDIR" ] && cp -rH "$TESTDIR" .fix
+}
+
+# Usage: execute CMD TRAPFILE
+#    or: execute <<EOF TRAPFILE
+#            CMD
+#        EOF
+#
+# Evals CMD in a subshell, saving to TRAPFILE whether the command(s) exited
+# ('EXIT'), or ran all the way through ('FULL'). This can be used to invoke a
+# function and see whether it called return ('FULL') or exit ('EXIT').
+#
+# Exit status will be the same as the exit status of the terminating command in
+# CMD (if 'exit' was called, this is be whatever exit status was specified with
+# 'exit').
+execute() {
+    if [ -t 0 ]; then
+        local CMD="$1" TRAPFILE="$2"
+    else
+        local CMD="$(while read LINE; do echo "$LINE"; done)" TRAPFILE="$1"
+    fi
+    [ -z "$TRAPFILE" ] && error "execute: Missing TRAPFILE argument"
+    (
+        trap "echo EXIT >$TRAPFILE; trap - 0" 0
+        eval "$CMD"
+        STATUS=$?
+        trap "echo FULL >$TRAPFILE; trap - 0" 0
+        exit $STATUS
+    )
 }
 
 mkpath() {

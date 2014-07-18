@@ -1,7 +1,6 @@
 -*- org -*-
 
 * Program
-** TODO Add SKIP tests
 ** TODO Separate docs from source code
    Using Markdown?
 ** TODO Separate Fix.sh test helper functions from Dashtap
@@ -11,12 +10,14 @@
    README.)
 ** TODO 'seteval' should test that variable name given is valid
 ** TODO Merge 'is_changed' and 'is_unchanged' to follow DRY
+** TODO Add function 'read_file VARNAME FILE'
+   Should read content of FILE into variable named VARNAME (preserving all
+   whitespace). This function should be used by 'file_is', and 'execute'.
+** TODO Function to test if a function exists
 * Testing
 ** TODO Test 'on_exit'
 ** TODO Test 'done_testing'
 ** TODO Test 'skip_all'
-** TODO Test 'TODO'
-** TODO Test 'END_TODO'
 ** TODO Test 'BAIL_OUT'
 ** TODO Test 'diag'
 ** TODO Test 'note'
@@ -49,3 +50,9 @@
    CLOSED: [2014-07-13 Sun 06:27]
    Permission bits & date should come *before* filename (to be consistent with
    touch and chmod).
+** DONE Add SKIP tests
+   CLOSED: [2014-07-17 Thu 19:49]
+** DONE Test 'TODO'
+   CLOSED: [2014-07-18 Fri 18:31]
+** DONE Test 'END_TODO'
+   CLOSED: [2014-07-18 Fri 18:31]

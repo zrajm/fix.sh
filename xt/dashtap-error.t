@@ -1,36 +1,26 @@
 #!/usr/bin/env dash
 # -*- sh -*-
 . "t/dashtap.sh"
-cd "$(mktemp -d)"
+
+is "$(type error)" "error is a shell function" "Function 'error' exists"
 
 ##############################################################################
 
-# FIXME: test function existance of 'error' first
-(
-    trap 'echo EXITED >trapout; trap - 0' 0
-    error "AA BB" >stdout 2>stderr
-    STATUS=$?
-    trap 'echo RETURNED >trapout; trap - 0' 0
-    exit $STATUS
-)
+cd "$(mktemp -d)"
+execute "error 'AA BB'" trapout >stdout 2>stderr
 is        $?        255        "Exit status"
 file_is   stdout    ""         "Standard output"
 file_is   stderr    "AA BB"    "Standard error"
-file_is   trapout   "EXITED"   "Call exit (don't return)"
+file_is   trapout   "EXIT"     "Called exit"
 
 ##############################################################################
 
-(
-    trap 'echo EXITED >trapout; trap - 0' 0
-    error >stdout 2>stderr
-    STATUS=$?
-    trap 'echo RETURNED >trapout; trap - 0' 0
-    exit $STATUS
-)
+cd "$(mktemp -d)"
+execute "error" trapout >stdout 2>stderr
 is        $?        255        "Exit status"
 file_is   stdout    ""         "Standard output"
 file_is   stderr    ""         "Standard error"
-file_is   trapout   "EXITED"   "Call exit (don't return)"
+file_is   trapout   "EXIT"     "Called exit"
 
 ##############################################################################
 
