@@ -197,7 +197,7 @@ varname() {
 # still having a predictable result (as opposed to the shell's builtin $(...)
 # which strips any number of trailing newlines).
 strip_newline() {
-    [ $# != 1 ]  && error "strip_newline: Too many arguments"
+    [ $# != 1 ]  && error "strip_newline: Too many args"
     varname "$1" || error "strip_newline: Bad VARNAME '$1'"
     eval 'set $1 "$'$1'" "
 "'  # $1 = variable name / $2 = variable content / $3 = newline
@@ -305,7 +305,7 @@ descr() {
 # to its test name. (This is might be more convenient if you need to mark a
 # single test as TODO.)
 TODO() {
-    [ $# -gt 1 ] && error "TODO: Too many arguments"
+    [ $# -gt 1 ] && error "TODO: Too many args"
     TEST_TODO="${1:-.}"
 }
 
@@ -313,17 +313,17 @@ TODO() {
 #
 # Turn off TODO mode. Takes no arguments.
 END_TODO() {
-    [ $# != 0 ] && error "END_TODO: No arguments allowed"
+    [ $# = 0 ] || error "END_TODO: No args allowed"
     TEST_TODO=""
 }
 
 SKIP() {
-    [ $# -gt 1 ] && error "SKIP: Too many arguments"
+    [ $# -gt 1 ] && error "SKIP: Too many args"
     TEST_SKIP="${1:-.}"
 }
 
 END_SKIP() {
-    [ $# != 0 ] && error "END_SKIP: No arguments allowed"
+    [ $# = 0 ] || error "END_SKIP: No args allowed"
     TEST_SKIP=""
 }
 
@@ -435,11 +435,11 @@ ok() {
     [ "$DESCR" = "]" ] && DESCR=""             #   unset DESCR if ']'
     EXPR="${EXPR% $DESCR}"                     #   EXPR = all but DESCR
     if [ -n "${EXPR%\[*}" ]; then              # must start & have only one '['
-        error "ok: Error in expression: 'missing or multiple ['"
+        error "ok: Error in args: 'missing or multiple ['"
     fi
     ERRMSG="$(eval "$EXPR 2>&1")"; RESULT=$?
     if [ -n "$ERRMSG" ]; then                  # error msg from eval
-        error "ok: Error in expression: '${ERRMSG#* \[: }'"
+        error "ok: Error in args: '${ERRMSG#* \[: }'"
     fi
     if [ $RESULT = 0 ]; then
         pass "$DESCR"
@@ -521,9 +521,7 @@ is() {
     local GOT="$1" WANTED="$2" DESCR="$(descr SKIP "$3")" NL="
 "   # NB: intentional newline
     match "# SKIP" "$DESCR" && pass "$DESCR" && return
-    if [ $# -gt 3 ]; then
-        error "is: Too many arguments (Did you forget to quote a variable?)"
-    fi
+    [ $# -gt 3 ] && error "is: Too many args"
     if [ "$GOT" = "$WANTED" ]; then
         pass "$DESCR"
         return
@@ -678,7 +676,7 @@ execute() {
     else
         local CMD="$(while read LINE; do echo "$LINE"; done)" TRAPFILE="$1"
     fi
-    [ -z "$TRAPFILE" ] && error "execute: Missing TRAPFILE argument"
+    [ -z "$TRAPFILE" ] && error "execute: Missing TRAPFILE arg"
     (
         trap "echo EXIT >\"$TRAPFILE\"; trap - 0" 0
         eval "$CMD"
@@ -739,10 +737,10 @@ write_file() {
         [ $# = 1 ] && { FILE="$1"; break; }
         case "$1" in
             [-+][0-9]*[a-z]|????-??-??)
-                [ -n "$DATE" ] && error "write_file: Too many DATE arguments!"
+                [ -n "$DATE" ] && error "write_file: Too many DATE args"
                 DATE="$1" ;;
             *[-+=][rwxXstugo]*|[0-7][0-7][0-7])
-                [ -n "$BITS" ] && error "write_file: Too many BITS arguments!"
+                [ -n "$BITS" ] && error "write_file: Too many BITS args"
                 BITS="$1" ;;
             *) error "write_file: Bad arg '$1'"
         esac

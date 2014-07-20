@@ -8,7 +8,7 @@ is "$(type strip_newline)" "strip_newline is a shell function" \
 ##############################################################################
 
 cd "$(mktemp -d)"
-STDERR="strip_newline: Too many arguments"
+STDERR="strip_newline: Too many args"
 note "strip_newline with too many args"
 execute <<"EOF" trap >out 2>err
     LINE=""
