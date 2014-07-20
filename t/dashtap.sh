@@ -451,13 +451,56 @@ ok() {
 	EOF
 }
 
+# Usage: setread VARNAME [+] [<FILE]
+#    or: setread VARNAME [+] [<<EOF
+#            CONTENT
+#        EOF]
+#
+# Read a FILE (or the CONTENT of a here document) and capture the contents in
+# VARNAME (if no input is given it will be set to empty string before
+# processing trailing newlines). If '+' is given as a second argument trailing
+# newlines are preserved as-is, otherwise the very last newline is stripped (if
+# final character is not a newline, the string '\No newline at end' is
+# appended).
+#
+# The handling of trailing newlines differs from the shell contstruct $(...)
+# which strips ALL trailing newlines. 'setread' is intentionally more
+# restrictive since the strings are used in string comparison tests.
+#
+#     setread X   <<-EOF               # set X to "hello"
+#         hello
+#         EOF
+#     setread X + <<-EOF               # set X to "hello" + newline
+#         hello
+#         EOF
+#
+# NOTA BENE: Piping into 'setread' DOES NOT WORK. (E.g. 'echo text|setread X'.)
+# -- This is because the shell executes each process of a pipe in its own
+# subshell, and all variables set by these processes are simply wiped as the
+# processes exit.
+setread() {
+    # NOTA BENE: This function use only positional parameters ($1, $2, etc) no
+    # ordinary vars. This avoids namespace collision between local vars and
+    # VARNAME. (If local vars were used, and user one of those used in function
+    # it could not be set globally.)
+    [ $# -gt 2 ] && error "setread: Too many args"
+    varname "$1" || error "setread: Bad VARNAME '$1'"
+    [ "$2" != "+" ] && set "$1" ""             # $2 is '+' or ''
+    if [ ! -t 0 ]; then
+        set $1 "$2" "$(while IFS="" read -r L; do echo "$L"; done; echo "$L.")"
+    fi
+    eval $1'="${3%.}"'
+    [ -z "$2" ] && strip_newline $1
+}
+
 # Usage: seteval VARNAME [+] STATEMENTS
 #
 # Evaluates shell STATEMENTS and capture the output thereof into the variable
 # named VARNAME. Normally the very last newline is stripped, but if '+' is
 # given as the second argument no stripping is done at all. (This differs from
 # the '$(...)' construct which strips all trailing newlines.) If no newline was
-# could be stripped then the string '\No newline at end' is appended instead.
+# could be stripped then the string '\No newline at end' is appended instead
+# (see also: 'setread').
 #
 #     seteval X   'echo hello'         # set X to "hello"
 #     seteval X + 'echo hello'         # set X to "hello" + newline
@@ -466,11 +509,11 @@ seteval() {
     # ordinary vars. This avoids namespace collision between local vars and
     # VARNAME. (If local vars were used, and user one of those used in function
     # it could not be set globally.)
-    [ "$2" != "+" ] && set "$1" "" "$2"        # $2 is '+' or ''
-    [ $# != 3 ]  && error "seteval: Bad number of args"
+    [ $# -gt 3 ] && error "seteval: Too many args"
     varname "$1" || error "seteval: Bad VARNAME '$1'"
+    [ "$2" != "+" ] && set "$1" "" "$2"        # $2 is '+' or ''
     set  $1 "$2" "$(eval "$3"; echo .)"
-    eval $1='${3%.}'
+    eval $1'="${3%.}"'
     [ -z "$2" ] && strip_newline $1
 }
 
