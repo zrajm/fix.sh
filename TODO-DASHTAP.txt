@@ -82,3 +82,7 @@
    CLOSED: [2014-07-20 Sun 09:10]
    A simple echo should suffice to catch the 'FULL' case, instead of the trap
    at the end of the 'execute' function.
+** DONE Test 'varname'
+   CLOSED: [2014-07-20 Sun 15:01]
+** DONE 'varname' should not allow empty string or '_'                  :BUG:
+   CLOSED: [2014-07-20 Sun 15:01]

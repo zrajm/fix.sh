@@ -181,9 +181,10 @@ match() { [ "${2%"$1"*}" != "$2" ]; }
 #
 # Returns true if VARNAME is a valid shell variable name, false otherwise. (A
 # variable name may only consist of alphanumeric characters and underscores,
-# and the first character may not be a number.)
+# and the first character may not be a number. Also it may not consist of the
+# empty string, or a single "_".)
 varname() {
-    case "$1" in *[!a-zA-Z0-9_]*|[0-9]*) return 1; esac
+    case "$1" in ""|_|[0-9]*|*[!a-zA-Z0-9_]*) return 1; esac
     return 0
 }
 
