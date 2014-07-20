@@ -177,6 +177,16 @@ error() {
 # Returns true if SUBSTR is found in STRING, false otherwise.
 match() { [ "${2%"$1"*}" != "$2" ]; }
 
+# Usage: varname VARNAME
+#
+# Returns true if VARNAME is a valid shell variable name, false otherwise. (A
+# variable name may only consist of alphanumeric characters and underscores,
+# and the first character may not be a number.)
+varname() {
+    case "$1" in *[!a-zA-Z0-9_]*|[0-9]*) return 1; esac
+    return 0
+}
+
 # Usage: indent PROMPT [MSG] [<<EOF
 #            CONTENT
 #        EOF]
@@ -429,8 +439,6 @@ ok() {
 #     seteval X   'echo hello'         # set X to "hello"
 #     seteval X + 'echo hello'         # set X to "hello" + newline
 seteval() {
-    # FIXME: test that $VARNAME is valid variable name, error otherwise
-
     # NOTA BENE: Only positional parameters ($1, $2, etc) are used in this
     # function, no other variables. THIS IS AN INTENTIONAL WORKAROUND to avoid
     # a namespace collision with variable name specified by the user. I.e. if a
@@ -438,6 +446,7 @@ seteval() {
     # X') it could not be set for the global scope from within the function,
     # and should the user ever try set that same variable (with 'seteval X
     # <something>') $X would always remain unchanged for the user.
+    varname "$1" || error "seteval: Bad variable name '$1'"
     if [ "$2" = "+" ]; then
         set "$1" "$(eval "$3; echo .")"
         eval $1='${2%.}'
