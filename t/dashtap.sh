@@ -252,7 +252,9 @@ skip_all() {
 # will return "Return value # SKIP <REASON>" (see also SKIP/END_SKIP and
 # TODO/END_TODO).
 descr() {
-    local MODE="$1" DESCR="$2" REASON="$(eval "echo \"\$TEST_$1\"")"
+    local MODE="$1" DESCR="$2" REASON=""
+    [ "$MODE" = TODO -o "$MODE" = SKIP ] || error "descr: Bad MODE '$MODE'"
+    eval 'REASON="$TEST_'$1'"'
     case "$REASON" in
         "") echo "$DESCR" ;;
         .)  echo "${DESCR:+$DESCR }# $MODE" ;;
@@ -446,7 +448,7 @@ seteval() {
     # X') it could not be set for the global scope from within the function,
     # and should the user ever try set that same variable (with 'seteval X
     # <something>') $X would always remain unchanged for the user.
-    varname "$1" || error "seteval: Bad variable name '$1'"
+    varname "$1" || error "seteval: Bad VARNAME '$1'"
     if [ "$2" = "+" ]; then
         set "$1" "$(eval "$3; echo .")"
         eval $1='${2%.}'
