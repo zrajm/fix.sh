@@ -1,6 +1,9 @@
 -*- org -*-
 
 * Program
+** TODO 'is_file' should only strip one trailing newline                :BUG:
+   When this works, add test with two trailing newlines to
+   'dashtap-strip_newline.t' as well.
 ** TODO Dashtap variables should have prefix DASHTAP_*
    Not TEST_* as they have now.
 ** TODO Eliminate as many $(...) as possible
@@ -86,3 +89,7 @@
    CLOSED: [2014-07-20 Sun 15:01]
 ** DONE 'varname' should not allow empty string or '_'                  :BUG:
    CLOSED: [2014-07-20 Sun 15:01]
+** DONE Added 'strip_newline' and modified 'seteval' to make use of it
+   CLOSED: [2014-07-20 Sun 18:38]
+** DONE Added test cases for 'strip_newline'
+   CLOSED: [2014-07-20 Sun 18:40]

@@ -188,6 +188,26 @@ varname() {
     return 0
 }
 
+# Usage: strip_newline VARNAME
+#
+# Strip one trailing newline in VARNAME, or, if there is no trailing newline,
+# appends the string "\No newline at end".
+#
+# This is intended to prettify string for output (in 'fail' or similar) while
+# still having a predictable result (as opposed to the shell's builtin $(...)
+# which strips any number of trailing newlines).
+strip_newline() {
+    [ $# != 1 ]  && error "strip_newline: Too many arguments"
+    varname "$1" || error "strip_newline: Bad VARNAME '$1'"
+    eval 'set $1 "$'$1'" "
+"'  # $1 = variable name / $2 = variable content / $3 = newline
+    if [ "${2%$3}" = "$2" ]; then
+        eval $1'="$2\\No newline at end"'
+    else
+        eval $1'="${2%$3}"'
+    fi
+}
+
 # Usage: indent PROMPT [MSG] [<<EOF
 #            CONTENT
 #        EOF]
@@ -442,26 +462,16 @@ ok() {
 #     seteval X   'echo hello'         # set X to "hello"
 #     seteval X + 'echo hello'         # set X to "hello" + newline
 seteval() {
-    # NOTA BENE: Only positional parameters ($1, $2, etc) are used in this
-    # function, no other variables. THIS IS AN INTENTIONAL WORKAROUND to avoid
-    # a namespace collision with variable name specified by the user. I.e. if a
-    # variable $X was used in the function (and therefore declared with 'local
-    # X') it could not be set for the global scope from within the function,
-    # and should the user ever try set that same variable (with 'seteval X
-    # <something>') $X would always remain unchanged for the user.
+    # NOTA BENE: This function use only positional parameters ($1, $2, etc) no
+    # ordinary vars. This avoids namespace collision between local vars and
+    # VARNAME. (If local vars were used, and user one of those used in function
+    # it could not be set globally.)
+    [ "$2" != "+" ] && set "$1" "" "$2"        # $2 is '+' or ''
+    [ $# != 3 ]  && error "seteval: Bad number of args"
     varname "$1" || error "seteval: Bad VARNAME '$1'"
-    if [ "$2" = "+" ]; then
-        set "$1" "$(eval "$3; echo .")"
-        eval $1='${2%.}'
-        return
-    fi
-    set "$1" "$(eval "$2; echo .")"
-    set "$1" "${2%.}" "
-"   # NB: intentional newline
-    if [ "$2" = "${2%$3}" ]; then
-        set "$1" "$2\No newline at end" "$3"
-    fi
-    eval $1='${2%$3}'
+    set  $1 "$2" "$(eval "$3"; echo .)"
+    eval $1='${3%.}'
+    [ -z "$2" ] && strip_newline $1
 }
 
 ##############################################################################
