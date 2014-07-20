@@ -667,10 +667,11 @@ execute() {
     fi
     [ -z "$TRAPFILE" ] && error "execute: Missing TRAPFILE argument"
     (
-        trap "echo EXIT >$TRAPFILE; trap - 0" 0
+        trap "echo EXIT >\"$TRAPFILE\"; trap - 0" 0
         eval "$CMD"
         STATUS=$?
-        trap "echo FULL >$TRAPFILE; trap - 0" 0
+        trap - 0
+        echo FULL >"$TRAPFILE"
         exit $STATUS
     )
 }

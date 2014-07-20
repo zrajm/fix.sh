@@ -1,6 +1,11 @@
 -*- org -*-
 
 * Program
+** TODO Dashtap variables should have prefix DASHTAP_*
+   Not TEST_* as they have now.
+** TODO Eliminate as many $(...) as possible
+   Each $(...) starts a subshell, which is inefficient, this should be avoided
+   whenever possible.
 ** TODO Separate docs from source code
    Using Markdown?
 ** TODO Separate Fix.sh test helper functions from Dashtap
@@ -14,6 +19,23 @@
    Should read content of FILE into variable named VARNAME (preserving all
    whitespace). This function should be used by 'file_is', and 'execute'.
 ** TODO Function to test if a function exists
+** TODO $BAIL_ON_FAIL/$DIE_ON_FAIL messages
+   If $BAIL_ON_FAIL or $DIE_ON_FAIL contains a message, output that before
+   exiting.
+** TODO Extra fail message
+   An extra fail message that can be set by a command, which will be displayed
+   only as a diagnostic if there is a failure, and which is valid until it is
+   reset.
+
+   E.g. 'extra "TODO-related tests"' would add an extra line to the beginning
+   of the failure message, like this:
+
+       not ok 35 - Exit status
+       #   TODO-related tests
+       #   Failed test 'Exit status'
+       #   in 'xt/dashtap-todo.t'
+       #     GOT   : 255
+       #     WANTED: 1
 * Testing
 ** TODO Test 'on_exit'
 ** TODO Test 'done_testing'
@@ -56,3 +78,7 @@
    CLOSED: [2014-07-18 Fri 18:31]
 ** DONE Test 'END_TODO'
    CLOSED: [2014-07-18 Fri 18:31]
+** DONE 'execute' should use only one trap
+   CLOSED: [2014-07-20 Sun 09:10]
+   A simple echo should suffice to catch the 'FULL' case, instead of the trap
+   at the end of the 'execute' function.
