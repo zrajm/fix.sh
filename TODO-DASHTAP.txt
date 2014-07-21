@@ -19,8 +19,6 @@
    fi
    read
    echo $REPLY
-** TODO Dashtap variables should have prefix DASHTAP_*
-   Not TEST_* as they have now.
 ** TODO Eliminate as many $(...) as possible
    Each $(...) starts a subshell, which is inefficient, this should be avoided
    whenever possible.
@@ -31,7 +29,6 @@
    This would have to be automatically cloned and built by the Fix.sh build
    system. (Or at least have a very simple way of doing this described in the
    README.)
-** TODO 'seteval' should test that variable name given is valid
 ** TODO Merge 'is_changed' and 'is_unchanged' to follow DRY
 ** TODO Function to test if a function exists
 ** TODO $BAIL_ON_FAIL/$DIE_ON_FAIL messages
@@ -51,9 +48,14 @@
        #   in 'xt/dashtap-todo.t'
        #     GOT   : 255
        #     WANTED: 1
+* To think about
+** TODO Should 'error' output be compatible with TAP?
+   Currently 'error' just aborts and outputs something on stderr, but should it
+   also be prefixed with '# '?
 * Testing
 ** TODO Quote all <<"EOF" in test scripts
-** TODO Test 'on_exit'
+** TODO Test 'dashtap_init'
+** TODO Test 'dashtap_exit'
 ** TODO Test 'done_testing'
 ** TODO Test 'skip_all'
 ** TODO Test 'BAIL_OUT'
@@ -116,3 +118,10 @@
    CLOSED: [2014-07-21 Mon 15:01]
    When this works, add test with two trailing newlines to
    'dashtap-strip_newline.t' as well.
+** DONE Dashtap variables should have prefix DASHTAP_*
+   CLOSED: [2014-07-21 Mon 16:06]
+   Not TEST_* as they have now.
+** DONE No references to DASHTAP_* variables outside 'dashtap.sh' itself
+   CLOSED: [2014-07-21 Mon 16:06]
+   Added 'dashtap_init' which can be used to re-initialize the variables (e.g.
+   in author tests).

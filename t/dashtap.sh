@@ -64,10 +64,10 @@
 ##    Each part of a pipe is executed in its own subshell, meaning that
 ##    variables set inside a command pipeline CANNOT be seen by the surrounding
 ##    shell. This means that if you put your test function (any function that
-##    call 'pass' or 'fail') in a pipe, it cannot update the global $TEST_COUNT
-##    variable, meaning that your test count will not agree with the number of
-##    'ok' (and 'not ok') in your TAP output. The following code is therefore
-##    also (subtly) broken:
+##    call 'pass' or 'fail') in a pipe, the global $DASHTAP_COUNT variable
+##    can't be updated, meaning that your test count will not agree with the
+##    number of 'ok'/'not ok' messages in your TAP output. The following code
+##    is therefore also (subtly) broken:
 ##
 ##        # BROKEN EXAMPLE -- DON'T USE
 ##        {
@@ -141,30 +141,34 @@
 ##                                                                          ##
 ##############################################################################
 
-TEST_COUNT=0                                   # tests performed
-TEST_FAILS=0                                   # failed tests
-TEST_PLANNED=-1                                # plan (set by done_testing)
-TEST_TODO=""                                   # TODO reason (if any)
-TEST_SKIP=""                                   # SKIP reason (if any)
-trap 'on_exit; trap - 0' 0                     # exit messages
-on_exit() {
-    if [ $TEST_COUNT = 0 ]; then
+dashtap_init() {
+    DASHTAP_COUNT=0                            # tests performed
+    DASHTAP_FAILS=0                            # failed tests
+    DASHTAP_PLANNED=-1                         # plan (set by done_testing)
+    DASHTAP_TODO=""                            # TODO reason (if any)
+    DASHTAP_SKIP=""                            # SKIP reason (if any)
+    trap 'dashtap_exit; trap - 0' 0            # exit messages
+}
+dashtap_init
+dashtap_exit() {
+    [ -z "$DASHTAP_COUNT" ] && error "result: 'dashtap_init' was never called"
+    if [ "$DASHTAP_COUNT" = 0 ]; then
         diag "No tests run!"
         error
     fi
-    if [ $TEST_PLANNED = -1 ]; then
+    if [ "$DASHTAP_PLANNED" = -1 ]; then
         diag "Tests were run but done_testing() was not seen."
         error
     fi
-    [ $TEST_PLANNED = $TEST_COUNT -a $TEST_FAILS = 0 ] && exit 0
-    if [ $TEST_COUNT != $TEST_PLANNED ]; then
-        diag "Looks like you planned $TEST_PLANNED test(s) but ran $TEST_COUNT."
+    [ "$DASHTAP_PLANNED" = "$DASHTAP_COUNT" -a "$DASHTAP_FAILS" = 0 ] && exit 0
+    if [ "$DASHTAP_COUNT" != "$DASHTAP_PLANNED" ]; then
+        diag "Looks like you planned $DASHTAP_PLANNED test(s) but ran $DASHTAP_COUNT."
     fi
-    if [ $TEST_FAILS -gt 0 ]; then
-        diag "Looks like you failed $TEST_FAILS test(s) of $TEST_COUNT."
+    if [ "$DASHTAP_FAILS" -gt 0 ]; then
+        diag "Looks like you failed $DASHTAP_FAILS test(s) of $DASHTAP_COUNT."
     fi
-    [ $TEST_FAILS -gt 254 ] && TEST_FAILS=254
-    exit $TEST_FAILS
+    [ "$DASHTAP_FAILS" -gt 254 ] && DASHTAP_FAILS=254
+    exit "$DASHTAP_FAILS"
 }
 
 error() {
@@ -247,9 +251,9 @@ indent() {
 }
 
 done_testing() {
-    if [ $TEST_PLANNED = -1 ]; then
-        echo "1..$TEST_COUNT"
-        TEST_PLANNED=$TEST_COUNT
+    if [ "$DASHTAP_PLANNED" = -1 ]; then
+        echo "1..$DASHTAP_COUNT"
+        DASHTAP_PLANNED="$DASHTAP_COUNT"
         return 0
     fi
     fail "done_testing() already called"
@@ -257,12 +261,12 @@ done_testing() {
 
 skip_all() {
     local REASON="$1"
-    if [ $TEST_PLANNED = -1 ]; then
+    if [ "$DASHTAP_PLANNED" = -1 ]; then
         echo "1..0 # SKIP $REASON"
     else
         echo "skip_all() called after done_testing()" >&2
     fi
-    exit $TEST_FAILS
+    exit "$DASHTAP_FAILS"
 }
 
 # Usage: $(descr MODE [DESCR])
@@ -275,7 +279,7 @@ skip_all() {
 descr() {
     local MODE="$1" DESCR="$2" REASON=""
     [ "$MODE" = TODO -o "$MODE" = SKIP ] || error "descr: Bad MODE '$MODE'"
-    eval 'REASON="$TEST_'$1'"'
+    eval 'REASON="$DASHTAP_'$1'"'
     case "$REASON" in
         "") echo "$DESCR" ;;
         .)  echo "${DESCR:+$DESCR }# $MODE" ;;
@@ -306,7 +310,7 @@ descr() {
 # single test as TODO.)
 TODO() {
     [ $# -gt 1 ] && error "TODO: Too many args"
-    TEST_TODO="${1:-.}"
+    DASHTAP_TODO="${1:-.}"
 }
 
 # Usage: END_TODO
@@ -314,17 +318,17 @@ TODO() {
 # Turn off TODO mode. Takes no arguments.
 END_TODO() {
     [ $# = 0 ] || error "END_TODO: No args allowed"
-    TEST_TODO=""
+    DASHTAP_TODO=""
 }
 
 SKIP() {
     [ $# -gt 1 ] && error "SKIP: Too many args"
-    TEST_SKIP="${1:-.}"
+    DASHTAP_SKIP="${1:-.}"
 }
 
 END_SKIP() {
     [ $# = 0 ] || error "END_SKIP: No args allowed"
-    TEST_SKIP=""
+    DASHTAP_SKIP=""
 }
 
 BAIL_OUT() {
@@ -375,11 +379,12 @@ note() {
 # automatically increased.
 result() {
     local RESULT="$1" DESCR="$2"
-    TEST_COUNT="$(( TEST_COUNT + 1 ))"
+    [ -z "$DASHTAP_COUNT" ] && error "result: 'dashtap_init' was never called"
+    DASHTAP_COUNT="$(( DASHTAP_COUNT + 1 ))"
     case "$DESCR" in
-        "")  echo "$RESULT $TEST_COUNT" ;;
-        \#*) echo "$RESULT $TEST_COUNT $DESCR" ;;
-        *)   echo "$RESULT $TEST_COUNT - $DESCR" ;;
+        "")  echo "$RESULT $DASHTAP_COUNT" ;;
+        \#*) echo "$RESULT $DASHTAP_COUNT $DESCR" ;;
+        *)   echo "$RESULT $DASHTAP_COUNT - $DESCR" ;;
     esac
 }
 
@@ -409,7 +414,7 @@ fail() {
     local DESCR="$(descr TODO "$1")" MSG="$2"
     result "not ok" "$DESCR"
     match "# TODO" "$DESCR" && return 0        # no diagnostics for TODO tests
-    TEST_FAILS=$(( TEST_FAILS + 1 ))
+    DASHTAP_FAILS="$(( DASHTAP_FAILS + 1 ))"
     # Insert extra newline when piped (so 'prove' output looks ok).
     # (Skip this if we're bailing out after the failure.)
     [ -n "$BAIL_ON_FAIL" -o -t 1 ] || echo >&2

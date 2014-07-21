@@ -15,7 +15,7 @@ note <<-EOF
 	EOF
 
 execute <<EOF trap >out 2>err
-    TEST_COUNT=0
+    dashtap_init
     is 1 2 'descr # TODO with reason'
 EOF
 is        $?        0          "Exit status"
@@ -32,7 +32,7 @@ note <<-EOF
 	EOF
 
 execute <<EOF trap >out 2>err
-    TEST_COUNT=0
+    dashtap_init
     is 1 2 'descr # TODO'
 EOF
 is        $?        0          "Exit status"
@@ -49,7 +49,7 @@ note <<-EOF
 	EOF
 
 execute <<EOF trap >out 2>err
-    TEST_COUNT=0
+    dashtap_init
     is 1 2 '# TODO with reason'
 EOF
 is        $?        0          "Exit status"
@@ -66,7 +66,7 @@ note <<-EOF
 	EOF
 
 execute <<EOF trap >out 2>err
-    TEST_COUNT=0
+    dashtap_init
     is 1 2 '# TODO'
 EOF
 is        $?        0          "Exit status"
@@ -83,7 +83,7 @@ note <<-EOF
 	EOF
 
 execute <<"EOF" trap >out 2>err
-    TEST_COUNT=0
+    dashtap_init
     TODO "'\"with reason"
     is 1 2 'descr'
 EOF
@@ -101,7 +101,7 @@ note <<-EOF
 	EOF
 
 execute <<EOF trap >out 2>err
-    TEST_COUNT=0
+    dashtap_init
     TODO
     is 1 2 'descr'
 EOF
@@ -119,7 +119,7 @@ note <<-EOF
 	EOF
 
 execute <<EOF trap >out 2>err
-    TEST_COUNT=0
+    dashtap_init
     TODO "with reason"
     is 1 2
 EOF
@@ -137,7 +137,7 @@ note <<-EOF
 	EOF
 
 execute <<EOF trap >out 2>err
-    TEST_COUNT=0
+    dashtap_init
     TODO
     is 1 2
 EOF
@@ -160,7 +160,7 @@ note <<-EOF
 	EOF
 
 execute <<"EOF" trap >out 2>err
-    TEST_COUNT=0
+    dashtap_init
     TODO
     END_TODO
     unset BAIL_ON_FAIL DIE_ON_FAIL
@@ -184,7 +184,7 @@ note <<-EOF
 	EOF
 
 execute <<EOF trap >out 2>err
-    TEST_COUNT=0
+    dashtap_init
     TODO
     END_TODO
     unset BAIL_ON_FAIL DIE_ON_FAIL
