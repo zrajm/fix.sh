@@ -24,7 +24,7 @@ METADATA="$(timestamp .fix/state/TARGET)"
 
 "$TESTCMD" TARGET >stdout 2>stderr
 is              $?                   5             "Exit status"
-file_is         stdout               ""            "Standard output"
+file_is         stdout               "$NADA"       "Standard output"
 file_is         stderr               "$ERRMSG"     "Standard error"
 file_is         build/TARGET         "OUTPUT"      "Target"
 is_unchanged    "$TARGET"                          "Target timestamp"

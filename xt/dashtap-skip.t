@@ -1,6 +1,7 @@
 #!/usr/bin/env dash
 # -*- sh -*-
 . "t/dashtap.sh"
+NADA=""; strip_newline NADA                    # NADA = '\No newline at end'
 
 is "$(type SKIP)"     "SKIP is a shell function"     "Function 'SKIP' exists"
 is "$(type END_SKIP)" "END_SKIP is a shell function" "Function 'END_SKIP' exists"
@@ -19,7 +20,7 @@ execute <<EOF trap >out 2>err
 EOF
 is        $?        0          "Exit status"
 file_is   out       "$STDOUT"  "Standard output"
-file_is   err       ""         "Standard error"
+file_is   err       "$NADA"    "Standard error"
 file_is   trap      "FULL"     "Didn't call exit"
 
 ##############################################################################
@@ -36,7 +37,7 @@ execute <<EOF trap >out 2>err
 EOF
 is        $?        0          "Exit status"
 file_is   out       "$STDOUT"  "Standard output"
-file_is   err       ""         "Standard error"
+file_is   err       "$NADA"    "Standard error"
 file_is   trap      "FULL"     "Didn't call exit"
 
 ##############################################################################
@@ -53,7 +54,7 @@ execute <<EOF trap >out 2>err
 EOF
 is        $?        0          "Exit status"
 file_is   out       "$STDOUT"  "Standard output"
-file_is   err       ""         "Standard error"
+file_is   err       "$NADA"    "Standard error"
 file_is   trap      "FULL"     "Didn't call exit"
 
 ##############################################################################
@@ -70,7 +71,7 @@ execute <<EOF trap >out 2>err
 EOF
 is        $?        0          "Exit status"
 file_is   out       "$STDOUT"  "Standard output"
-file_is   err       ""         "Standard error"
+file_is   err       "$NADA"    "Standard error"
 file_is   trap      "FULL"     "Didn't call exit"
 
 ##############################################################################
@@ -88,7 +89,7 @@ execute <<EOF trap >out 2>err
 EOF
 is        $?        0          "Exit status"
 file_is   out       "$STDOUT"  "Standard output"
-file_is   err       ""         "Standard error"
+file_is   err       "$NADA"    "Standard error"
 file_is   trap      "FULL"     "Didn't call exit"
 
 ##############################################################################
@@ -106,7 +107,7 @@ execute <<EOF trap >out 2>err
 EOF
 is        $?        0          "Exit status"
 file_is   out       "$STDOUT"  "Standard output"
-file_is   err       ""         "Standard error"
+file_is   err       "$NADA"    "Standard error"
 file_is   trap      "FULL"     "Didn't call exit"
 
 ##############################################################################
@@ -124,7 +125,7 @@ execute <<EOF trap >out 2>err
 EOF
 is        $?        0          "Exit status"
 file_is   out       "$STDOUT"  "Standard output"
-file_is   err       ""         "Standard error"
+file_is   err       "$NADA"    "Standard error"
 file_is   trap      "FULL"     "Didn't call exit"
 
 ##############################################################################
@@ -142,7 +143,7 @@ execute <<EOF trap >out 2>err
 EOF
 is        $?        0          "Exit status"
 file_is   out       "$STDOUT"  "Standard output"
-file_is   err       ""         "Standard error"
+file_is   err       "$NADA"    "Standard error"
 file_is   trap      "FULL"     "Didn't call exit"
 
 ##############################################################################
@@ -162,6 +163,7 @@ execute <<EOF trap >out 2>err
     TEST_COUNT=0
     SKIP
     END_SKIP
+    unset BAIL_ON_FAIL DIE_ON_FAIL
     is 1 2 "descr"
 EOF
 is        $?        1          "Exit status"
@@ -185,6 +187,7 @@ execute <<EOF trap >out 2>err
     TEST_COUNT=0
     SKIP
     END_SKIP
+    unset BAIL_ON_FAIL DIE_ON_FAIL
     is 1 2
 EOF
 is        $?        1          "Exit status"

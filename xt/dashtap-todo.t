@@ -1,6 +1,7 @@
 #!/usr/bin/env dash
 # -*- sh -*-
 . "t/dashtap.sh"
+NADA=""; strip_newline NADA                    # NADA = '\No newline at end'
 
 is "$(type TODO)"     "TODO is a shell function"     "Function 'TODO' exists"
 is "$(type END_TODO)" "END_TODO is a shell function" "Function 'END_TODO' exists"
@@ -19,7 +20,7 @@ execute <<EOF trap >out 2>err
 EOF
 is        $?        0          "Exit status"
 file_is   out       "$STDOUT"  "Standard output"
-file_is   err       ""         "Standard error"
+file_is   err       "$NADA"    "Standard error"
 file_is   trap      "FULL"     "Didn't call exit"
 
 ##############################################################################
@@ -36,7 +37,7 @@ execute <<EOF trap >out 2>err
 EOF
 is        $?        0          "Exit status"
 file_is   out       "$STDOUT"  "Standard output"
-file_is   err       ""         "Standard error"
+file_is   err       "$NADA"    "Standard error"
 file_is   trap      "FULL"     "Didn't call exit"
 
 ##############################################################################
@@ -53,7 +54,7 @@ execute <<EOF trap >out 2>err
 EOF
 is        $?        0          "Exit status"
 file_is   out       "$STDOUT"  "Standard output"
-file_is   err       ""         "Standard error"
+file_is   err       "$NADA"    "Standard error"
 file_is   trap      "FULL"     "Didn't call exit"
 
 ##############################################################################
@@ -70,25 +71,25 @@ execute <<EOF trap >out 2>err
 EOF
 is        $?        0          "Exit status"
 file_is   out       "$STDOUT"  "Standard output"
-file_is   err       ""         "Standard error"
+file_is   err       "$NADA"    "Standard error"
 file_is   trap      "FULL"     "Didn't call exit"
 
 ##############################################################################
 
 cd "$(mktemp -d)"
-STDOUT="not ok 1 - descr # TODO with reason"
+STDOUT="not ok 1 - descr # TODO '\"with reason"
 note <<-EOF
 	Test description + TODO with reason as separate function.
 	EOF
 
-execute <<EOF trap >out 2>err
+execute <<"EOF" trap >out 2>err
     TEST_COUNT=0
-    TODO "with reason"
+    TODO "'\"with reason"
     is 1 2 'descr'
 EOF
 is        $?        0          "Exit status"
 file_is   out       "$STDOUT"  "Standard output"
-file_is   err       ""         "Standard error"
+file_is   err       "$NADA"    "Standard error"
 file_is   trap      "FULL"     "Didn't call exit"
 
 ##############################################################################
@@ -106,7 +107,7 @@ execute <<EOF trap >out 2>err
 EOF
 is        $?        0          "Exit status"
 file_is   out       "$STDOUT"  "Standard output"
-file_is   err       ""         "Standard error"
+file_is   err       "$NADA"    "Standard error"
 file_is   trap      "FULL"     "Didn't call exit"
 
 ##############################################################################
@@ -124,7 +125,7 @@ execute <<EOF trap >out 2>err
 EOF
 is        $?        0          "Exit status"
 file_is   out       "$STDOUT"  "Standard output"
-file_is   err       ""         "Standard error"
+file_is   err       "$NADA"    "Standard error"
 file_is   trap      "FULL"     "Didn't call exit"
 
 ##############################################################################
@@ -142,7 +143,7 @@ execute <<EOF trap >out 2>err
 EOF
 is        $?        0          "Exit status"
 file_is   out       "$STDOUT"  "Standard output"
-file_is   err       ""         "Standard error"
+file_is   err       "$NADA"    "Standard error"
 file_is   trap      "FULL"     "Didn't call exit"
 
 ##############################################################################
@@ -158,10 +159,11 @@ note <<-EOF
 	Test description + no TODO.
 	EOF
 
-execute <<EOF trap >out 2>err
+execute <<"EOF" trap >out 2>err
     TEST_COUNT=0
     TODO
     END_TODO
+    unset BAIL_ON_FAIL DIE_ON_FAIL
     is 1 2 "descr"
 EOF
 is        $?        1          "Exit status"
@@ -185,6 +187,7 @@ execute <<EOF trap >out 2>err
     TEST_COUNT=0
     TODO
     END_TODO
+    unset BAIL_ON_FAIL DIE_ON_FAIL
     is 1 2
 EOF
 is        $?        1          "Exit status"

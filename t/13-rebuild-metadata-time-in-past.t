@@ -20,8 +20,8 @@ TARGET="$(timestamp build/TARGET)"
 METADATA="$(timestamp .fix/state/TARGET)"
 
 "$TESTCMD" TARGET >stdout 2>stderr
-file_is         stdout               ""            "Standard output"
-file_is         stderr               ""            "Standard error"
+file_is         stdout               "$NADA"       "Standard output"
+file_is         stderr               "$NADA"       "Standard error"
 file_is         build/TARGET         "OUTPUT"      "Target"
 is_unchanged    "$TARGET"                          "Target timestamp"
 file_exist      .fix/state/TARGET                  "Metadata file"

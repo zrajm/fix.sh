@@ -1,7 +1,7 @@
 #!/usr/bin/env dash
 # -*- sh -*-
 . "t/dashtap.sh"
-setread NADA
+NADA=""; strip_newline NADA                    # NADA = '\No newline at end'
 
 is "$(type setread)" "setread is a shell function" "Function 'setread' exists"
 
@@ -14,7 +14,7 @@ execute <<"EOF" trap >out 2>err
     setread ""
 EOF
 is        $?        255        "Exit status"
-file_is   out       ""         "Standard output"
+file_is   out       "$NADA"    "Standard output"
 file_is   err       "$STDERR"  "Standard error"
 file_is   trap      "EXIT"     "Called exit"
 
@@ -27,7 +27,7 @@ execute <<"EOF" trap >out 2>err
     setread too many args
 EOF
 is        $?        255        "Exit status"
-file_is   out       ""         "Standard output"
+file_is   out       "$NADA"    "Standard output"
 file_is   err       "$STDERR"  "Standard error"
 file_is   trap      "EXIT"     "Called exit"
 
@@ -42,7 +42,7 @@ execute <<"EOF" trap >out 2>err
 EOF
 is        $?        0          "Exit status"
 file_is   out       "$NADA"    "Standard output"
-file_is   err       ""         "Standard error"
+file_is   err       "$NADA"    "Standard error"
 file_is   trap      "FULL"     "Didn't call exit"
 
 ##############################################################################
@@ -56,7 +56,7 @@ execute <<"EOF" trap >out 2>err
 EOF
 is        $?        0          "Exit status"
 file_is   out       "$NADA"    "Standard output"
-file_is   err       ""         "Standard error"
+file_is   err       "$NADA"    "Standard error"
 file_is   trap      "FULL"     "Didn't call exit"
 
 ##############################################################################
@@ -73,7 +73,7 @@ execute <<"EOF" trap >out 2>err
 EOF
 is        $?        0          "Exit status"
 file_is   out       "$VAR"     "Standard output"
-file_is   err       ""         "Standard error"
+file_is   err       "$NADA"    "Standard error"
 file_is   trap      "FULL"     "Didn't call exit"
 
 ##############################################################################

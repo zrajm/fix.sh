@@ -28,7 +28,7 @@ sleep .1
 ## instance should have established a lockfile.
 "$TESTCMD" TARGET >stdout2 2>stderr2
 is              $?                   8             "Blocked's exit status"
-file_is         stdout2              ""            "Blocked's standard output"
+file_is         stdout2              "$NADA"       "Blocked's standard output"
 file_is         stderr2              "$ERRMSG"     "Blocked's standard error"
 
 ## This fifo is read by the buildscript (which is currently just hanging,
@@ -40,8 +40,8 @@ echo PIPED >fifo
 ## that it wasn't disturbed somehow.
 wait "$PID"
 is              $?                   0             "Exit status"
-file_is         stdout1              ""            "Standard output"
-file_is         stderr1              ""            "Standard error"
+file_is         stdout1              "$NADA"       "Standard output"
+file_is         stderr1              "$NADA"       "Standard error"
 file_not_exist  build/TARGET--fixing               "Target tempfile shouldn't exist"
 file_is         build/TARGET         "PIPED"       "Target"
 file_exist      .fix/state/TARGET                  "Metadata file"

@@ -115,3 +115,5 @@
    CLOSED: [2014-07-20 Sun 19:32]
    Should read standard input into variable named VARNAME (preserving all
    whitespace). This function should be used by 'file_is', and 'execute'.
+** DONE 'execute' and 'file_is' now uses 'setread'
+   CLOSED: [2014-07-21 Mon 14:43]

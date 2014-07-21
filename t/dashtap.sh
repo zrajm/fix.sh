@@ -578,10 +578,9 @@ is() {
 }
 
 file_is() {
-    local FILE="$1" WANTED="$2" DESCR="$(descr SKIP "$3")"
+    local FILE="$1" WANTED="$2" DESCR="$(descr SKIP "$3")" GOT=""
     match "# SKIP" "$DESCR" && pass "$DESCR" && return
-    # FIXME: don't ignore trailing newlines
-    local GOT="$(cat "$FILE")"
+    setread GOT <"$FILE"
     is "$GOT" "$WANTED" "$DESCR"
 }
 
@@ -692,7 +691,8 @@ is_unchanged() {
 # Also sets the TESTCMD variable to the full path of 'fix.sh' (it should be
 # used in tests instead of refering to any literal executable).
 init_test() {
-    readonly TESTCMD="$PWD/fix.sh"
+    NADA=""; strip_newline NADA                # NADA = '\No newline at end'
+    readonly TESTCMD="$PWD/fix.sh" NADA
     local TESTFILE="$PWD/$0" TESTDIR="$PWD/${0%.t}"
     local TMPDIR="$(mktemp -dt "fix-test-${TESTDIR##*/}.XXXXXX")"
     cd "$TMPDIR"
