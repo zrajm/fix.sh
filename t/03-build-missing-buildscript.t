@@ -1,7 +1,7 @@
 #!/usr/bin/env dash
 # -*- sh -*-
 . "t/dashtap.sh"
-note <<EOF
+note <<"EOF"
 Attempt to build target when there is no build script for it.
 EOF
 

@@ -16,7 +16,7 @@ note <<-EOF
 	Test description + TODO with reason in description.
 	EOF
 
-execute <<EOF trap >out 2>err
+execute <<"EOF" trap >out 2>err
     dashtap_init
     is 1 2 'descr # TODO with reason'
 EOF
@@ -33,7 +33,7 @@ note <<-EOF
 	Test description + TODO without reason in description.
 	EOF
 
-execute <<EOF trap >out 2>err
+execute <<"EOF" trap >out 2>err
     dashtap_init
     is 1 2 'descr # TODO'
 EOF
@@ -50,7 +50,7 @@ note <<-EOF
 	No test description + TODO with reason in description.
 	EOF
 
-execute <<EOF trap >out 2>err
+execute <<"EOF" trap >out 2>err
     dashtap_init
     is 1 2 '# TODO with reason'
 EOF
@@ -67,7 +67,7 @@ note <<-EOF
 	No test description + TODO without reason in description.
 	EOF
 
-execute <<EOF trap >out 2>err
+execute <<"EOF" trap >out 2>err
     dashtap_init
     is 1 2 '# TODO'
 EOF
@@ -102,7 +102,7 @@ note <<-EOF
 	Test description + TODO without reason as separate function.
 	EOF
 
-execute <<EOF trap >out 2>err
+execute <<"EOF" trap >out 2>err
     dashtap_init
     TODO
     is 1 2 'descr'
@@ -120,7 +120,7 @@ note <<-EOF
 	No test description + TODO with reason as separate function.
 	EOF
 
-execute <<EOF trap >out 2>err
+execute <<"EOF" trap >out 2>err
     dashtap_init
     TODO "with reason"
     is 1 2
@@ -138,7 +138,7 @@ note <<-EOF
 	No test description + TODO without reason as separate function.
 	EOF
 
-execute <<EOF trap >out 2>err
+execute <<"EOF" trap >out 2>err
     dashtap_init
     TODO
     is 1 2
@@ -185,7 +185,7 @@ note <<-EOF
 	No test description + no TODO.
 	EOF
 
-execute <<EOF trap >out 2>err
+execute <<"EOF" trap >out 2>err
     dashtap_init
     TODO
     END_TODO

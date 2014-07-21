@@ -11,21 +11,6 @@
 ** TODO 'setread' should support third string arg
    When this is added, also add a test to 'dashtap-setread.t' which test how
    'setread' reacts to input that does not end in newline.
-** TODO 'setread' should refuse pipe input
-   The following recipe could be used to detect pipe input and differentiate it
-   from stdin redirect:
-
-   if [ -p /dev/stdin ]; then
-       echo "stdin is coming from a pipe"
-   fi
-   if [ -t 0 ]; then
-       echo "stdin is coming from the terminal"
-   fi
-   if [ ! -t 0 && ! -p /dev/stdin ]; then
-       echo "stdin is redirected"
-   fi
-   read
-   echo $REPLY
 ** TODO Eliminate as many $(...) as possible
    Each $(...) starts a subshell, which is inefficient, this should be avoided
    whenever possible.
@@ -59,7 +44,6 @@
    Currently 'error' just aborts and outputs something on stderr, but should it
    also be prefixed with '# '?
 * Testing
-** TODO Quote all <<"EOF" in test scripts
 ** TODO Test reading of stdin for 'match' function
 ** TODO 'dashtap-todo.t' and 'dashtap-skip.t' should be very similar
    Currently there is some testing of ' and " in one of them.
@@ -138,3 +122,16 @@
    CLOSED: [2014-07-21 Mon 22:02]
 ** DONE Rename test functions '*_exist' -> '*_exists'
    CLOSED: [2014-07-22 Tue 00:47]
+** NOTDONE 'setread' should refuse pipe input
+   CLOSED: [2014-07-22 Tue 00:59]
+
+   We could use [ -p /dev/stdin ] in 'setread' to test whether was invoked in a
+   pipe or not. But stopping the user from doing this would backfire, since it
+   is sometimes desirable to use it in this way.
+
+   E.g. if 'match' uses 'setread' to read its input from standard input, and
+   then match was invoked by `echo "$STR" | match "$SUBSTR"`, the pipe error
+   would abort match even though the only thing relevant here is the return
+   status of 'match'.
+** DONE Quote all <<"EOF" in test scripts
+   CLOSED: [2014-07-22 Tue 01:06]

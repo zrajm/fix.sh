@@ -177,7 +177,7 @@ error() {
 }
 
 # Usage: match SUBSTR STRING
-#    or: match SUBSTR <<EOF
+#    or: match SUBSTR <<"EOF"
 #            STRING
 #        EOF
 #
@@ -225,7 +225,7 @@ strip_newline() {
     fi
 }
 
-# Usage: indent PROMPT [MSG] [<<EOF
+# Usage: indent PROMPT [MSG] [<<"EOF"
 #            CONTENT
 #        EOF]
 #
@@ -349,7 +349,7 @@ BAIL_OUT() {
     error
 }
 
-# Usage: diag [MSG] [<<EOF
+# Usage: diag [MSG] [<<"EOF"
 #            CONTENT
 #        EOF]
 #
@@ -366,7 +366,7 @@ diag() {
     return 1
 }
 
-# Usage: note [MSG] [<<EOF
+# Usage: note [MSG] [<<"EOF"
 #            CONTENT
 #        EOF]
 #
@@ -470,7 +470,7 @@ ok() {
 }
 
 # Usage: setread VARNAME [+] [<FILE]
-#    or: setread VARNAME [+] <<EOF
+#    or: setread VARNAME [+] <<"EOF"
 #            CONTENT
 #        EOF
 #
@@ -733,7 +733,7 @@ init_test() {
 }
 
 # Usage: execute CMD TRAPFILE
-#    or: execute <<EOF TRAPFILE
+#    or: execute <<"EOF" TRAPFILE
 #            CMD
 #        EOF
 #
@@ -781,7 +781,7 @@ chtime() {
     touch -t"$TIME" "$FILE" || error "chtime: 'touch' cannot update '$FILE'"
 }
 
-# Usage: write_file [BITS] [TIME] FILE [<<EOF
+# Usage: write_file [BITS] [TIME] FILE [<<"EOF"
 #            CONTENT
 #        EOF]
 #

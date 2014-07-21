@@ -1,7 +1,7 @@
 #!/usr/bin/env dash
 # -*- sh -*-
 . "t/dashtap.sh"
-note <<EOF
+note <<"EOF"
 Attempt to build target with buildscript with execute bits unset.
 EOF
 

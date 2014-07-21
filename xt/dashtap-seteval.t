@@ -12,7 +12,7 @@ function_exists     seteval    "Function 'seteval' exists"
 cd "$(mktemp -d)"
 note "Bad variable name"
 STDERR="seteval: Bad VARNAME ''"
-execute <<EOF trap >out 2>err
+execute <<"EOF" trap >out 2>err
     seteval ""
 EOF
 is        $?        255        "Exit status"
@@ -25,7 +25,7 @@ file_is   trap      "EXIT"     "Called exit"
 cd "$(mktemp -d)"
 note "Too many args"
 STDERR="seteval: Too many args"
-execute <<EOF trap >out 2>err
+execute <<"EOF" trap >out 2>err
     seteval too many args here
 EOF
 is        $?        255        "Exit status"

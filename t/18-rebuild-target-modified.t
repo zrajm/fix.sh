@@ -1,7 +1,7 @@
 #!/usr/bin/env dash
 # -*- sh -*-
 . "t/dashtap.sh"
-note <<EOF
+note <<"EOF"
 Attempt to rebuild target when previous target exist and is modified. (Based on
 07.)
 EOF

@@ -1,7 +1,7 @@
 #!/usr/bin/env dash
 # -*- sh -*-
 . "t/dashtap.sh"
-note <<EOF
+note <<"EOF"
 Rebuild target after buildscript have been changed so that it now fails. (Based
 on 07.)
 EOF

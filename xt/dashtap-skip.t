@@ -16,7 +16,7 @@ note <<-EOF
 	Test description + SKIP with reason in description.
 	EOF
 
-execute <<EOF trap >out 2>err
+execute <<"EOF" trap >out 2>err
     dashtap_init
     is 1 2 'descr # SKIP with reason'
 EOF
@@ -33,7 +33,7 @@ note <<-EOF
 	Test description + SKIP without reason in description.
 	EOF
 
-execute <<EOF trap >out 2>err
+execute <<"EOF" trap >out 2>err
     dashtap_init
     is 1 2 'descr # SKIP'
 EOF
@@ -50,7 +50,7 @@ note <<-EOF
 	No test description + SKIP with reason in description.
 	EOF
 
-execute <<EOF trap >out 2>err
+execute <<"EOF" trap >out 2>err
     dashtap_init
     is 1 2 '# SKIP with reason'
 EOF
@@ -67,7 +67,7 @@ note <<-EOF
 	No test description + SKIP without reason in description.
 	EOF
 
-execute <<EOF trap >out 2>err
+execute <<"EOF" trap >out 2>err
     dashtap_init
     is 1 2 '# SKIP'
 EOF
@@ -84,7 +84,7 @@ note <<-EOF
 	Test description + SKIP with reason as separate function.
 	EOF
 
-execute <<EOF trap >out 2>err
+execute <<"EOF" trap >out 2>err
     dashtap_init
     SKIP "with reason"
     is 1 2 'descr'
@@ -102,7 +102,7 @@ note <<-EOF
 	Test description + SKIP without reason as separate function.
 	EOF
 
-execute <<EOF trap >out 2>err
+execute <<"EOF" trap >out 2>err
     dashtap_init
     SKIP
     is 1 2 'descr'
@@ -120,7 +120,7 @@ note <<-EOF
 	No test description + SKIP with reason as separate function.
 	EOF
 
-execute <<EOF trap >out 2>err
+execute <<"EOF" trap >out 2>err
     dashtap_init
     SKIP "with reason"
     is 1 2
@@ -138,7 +138,7 @@ note <<-EOF
 	No test description + SKIP without reason as separate function.
 	EOF
 
-execute <<EOF trap >out 2>err
+execute <<"EOF" trap >out 2>err
     dashtap_init
     SKIP
     is 1 2
@@ -161,7 +161,7 @@ note <<-EOF
 	Test description + no SKIP.
 	EOF
 
-execute <<EOF trap >out 2>err
+execute <<"EOF" trap >out 2>err
     dashtap_init
     SKIP
     END_SKIP
@@ -185,7 +185,7 @@ note <<-EOF
 	No test description + no SKIP.
 	EOF
 
-execute <<EOF trap >out 2>err
+execute <<"EOF" trap >out 2>err
     dashtap_init
     SKIP
     END_SKIP
