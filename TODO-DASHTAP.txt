@@ -1,6 +1,15 @@
 -*- org -*-
 
 * Program
+** TODO Functions that test existence should end in '_exists'
+   Not '_exist'.
+** TODO Functions that read stdin should not determine this by testing
+   Functions that read standard input should not determine whether or not to
+   read it by testing whether there is anything to read. Instead some other
+   factor (e.g. number of args) should be used to determine whether or not to
+   read it, and then give an error if there was nothing to read. (This toa avoid
+   that nested functions all reading from standard input, interfere with each
+   other.)
 ** TODO 'setread' should support third string arg
    When this is added, also add a test to 'dashtap-setread.t' which test how
    'setread' reacts to input that does not end in newline.
@@ -30,7 +39,6 @@
    system. (Or at least have a very simple way of doing this described in the
    README.)
 ** TODO Merge 'is_changed' and 'is_unchanged' to follow DRY
-** TODO Function to test if a function exists
 ** TODO $BAIL_ON_FAIL/$DIE_ON_FAIL messages
    If $BAIL_ON_FAIL or $DIE_ON_FAIL contains a message, output that before
    exiting.
@@ -54,6 +62,8 @@
    also be prefixed with '# '?
 * Testing
 ** TODO Quote all <<"EOF" in test scripts
+** TODO 'dashtap-todo.t' and 'dashtap-skip.t' should be very similar
+   Currently there is some testing of ' and " in one of them.
 ** TODO Test 'dashtap_init'
 ** TODO Test 'dashtap_exit'
 ** TODO Test 'done_testing'
@@ -125,3 +135,5 @@
    CLOSED: [2014-07-21 Mon 16:06]
    Added 'dashtap_init' which can be used to re-initialize the variables (e.g.
    in author tests).
+** DONE Function to test if a function exists
+   CLOSED: [2014-07-21 Mon 22:02]

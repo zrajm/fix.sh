@@ -3,7 +3,9 @@
 . "t/dashtap.sh"
 NADA=""; strip_newline NADA                    # NADA = '\No newline at end'
 
-is "$(type match)" "match is a shell function" "Function 'match' exists"
+##############################################################################
+
+function_exists         match        "Function 'match' exists"
 
 ##############################################################################
 

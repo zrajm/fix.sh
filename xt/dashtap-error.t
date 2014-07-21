@@ -3,7 +3,9 @@
 . "t/dashtap.sh"
 NADA=""; strip_newline NADA                    # NADA = '\No newline at end'
 
-is "$(type error)" "error is a shell function" "Function 'error' exists"
+##############################################################################
+
+function_exists     error      "Function 'error' exists"
 
 ##############################################################################
 

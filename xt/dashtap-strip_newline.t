@@ -3,8 +3,9 @@
 . "t/dashtap.sh"
 NADA=""; strip_newline NADA                    # NADA = '\No newline at end'
 
-is "$(type strip_newline)" "strip_newline is a shell function" \
-    "Function 'strip_newline' exists"
+##############################################################################
+
+function_exists strip_newline  "Function 'strip_newline' exists"
 
 ##############################################################################
 

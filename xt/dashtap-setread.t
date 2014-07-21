@@ -3,7 +3,9 @@
 . "t/dashtap.sh"
 NADA=""; strip_newline NADA                    # NADA = '\No newline at end'
 
-is "$(type setread)" "setread is a shell function" "Function 'setread' exists"
+##############################################################################
+
+function_exists     setread    "Function 'setread' exists"
 
 ##############################################################################
 

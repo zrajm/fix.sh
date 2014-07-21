@@ -3,8 +3,10 @@
 . "t/dashtap.sh"
 NADA=""; strip_newline NADA                    # NADA = '\No newline at end'
 
-is "$(type SKIP)"     "SKIP is a shell function"     "Function 'SKIP' exists"
-is "$(type END_SKIP)" "END_SKIP is a shell function" "Function 'END_SKIP' exists"
+##############################################################################
+
+function_exists     SKIP       "Function 'SKIP' exists"
+function_exists     END_SKIP   "Function 'END_SKIP' exists"
 
 ##############################################################################
 

@@ -177,9 +177,22 @@ error() {
 }
 
 # Usage: match SUBSTR STRING
+#    or: match SUBSTR <<EOF
+#            STRING
+#        EOF
 #
-# Returns true if SUBSTR is found in STRING, false otherwise.
-match() { [ "${2%"$1"*}" != "$2" ]; }
+# Returns true if SUBSTR could be found in STRING, false otherwise. If STRING
+# is not given as a second argument, reads standard input and searches that
+# instead.
+match() {
+    local SUBSTR="$1" STR="$2" ARGS=2
+    if [ $# = 1 ]; then                        # one arg = read stdin
+        ARGS=1
+        STR=""; setread STR +
+    fi
+    [ $# != $ARGS ] && error "match: Bad number of args"
+    [ "${STR%"$SUBSTR"*}" != "$STR" ]
+}
 
 # Usage: varname VARNAME
 #
@@ -457,9 +470,9 @@ ok() {
 }
 
 # Usage: setread VARNAME [+] [<FILE]
-#    or: setread VARNAME [+] [<<EOF
+#    or: setread VARNAME [+] <<EOF
 #            CONTENT
-#        EOF]
+#        EOF
 #
 # Read a FILE (or the CONTENT of a here document) and capture the contents in
 # VARNAME (if no input is given it will be set to empty string before
@@ -479,8 +492,9 @@ ok() {
 #         hello
 #         EOF
 #
-# NOTA BENE: Piping into 'setread' DOES NOT WORK. (E.g. 'echo text|setread X'.)
-# -- This is because the shell executes each process of a pipe in its own
+# NOTA BENE: A function may read its own standard input with setread but
+# otherwise stuff piping into 'setread' DOES NOT WORK (e.g. 'echo text|setread
+# X'). This is because the shell executes each process of a pipe in its own
 # subshell, and all variables set by these processes are simply wiped as the
 # processes exit.
 setread() {
@@ -579,6 +593,18 @@ is() {
     fail "$DESCR" <<-EOF
 	$GOT
 	$WANTED
+	EOF
+}
+
+function_exists() {
+    local FUNCTION="$1" DESCR="$(descr SKIP "$2")"
+    match "# SKIP" "$DESCR" && pass "$DESCR" && return
+    if type "$FUNCTION" | match "function"; then
+        pass "$DESCR"
+        return
+    fi
+    fail "$DESCR" <<-EOF
+	Function '$FUNCTION' should exist, but it does not
 	EOF
 }
 
