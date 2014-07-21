@@ -98,6 +98,24 @@ file_is   trap      "FULL"     "Didn't call exit"
 
 ##############################################################################
 
+cd "$(mktemp -d)"
+STDOUT="Hello
+"
+note "strip_newline with string ending in two newlines"
+execute <<"EOF" trap >out 2>err
+    LINE="Hello
+
+"
+    strip_newline LINE
+    echo "$LINE"
+EOF
+is        $?        0          "Exit status"
+file_is   out       "$STDOUT"  "Standard output"
+file_is   err       "$NADA"    "Standard error"
+file_is   trap      "FULL"     "Didn't call exit"
+
+##############################################################################
+
 done_testing
 
 #[eof]
