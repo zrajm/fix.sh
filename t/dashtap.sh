@@ -615,7 +615,7 @@ file_is() {
     is "$GOT" "$WANTED" "$DESCR"
 }
 
-file_exist() {
+file_exists() {
     local FILE="$1" DESCR="$(descr SKIP "$2")"
     match "# SKIP" "$DESCR" && pass "$DESCR" && return
     if [ -e "$FILE" ]; then
@@ -627,7 +627,7 @@ file_exist() {
 	EOF
 }
 
-file_not_exist() {
+file_not_exists() {
     local FILE="$1" DESCR="$(descr SKIP "$2")"
     match "# SKIP" "$DESCR" && pass "$DESCR" && return
     if [ ! -e "$FILE" ]; then

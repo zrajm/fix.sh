@@ -1,8 +1,6 @@
 -*- org -*-
 
 * Program
-** TODO Functions that test existence should end in '_exists'
-   Not '_exist'.
 ** TODO Functions that read stdin should not determine this by testing
    Functions that read standard input should not determine whether or not to
    read it by testing whether there is anything to read. Instead some other
@@ -62,6 +60,7 @@
    also be prefixed with '# '?
 * Testing
 ** TODO Quote all <<"EOF" in test scripts
+** TODO Test reading of stdin for 'match' function
 ** TODO 'dashtap-todo.t' and 'dashtap-skip.t' should be very similar
    Currently there is some testing of ' and " in one of them.
 ** TODO Test 'dashtap_init'
@@ -137,3 +136,5 @@
    in author tests).
 ** DONE Function to test if a function exists
    CLOSED: [2014-07-21 Mon 22:02]
+** DONE Rename test functions '*_exist' -> '*_exists'
+   CLOSED: [2014-07-22 Tue 00:47]
