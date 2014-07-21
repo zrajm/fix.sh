@@ -714,10 +714,10 @@ init_test() {
 # CMD (if 'exit' was called, this is be whatever exit status was specified with
 # 'exit').
 execute() {
-    if [ -t 0 ]; then
-        local CMD="$1" TRAPFILE="$2"
-    else
-        local CMD="$(while read LINE; do echo "$LINE"; done)" TRAPFILE="$1"
+    local CMD="$1" TRAPFILE="$2"
+    if [ ! -t 0 ]; then
+        TRAPFILE="$1"
+        setread CMD +
     fi
     [ -z "$TRAPFILE" ] && error "execute: Missing TRAPFILE arg"
     (

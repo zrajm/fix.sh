@@ -63,7 +63,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 
 cd "$(mktemp -d)"
 note "setread: Input with space and quotes"
-VAR="'   \"  "
+VAR="  '   \"  "
 execute <<"EOF" trap >out 2>err
     X=""
     setread X <<-"END_SETREAD"

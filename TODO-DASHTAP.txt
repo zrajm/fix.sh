@@ -9,6 +9,21 @@
 ** TODO 'setread' should support third string arg
    When this is added, also add a test to 'dashtap-setread.t' which test how
    'setread' reacts to input that does not end in newline.
+** TODO 'setread' should refuse pipe input
+   The following recipe could be used to detect pipe input and differentiate it
+   from stdin redirect:
+
+   if [ -p /dev/stdin ]; then
+       echo "stdin is coming from a pipe"
+   fi
+   if [ -t 0 ]; then
+       echo "stdin is coming from the terminal"
+   fi
+   if [ ! -t 0 && ! -p /dev/stdin ]; then
+       echo "stdin is redirected"
+   fi
+   read
+   echo $REPLY
 ** TODO Dashtap variables should have prefix DASHTAP_*
    Not TEST_* as they have now.
 ** TODO Eliminate as many $(...) as possible
