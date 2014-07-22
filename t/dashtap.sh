@@ -804,9 +804,8 @@ chtime() {
 #     etc.)
 #
 write_file() {
-    local DATE="" BITS="" FILE="" LINE=""
-    while :; do
-        [ $# = 1 ] && { FILE="$1"; break; }
+    local DATE="" BITS="" FILE="" CONTENT=""
+    while [ $# -gt 1 ]; do
         case "$1" in
             [-+][0-9]*[a-z]|????-??-??)
                 [ -n "$DATE" ] && error "write_file: Too many DATE args"
@@ -818,13 +817,11 @@ write_file() {
         esac
         shift
     done
+    FILE="$1"
     mkpath "$FILE" 2>/dev/null \
         || error "write_file: Cannot create dir for file '$FILE'"
-    {
-        [ -t 0 ] || while IFS='' read -r LINE; do
-            echo "$LINE"
-        done
-    } >"$FILE"
+    setread CONTENT +
+    printf "%s" "$CONTENT" >"$FILE"
     [ -n "$BITS" ] && chmod  "$BITS" "$FILE"
     [ -n "$DATE" ] && chtime "$DATE" "$FILE"
 }
