@@ -1,7 +1,7 @@
 -*- org -*-
 
 * Program
-** TODO Functions that read stdin should not determine this by testing
+** TODO Functions that read stdin should not determine this by testing stdin
    Functions that read standard input should not determine whether or not to
    read it by testing whether there is anything to read. Instead some other
    factor (e.g. number of args) should be used to determine whether or not to
@@ -14,6 +14,8 @@
 ** TODO Eliminate as many $(...) as possible
    Each $(...) starts a subshell, which is inefficient, this should be avoided
    whenever possible.
+
+   Could this be avoided in 'setread', for example?
 ** TODO Separate docs from source code
    Using Markdown?
 ** TODO Separate Fix.sh test helper functions from Dashtap
@@ -44,7 +46,6 @@
    Currently 'error' just aborts and outputs something on stderr, but should it
    also be prefixed with '# '?
 * Testing
-** TODO Test reading of stdin for 'match' function
 ** TODO 'dashtap-todo.t' and 'dashtap-skip.t' should be very similar
    Currently there is some testing of ' and " in one of them.
 ** TODO Test 'dashtap_init'
@@ -135,3 +136,5 @@
    status of 'match'.
 ** DONE Quote all <<"EOF" in test scripts
    CLOSED: [2014-07-22 Tue 01:06]
+** DONE Test reading of stdin for 'match' function
+   CLOSED: [2014-07-22 Tue 01:43]

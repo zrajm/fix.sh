@@ -177,20 +177,18 @@ error() {
 }
 
 # Usage: match SUBSTR STRING
-#    or: match SUBSTR <<"EOF"
-#            STRING
-#        EOF
+#    or: echo STRING | match SUBSTR
 #
 # Returns true if SUBSTR could be found in STRING, false otherwise. If STRING
 # is not given as a second argument, reads standard input and searches that
 # instead.
 match() {
-    local SUBSTR="$1" STR="$2" ARGS=2
+    local SUBSTR="$1" STR="$2"
     if [ $# = 1 ]; then                        # one arg = read stdin
-        ARGS=1
         STR=""; setread STR +
+    elif [ $# != 2 ]; then
+        error "match: Bad number of args"
     fi
-    [ $# != $ARGS ] && error "match: Bad number of args"
     [ "${STR%"$SUBSTR"*}" != "$STR" ]
 }
 
