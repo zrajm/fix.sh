@@ -612,6 +612,7 @@ function_exists() {
 file_is() {
     local FILE="$1" WANTED="$2" DESCR="$(descr SKIP "$3")" GOT=""
     match "# SKIP" "$DESCR" && pass "$DESCR" && return
+    [ -r "$FILE" ] || error "file_is: Can't read file '$FILE'"
     setread GOT <"$FILE"
     is "$GOT" "$WANTED" "$DESCR"
 }
@@ -824,7 +825,7 @@ write_file() {
     done
     FILE="$1"
     mkpath "$FILE" 2>/dev/null \
-        || error "write_file: Cannot create dir for file '$FILE'"
+        || error "write_file: Can't create dir for file '$FILE'"
     setread CONTENT +
     printf "%s" "$CONTENT" >"$FILE"
     [ -n "$BITS" ] && chmod  "$BITS" "$FILE"

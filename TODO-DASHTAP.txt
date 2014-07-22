@@ -1,6 +1,20 @@
 -*- org -*-
 
 * Program
+** TODO Extra fail message
+   An extra fail message that can be set by a command, which will be displayed
+   only as a diagnostic if there is a failure, and which is valid until it is
+   reset.
+
+   E.g. 'extra "TODO-related tests"' would add an extra line to the beginning
+   of the failure message, like this:
+
+       not ok 35 - Exit status
+       #   TODO-related tests
+       #   Failed test 'Exit status'
+       #   in 'xt/dashtap-todo.t'
+       #     GOT   : 255
+       #     WANTED: 1
 ** TODO Functions that read stdin shouldn't determine when by testing stdin
    Functions that read standard input should not determine whether or not to
    read it by testing whether there is anything to read. Instead some other
@@ -35,21 +49,8 @@
 ** TODO $BAIL_ON_FAIL/$DIE_ON_FAIL messages
    If $BAIL_ON_FAIL or $DIE_ON_FAIL contains a message, output that before
    exiting.
-** TODO Extra fail message
-   An extra fail message that can be set by a command, which will be displayed
-   only as a diagnostic if there is a failure, and which is valid until it is
-   reset.
-
-   E.g. 'extra "TODO-related tests"' would add an extra line to the beginning
-   of the failure message, like this:
-
-       not ok 35 - Exit status
-       #   TODO-related tests
-       #   Failed test 'Exit status'
-       #   in 'xt/dashtap-todo.t'
-       #     GOT   : 255
-       #     WANTED: 1
 * To think about
+** TODO Merge 'execute' and 'seteval'?
 ** TODO Should 'error' output be compatible with TAP?
    Currently 'error' just aborts and outputs something on stderr, but should it
    also be prefixed with '# '?
