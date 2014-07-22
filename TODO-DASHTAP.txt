@@ -1,13 +1,21 @@
 -*- org -*-
 
 * Program
-** TODO Functions that read stdin should not determine this by testing stdin
+** TODO Functions that read stdin shouldn't determine when by testing stdin
    Functions that read standard input should not determine whether or not to
    read it by testing whether there is anything to read. Instead some other
    factor (e.g. number of args) should be used to determine whether or not to
    read it, and then give an error if there was nothing to read. (This toa avoid
    that nested functions all reading from standard input, interfere with each
    other.)
+*** TODO 'indent'
+    Only called from inside 'dashtap.sh', and never using stdin.
+*** TODO 'note' (and thereby 'diag')
+*** TODO 'setread'
+*** TODO 'write_file'
+*** DONE 'match'
+*** DONE 'execute'
+    CLOSED: [2014-07-22 Tue 14:29]
 ** TODO 'setread' should support third string arg
    When this is added, also add a test to 'dashtap-setread.t' which test how
    'setread' reacts to input that does not end in newline.
@@ -138,3 +146,5 @@
    CLOSED: [2014-07-22 Tue 01:06]
 ** DONE Test reading of stdin for 'match' function
    CLOSED: [2014-07-22 Tue 01:43]
+** DONE Test 'execute'
+   CLOSED: [2014-07-22 Tue 14:26]

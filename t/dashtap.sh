@@ -733,25 +733,27 @@ init_test() {
     [ -e "$TESTDIR" ] && cp -rH "$TESTDIR" .fix
 }
 
-# Usage: execute CMD TRAPFILE
-#    or: execute <<"EOF" TRAPFILE
-#            CMD
+# Usage: execute COMMAND TRAPFILE
+#    or: execute TRAPFILE <<"EOF"
+#            COMMAND
 #        EOF
 #
-# Evals CMD in a subshell, saving to TRAPFILE whether the command(s) exited
-# ('EXIT'), or ran all the way through ('FULL'). This can be used to invoke a
-# function and see whether it called return ('FULL') or exit ('EXIT').
+# Eval shell COMMAND(s) in a subshell, saving to FILE whether the command(s)
+# ran all the way through ('ALL') or exited before that ('SOME'). This can be
+# used to invoke a function and see whether it called exit ('SOME') or return
+# ('ALL').
 #
-# Exit status will be the same as the exit status of the terminating command in
-# CMD (if 'exit' was called, this is be whatever exit status was specified with
-# 'exit').
+# Return status will be the same as the exit status of the terminating command
+# in COMMAND (if COMMANDS were terminated with 'exit', the return code will be
+# the same as the exit status).
 execute() {
     local CMD="$1" TRAPFILE="$2"
-    if [ ! -t 0 ]; then
+    if [ $# = 1 ]; then                        # one arg = read stdin
         TRAPFILE="$1"
-        setread CMD +
+        CMD=""; setread CMD +
+    elif [ $# != 2 ]; then
+        error "execute: Bad number of args"
     fi
-    [ -z "$TRAPFILE" ] && error "execute: Missing TRAPFILE arg"
     (
         trap "echo EXIT >\"$TRAPFILE\"; trap - 0" 0
         eval "$CMD"
