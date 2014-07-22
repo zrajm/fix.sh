@@ -528,7 +528,11 @@ setread() {
     [ -z "$1" ] && strip_newline $2
 }
 
-# Usage: seteval VARNAME [+] STATEMENTS
+# Usage: seteval [+] VARNAME STATEMENTS
+#    or: seteval [+] VARNAME [<FILE]
+#    or: seteval [+] VARNAME <<"EOF"
+#            STATEMENTS
+#        EOF
 #
 # Evaluates shell STATEMENTS and capture standard output thereof into the
 # variable named VARNAME. Normally the very last newline is stripped, but if
@@ -539,20 +543,21 @@ setread() {
 #
 # The return value will be the same as the one returned by the evaluated code.
 #
-#     seteval X   'echo hello'         # set X to "hello"
-#     seteval X + 'echo hello'         # set X to "hello" + newline
+#     seteval   X 'echo hello'         # set X to "hello"
+#     seteval + X 'echo hello'         # set X to "hello" + newline
 seteval() {
     # NOTA BENE: This function use only positional parameters ($1, $2, etc) no
     # ordinary vars. This avoids namespace collision between local vars and
     # VARNAME. (If local vars were used, and user one of those used in function
     # it could not be set globally.)
-    [ $# -gt 3 ] && error "seteval: Too many args"
-    varname "$1" || error "seteval: Bad VARNAME '$1'"
-    [ "$2" != "+" ] && set "$1" "" "$2"        # $2 is '+' or ''
-    set  $1 "$2" "$(eval "$3"; echo ".$?")"    # append return value
-    eval $1'="${3%.*}"'
-    [ -z "$2" ] && strip_newline $1
-    return "${3##*.}"
+    [ "$1" != "+" ] && set -- "" "$@"          # $1 is '+' or ''
+    [ $# -lt 2 -o $# -gt 3 ] && error "seteval: Bad number of args"
+    varname "$2" || error "seteval: Bad VARNAME '$2'"
+    [ $# = 2 ] && set -- "$@" "$(stdin)"        # read STDIN
+    set -- "$1" "$2" "$(eval "$3"; echo ":$?")" # append return value
+    eval $2'="${3%:*}"'
+    [ -z "$1" ] && strip_newline $2
+    return "${3##*:}"
 }
 
 ##############################################################################

@@ -15,7 +15,8 @@
        #   in 'xt/dashtap-todo.t'
        #     GOT   : 255
        #     WANTED: 1
-*** TODO 'seteval' argument change
+*** DONE 'seteval' argument change
+    CLOSED: [2014-07-22 Tue 21:17]
     '+' should be first arg in parallel to 'setread'
 *** DONE 'setread' argument change
     CLOSED: [2014-07-22 Tue 19:25]

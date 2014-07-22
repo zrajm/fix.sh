@@ -3,6 +3,9 @@
 . "t/dashtap.sh"
 NADA=""; strip_newline NADA                    # NADA = '\No newline at end'
 
+dot() { stdin <"$1"; echo .; }
+cat() { stdin <"$1"; }
+
 ##############################################################################
 
 function_exists     seteval    "Function 'seteval' exists"
@@ -10,87 +13,282 @@ function_exists     seteval    "Function 'seteval' exists"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "seteval: Bad variable name"
-STDERR="seteval: Bad VARNAME ''"
-execute <<"EOF" trap >out 2>err
-    seteval ""
-EOF
-is        $?        255        "Exit status"
-file_is   out       "$NADA"    "Standard output"
-file_is   err       "$STDERR"  "Standard error"
-file_is   trap      "EXIT"     "Called exit"
+note "seteval: Fail when more than two args are used without '+'"
+STDERR="seteval: Bad number of args"
+(
+    trap 'echo EXIT >trap' 0
+    seteval TOO MANY ARGS >out 2>err <&-
+    trap - 0
+    echo FULL >trap
+)
+is  $?             255        "Exit status"
+is  "$(cat err)"   "$STDERR"  "Standard error"
+is  "$(dot out)"   "."        "Standard output"
+is  "$(cat trap)"  "EXIT"     "Called exit"
 
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "seteval: Too many args"
-STDERR="seteval: Too many args"
-execute <<"EOF" trap >out 2>err
-    seteval too many args here
-EOF
-is        $?        255        "Exit status"
-file_is   out       "$NADA"    "Standard output"
-file_is   err       "$STDERR"  "Standard error"
-file_is   trap      "EXIT"     "Called exit"
+note "seteval: Fail when more than three args are used"
+STDERR="seteval: Bad number of args"
+(
+    trap 'echo EXIT >trap' 0
+    seteval '+' TOO MANY ARGS >out 2>err <&-
+    trap - 0
+    echo FULL >trap
+)
+is  $?             255        "Exit status"
+is  "$(cat err)"   "$STDERR"  "Standard error"
+is  "$(dot out)"   "."        "Standard output"
+is  "$(cat trap)"  "EXIT"     "Called exit"
 
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "seteval: Returning true"
-seteval GOT ":"
-is        $?        0          "Exit status"
-is        "$GOT"    "$NADA"    "Standard output"
+note "seteval: Fail when called with no args"
+STDERR="seteval: Bad number of args"
+(
+    trap 'echo EXIT >trap' 0
+    seteval >out 2>err <&-
+    trap - 0
+    echo FULL >trap
+)
+is  $?             255        "Exit status"
+is  "$(cat err)"   "$STDERR"  "Standard error"
+is  "$(dot out)"   "."        "Standard output"
+is  "$(cat trap)"  "EXIT"     "Called exit"
 
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "seteval: Returning false"
-seteval GOT "! :" 2>err
-is        $?        1          "Exit status"
-is        "$GOT"    "$NADA"    "Standard output"
+note "seteval: Fail when called with bad variable name"
+STDERR="seteval: Bad VARNAME '_'"
+(
+    trap 'echo EXIT >trap' 0
+    seteval _ >out 2>err <&-
+    trap - 0
+    echo FULL >trap
+)
+is  $?             255        "Exit status"
+is  "$(cat err)"   "$STDERR"  "Standard error"
+is  "$(dot out)"   "."        "Standard output"
+is  "$(cat trap)"  "EXIT"     "Called exit"
 
 ##############################################################################
 
-note "seteval: Strip newline"
-
-seteval GOT    "printf \"start\\\"'end\""
-WANTED="start\"'end\No newline at end"
-is "$GOT" "$WANTED" "String with quotes in"
-
-seteval GOT    'printf "AA BB"'
-WANTED="AA BB\No newline at end"
-is "$GOT" "$WANTED" "String with space inside"
-
-seteval GOT    'printf " AA "'
-WANTED=" AA \No newline at end"
-is "$GOT" "$WANTED" "String with space at start and end"
-
-seteval GOT    'printf "\nAA\n"'
-WANTED="
-AA"
-is "$GOT" "$WANTED" "String with newline at start and end"
+cd "$(mktemp -d)"
+note "seteval: Ignore STDIN when two args are used"
+VALUE="ARG\No newline at end."
+(
+    trap 'echo EXIT >trap' 0
+    seteval XX "printf '%s' ARG" >out 2>err <<-"EOF"
+	printf '%s' STDIN
+	EOF
+    printf "%s" "$XX" >value
+    trap - 0
+    echo FULL >trap
+)
+is  $?             0          "Exit status"
+is  "$(cat err)"   ""         "Standard error"
+is  "$(dot out)"   "."        "Standard output"
+is  "$(dot value)" "$VALUE"   "Variable value"
+is  "$(cat trap)"  "FULL"     "Didn't call exit"
 
 ##############################################################################
 
-note "seteval: Preserve newline"
+cd "$(mktemp -d)"
+note "seteval: Ignore STDIN when two args are used + don't strip newline"
+VALUE="ARG."
+(
+    trap 'echo EXIT >trap' 0
+    seteval + XX "printf '%s' ARG" >out 2>err <<-"EOF"
+	printf '%s' STDIN
+	EOF
+    printf "%s" "$XX" >value
+    trap - 0
+    echo FULL >trap
+)
+is  $?             0          "Exit status"
+is  "$(cat err)"   ""         "Standard error"
+is  "$(dot out)"   "."        "Standard output"
+is  "$(dot value)" "$VALUE"   "Variable value"
+is  "$(cat trap)"  "FULL"     "Didn't call exit"
 
-seteval GOT + "printf \"start\\\"'end\""
-WANTED="start\"'end"
-is "$GOT" "$WANTED" "String with quotes in"
+##############################################################################
 
-seteval GOT + 'printf "AA BB"'
-WANTED="AA BB"
-is "$GOT" "$WANTED" "String with space inside"
+cd "$(mktemp -d)"
+note "seteval: Process STDIN when one arg is used (ending in newline)"
+VALUE="STDIN."
+(
+    trap 'echo EXIT >trap' 0
+    seteval XX >out 2>err <<-"EOF"
+	echo STDIN
+	EOF
+    printf "%s" "$XX" >value
+    trap - 0
+    echo FULL >trap
+)
+is  $?             0          "Exit status"
+is  "$(cat err)"   ""         "Standard error"
+is  "$(dot out)"   "."        "Standard output"
+is  "$(dot value)" "$VALUE"   "Variable value"
+is  "$(cat trap)"  "FULL"     "Didn't call exit"
 
-seteval GOT + 'printf " AA "'
-WANTED=" AA "
-is "$GOT" "$WANTED" "String with space at start and end"
+##############################################################################
 
-seteval GOT + 'printf "\nAA\n"'
-WANTED="
-AA
-"
-is "$GOT" "$WANTED" "String with newline at start and end"
+cd "$(mktemp -d)"
+note "seteval: Process STDIN when one arg is used (not ending in newline)"
+VALUE="STDIN\No newline at end."
+(
+    trap 'echo EXIT >trap' 0
+    seteval XX >out 2>err <<-"EOF"
+	printf '%s' STDIN
+	EOF
+    printf "%s" "$XX" >value
+    trap - 0
+    echo FULL >trap
+)
+is  $?             0          "Exit status"
+is  "$(cat err)"   ""         "Standard error"
+is  "$(dot out)"   "."        "Standard output"
+is  "$(dot value)" "$VALUE"   "Variable value"
+is  "$(cat trap)"  "FULL"     "Didn't call exit"
+
+##############################################################################
+
+cd "$(mktemp -d)"
+note "seteval: Process STDIN when one arg is used + don't strip newline"
+VALUE="STDIN
+."
+(
+    trap 'echo EXIT >trap' 0
+    seteval + XX >out 2>err <<-"EOF"
+	echo STDIN
+	EOF
+    printf "%s" "$XX" >value
+    trap - 0
+    echo FULL >trap
+)
+is  $?             0          "Exit status"
+is  "$(cat err)"   ""         "Standard error"
+is  "$(dot out)"   "."        "Standard output"
+is  "$(dot value)" "$VALUE"   "Variable value"
+is  "$(cat trap)"  "FULL"     "Didn't call exit"
+
+##############################################################################
+
+cd "$(mktemp -d)"
+note "seteval: Process STDIN when one arg is used + no input"
+VALUE="."
+(
+    trap 'echo EXIT >trap' 0
+    seteval + XX >out 2>err
+    printf "%s" "$XX" >value
+    trap - 0
+    echo FULL >trap
+)
+is  $?             0          "Exit status"
+is  "$(cat err)"   ""         "Standard error"
+is  "$(dot out)"   "."        "Standard output"
+is  "$(dot value)" "$VALUE"   "Variable value"
+is  "$(cat trap)"  "FULL"     "Didn't call exit"
+
+##############################################################################
+
+cd "$(mktemp -d)"
+note "seteval: Overwriting previously set variable"
+VALUE="NEW."
+(
+    trap 'echo EXIT >trap' 0
+    X="OLD"
+    seteval XX "echo NEW" >out 2>err
+    printf "%s" "$XX" >value
+    trap - 0
+    echo FULL >trap
+)
+is  $?             0          "Exit status"
+is  "$(cat err)"   ""         "Standard error"
+is  "$(dot out)"   "."        "Standard output"
+is  "$(dot value)" "$VALUE"   "Variable value"
+is  "$(cat trap)"  "FULL"     "Didn't call exit"
+
+##############################################################################
+
+cd "$(mktemp -d)"
+note "seteval: Process STDIN with space and quotes"
+VALUE="  '  \"  ."
+(
+    trap 'echo EXIT >trap' 0
+    seteval XX >out 2>err <<-"EOF"
+	echo "  '  \"  "
+	EOF
+    printf "%s" "$XX" >value
+    trap - 0
+    echo FULL >trap
+)
+is  $?             0          "Exit status"
+is  "$(cat err)"   ""         "Standard error"
+is  "$(dot out)"   "."        "Standard output"
+is  "$(dot value)" "$VALUE"   "Variable value"
+is  "$(cat trap)"  "FULL"     "Didn't call exit"
+
+##############################################################################
+
+cd "$(mktemp -d)"
+note "seteval: Process arg with space and quotes"
+VALUE="  '  \"  ."
+(
+    trap 'echo EXIT >trap' 0
+    seteval XX "echo \"  '  \\\"  \"" >out 2>err
+    printf "%s" "$XX" >value
+    trap - 0
+    echo FULL >trap
+)
+is  $?             0        "Exit status"
+is  "$(cat err)"   ""       "Standard error"
+is  "$(dot out)"   "."      "Standard output"
+is  "$(dot value)" "$VALUE" "Variable value"
+is  "$(cat trap)"  "FULL"   "Didn't call exit"
+
+##############################################################################
+
+cd "$(mktemp -d)"
+note "seteval: Two newlines at end, one should be stripped"
+VALUE="x
+."
+(
+    trap 'echo EXIT >trap' 0
+    seteval XX "echo x; echo" >out 2>err
+    printf "%s" "$XX" >value
+    trap - 0
+    echo FULL >trap
+)
+is  $?             0        "Exit status"
+is  "$(cat err)"   ""       "Standard error"
+is  "$(dot out)"   "."      "Standard output"
+is  "$(dot value)" "$VALUE" "Variable value"
+is  "$(cat trap)"  "FULL"   "Didn't call exit"
+
+##############################################################################
+
+
+cd "$(mktemp -d)"
+note "seteval: Two newlines at end, none stripped"
+VALUE="x
+
+."
+(
+    trap 'echo EXIT >trap' 0
+    seteval + XX "echo x; echo" >out 2>err
+    printf "%s" "$XX" >value
+    trap - 0
+    echo FULL >trap
+)
+is  $?             0        "Exit status"
+is  "$(cat err)"   ""       "Standard error"
+is  "$(dot out)"   "."      "Standard output"
+is  "$(dot value)" "$VALUE" "Variable value"
+is  "$(cat trap)"  "FULL"   "Didn't call exit"
 
 ##############################################################################
 
