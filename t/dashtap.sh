@@ -185,7 +185,7 @@ error() {
 match() {
     local SUBSTR="$1" STR="$2"
     if [ $# = 1 ]; then                        # one arg = read stdin
-        STR=""; setread STR +
+        STR=""; setread + STR
     elif [ $# != 2 ]; then
         error "match: Bad number of args"
     fi
@@ -467,14 +467,30 @@ ok() {
 	EOF
 }
 
-# Usage: setread VARNAME [+] [<FILE]
-#    or: setread VARNAME [+] <<"EOF"
+# Usage: VARNAME="$(stdin)"             # to truncate trailing newlines
+#    or: VARNAME="$(stdin; echo .)"     # to preserve trailing newlines
+#        VARNAME="${VARNAME%.}"
+#
+# Reads all of standard input and outputs it on standard output. Intended for
+# use instead of cat in $(...) constructs. Don't forget take precautions if you
+# want to preserve trailing newlines!
+stdin() {
+    local LINE=""
+    [ -t 0 ] || while IFS="" read -r LINE; do
+        echo "$LINE"
+    done
+    printf "%s" "$LINE"
+}
+
+# Usage: setread [+] VARNAME CONTENT
+#    or: setread [+] VARNAME [<FILE]
+#    or: setread [+] VARNAME <<"EOF"
 #            CONTENT
 #        EOF
 #
 # Read a FILE (or the CONTENT of a here document) and capture the contents in
 # VARNAME (if no input is given it will be set to empty string before
-# processing trailing newlines). If '+' is given as a second argument trailing
+# processing trailing newlines). If '+' is given as the first argument trailing
 # newlines are preserved as-is, otherwise the very last newline is stripped (if
 # final character is not a newline, the string '\No newline at end' is
 # appended).
@@ -483,10 +499,10 @@ ok() {
 # which strips ALL trailing newlines. 'setread' is intentionally more
 # restrictive since the strings are used in string comparison tests.
 #
-#     setread X   <<-EOF               # set X to "hello"
+#     setread   X <<-EOF               # set X to "hello"
 #         hello
 #         EOF
-#     setread X + <<-EOF               # set X to "hello" + newline
+#     setread + X <<-EOF               # set X to "hello" + newline
 #         hello
 #         EOF
 #
@@ -500,14 +516,16 @@ setread() {
     # ordinary vars. This avoids namespace collision between local vars and
     # VARNAME. (If local vars were used, and user one of those used in function
     # it could not be set globally.)
-    [ $# -gt 2 ] && error "setread: Too many args"
-    varname "$1" || error "setread: Bad VARNAME '$1'"
-    [ "$2" != "+" ] && set "$1" ""             # $2 is '+' or ''
-    if [ ! -t 0 ]; then
-        set $1 "$2" "$(while IFS="" read -r L; do echo "$L"; done; echo "$L.")"
+    [ "$1" != "+" ] && set -- "" "$@"          # $1 is '+' or ''
+    [ $# -lt 2 -o $# -gt 3 ] && error "setread: Bad number of args"
+    varname "$2" || error "setread: Bad VARNAME '$2'"
+    if [ $# = 3 ]; then                        # set to $3
+        eval $2'="$3"'
+    else                                       # set to STDIN
+        set -- "$@" "$(stdin; echo .)"
+        eval $2'="${3%.}"'
     fi
-    eval $1'="${3%.}"'
-    [ -z "$2" ] && strip_newline $1
+    [ -z "$1" ] && strip_newline $2
 }
 
 # Usage: seteval VARNAME [+] STATEMENTS
@@ -751,7 +769,7 @@ execute() {
     local CMD="$1" TRAPFILE="$2"
     if [ $# = 1 ]; then                        # one arg = read stdin
         TRAPFILE="$1"
-        CMD=""; setread CMD +
+        CMD=""; setread + CMD
     elif [ $# != 2 ]; then
         error "execute: Bad number of args"
     fi
@@ -826,7 +844,7 @@ write_file() {
     FILE="$1"
     mkpath "$FILE" 2>/dev/null \
         || error "write_file: Can't create dir for file '$FILE'"
-    setread CONTENT +
+    setread + CONTENT
     printf "%s" "$CONTENT" >"$FILE"
     [ -n "$BITS" ] && chmod  "$BITS" "$FILE"
     [ -n "$DATE" ] && chtime "$DATE" "$FILE"

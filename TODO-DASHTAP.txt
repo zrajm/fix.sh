@@ -1,10 +1,10 @@
 -*- org -*-
 
 * Program
-** TODO Extra fail message
-   An extra fail message that can be set by a command, which will be displayed
-   only as a diagnostic if there is a failure, and which is valid until it is
-   reset.
+** TODO 'title' -- Extra fail message
+   Output as 'note' whenever it occurs, but also added as an extra fail message
+   that can be set by a command, which will be displayed only as a diagnostic
+   if there is a failure, and which is valid until it is reset.
 
    E.g. 'extra "TODO-related tests"' would add an extra line to the beginning
    of the failure message, like this:
@@ -15,6 +15,11 @@
        #   in 'xt/dashtap-todo.t'
        #     GOT   : 255
        #     WANTED: 1
+*** TODO 'seteval' argument change
+    '+' should be first arg in parallel to 'setread'
+*** DONE 'setread' argument change
+    CLOSED: [2014-07-22 Tue 19:25]
+    '+' should be first arg, to allow for unambiguous 3rd argument.
 ** TODO Functions that read stdin shouldn't determine when by testing stdin
    Functions that read standard input should not determine whether or not to
    read it by testing whether there is anything to read. Instead some other
