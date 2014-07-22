@@ -10,7 +10,7 @@ function_exists     seteval    "Function 'seteval' exists"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "Bad variable name"
+note "seteval: Bad variable name"
 STDERR="seteval: Bad VARNAME ''"
 execute <<"EOF" trap >out 2>err
     seteval ""
@@ -23,7 +23,7 @@ file_is   trap      "EXIT"     "Called exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "Too many args"
+note "seteval: Too many args"
 STDERR="seteval: Too many args"
 execute <<"EOF" trap >out 2>err
     seteval too many args here
@@ -35,42 +35,62 @@ file_is   trap      "EXIT"     "Called exit"
 
 ##############################################################################
 
+cd "$(mktemp -d)"
+note "seteval: Returning true"
+seteval GOT ":"
+is        $?        0          "Exit status"
+is        "$GOT"    "$NADA"    "Standard output"
+
+##############################################################################
+
+cd "$(mktemp -d)"
+note "seteval: Returning false"
+seteval GOT "! :" 2>err
+is        $?        1          "Exit status"
+is        "$GOT"    "$NADA"    "Standard output"
+
+##############################################################################
+
+note "seteval: Strip newline"
+
 seteval GOT    "printf \"start\\\"'end\""
 WANTED="start\"'end\No newline at end"
-is "$GOT" "$WANTED" "Strip newline - String with quotes in"
+is "$GOT" "$WANTED" "String with quotes in"
 
 seteval GOT    'printf "AA BB"'
 WANTED="AA BB\No newline at end"
-is "$GOT" "$WANTED" "Strip newline - String with space inside"
+is "$GOT" "$WANTED" "String with space inside"
 
 seteval GOT    'printf " AA "'
 WANTED=" AA \No newline at end"
-is "$GOT" "$WANTED" "Strip newline - String with space at start and end"
+is "$GOT" "$WANTED" "String with space at start and end"
 
 seteval GOT    'printf "\nAA\n"'
 WANTED="
 AA"
-is "$GOT" "$WANTED" "Strip newline - String with newline at start and end"
+is "$GOT" "$WANTED" "String with newline at start and end"
 
 ##############################################################################
 
+note "seteval: Preserve newline"
+
 seteval GOT + "printf \"start\\\"'end\""
 WANTED="start\"'end"
-is "$GOT" "$WANTED" "Preserve newline - String with quotes in"
+is "$GOT" "$WANTED" "String with quotes in"
 
 seteval GOT + 'printf "AA BB"'
 WANTED="AA BB"
-is "$GOT" "$WANTED" "Preserve newline - String with space inside"
+is "$GOT" "$WANTED" "String with space inside"
 
 seteval GOT + 'printf " AA "'
 WANTED=" AA "
-is "$GOT" "$WANTED" "Preserve newline - String with space at start and end"
+is "$GOT" "$WANTED" "String with space at start and end"
 
 seteval GOT + 'printf "\nAA\n"'
 WANTED="
 AA
 "
-is "$GOT" "$WANTED" "Preserve newline - String with newline at start and end"
+is "$GOT" "$WANTED" "String with newline at start and end"
 
 ##############################################################################
 

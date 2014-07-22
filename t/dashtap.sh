@@ -512,12 +512,14 @@ setread() {
 
 # Usage: seteval VARNAME [+] STATEMENTS
 #
-# Evaluates shell STATEMENTS and capture the output thereof into the variable
-# named VARNAME. Normally the very last newline is stripped, but if '+' is
-# given as the second argument no stripping is done at all. (This differs from
-# the '$(...)' construct which strips all trailing newlines.) If no newline was
-# could be stripped then the string '\No newline at end' is appended instead
-# (see also: 'setread').
+# Evaluates shell STATEMENTS and capture standard output thereof into the
+# variable named VARNAME. Normally the very last newline is stripped, but if
+# '+' is given as the second argument no stripping is done at all. (This
+# differs from the '$(...)' construct which strips all trailing newlines.) If
+# no newline was could be stripped then the string '\No newline at end' is
+# appended instead (see also: 'setread').
+#
+# The return value will be the same as the one returned by the evaluated code.
 #
 #     seteval X   'echo hello'         # set X to "hello"
 #     seteval X + 'echo hello'         # set X to "hello" + newline
@@ -529,9 +531,10 @@ seteval() {
     [ $# -gt 3 ] && error "seteval: Too many args"
     varname "$1" || error "seteval: Bad VARNAME '$1'"
     [ "$2" != "+" ] && set "$1" "" "$2"        # $2 is '+' or ''
-    set  $1 "$2" "$(eval "$3"; echo .)"
-    eval $1'="${3%.}"'
+    set  $1 "$2" "$(eval "$3"; echo ".$?")"    # append return value
+    eval $1'="${3%.*}"'
     [ -z "$2" ] && strip_newline $1
+    return "${3##*.}"
 }
 
 ##############################################################################
