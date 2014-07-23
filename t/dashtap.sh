@@ -145,6 +145,7 @@ dashtap_init() {
     DASHTAP_COUNT=0                            # tests performed
     DASHTAP_FAILS=0                            # failed tests
     DASHTAP_PLANNED=-1                         # plan (set by done_testing)
+    DASHTAP_TITLE=""                           # test title (if any)
     DASHTAP_TODO=""                            # TODO reason (if any)
     DASHTAP_SKIP=""                            # SKIP reason (if any)
     trap 'dashtap_exit; trap - 0' 0            # exit messages
@@ -298,6 +299,25 @@ descr() {
     esac
 }
 
+# Usage: title TITLE
+#
+# Set TITLE for subsequent tests, to unset title use 'end_title' (very rarely
+# needed).
+#
+# If set, TITLE is included in the diagnostics output of each failing test, and
+# in the debug output at the point where 'title' was called (this is visible
+# only if the test harness is in verbose mode).
+title() {
+    [ $# = 1 ] || error "title: Bad number of args"
+    DASHTAP_TITLE="$1"
+    note "$DASHTAP_TITLE"
+}
+
+end_title() {
+    [ $# = 0 ] || error "end_title: No args allowed"
+    DASHTAP_TITLE=""
+}
+
 # Usage: TODO [REASON]
 #        ...              # tests
 #        [END_TODO]
@@ -429,6 +449,7 @@ fail() {
     # Insert extra newline when piped (so 'prove' output looks ok).
     # (Skip this if we're bailing out after the failure.)
     [ -n "$BAIL_ON_FAIL" -o -t 1 ] || echo >&2
+    [ -n "$DASHTAP_TITLE"        ] && indent " " "$DASHTAP_TITLE" | diag
     if [ -z "$DESCR" ]; then
         diag <<-EOF
 	  Failed test in '$0'

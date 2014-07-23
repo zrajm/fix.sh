@@ -1,26 +1,6 @@
 -*- org -*-
 
 * Program
-** TODO 'title' -- Extra fail message
-   Output as 'note' whenever it occurs, but also added as an extra fail message
-   that can be set by a command, which will be displayed only as a diagnostic
-   if there is a failure, and which is valid until it is reset.
-
-   E.g. 'extra "TODO-related tests"' would add an extra line to the beginning
-   of the failure message, like this:
-
-       not ok 35 - Exit status
-       #   TODO-related tests
-       #   Failed test 'Exit status'
-       #   in 'xt/dashtap-todo.t'
-       #     GOT   : 255
-       #     WANTED: 1
-*** DONE 'seteval' argument change
-    CLOSED: [2014-07-22 Tue 21:17]
-    '+' should be first arg in parallel to 'setread'
-*** DONE 'setread' argument change
-    CLOSED: [2014-07-22 Tue 19:25]
-    '+' should be first arg, to allow for unambiguous 3rd argument.
 ** TODO Functions that read stdin shouldn't determine when by testing stdin
    Functions that read standard input should not determine whether or not to
    read it by testing whether there is anything to read. Instead some other
@@ -36,9 +16,6 @@
 *** DONE 'match'
 *** DONE 'execute'
     CLOSED: [2014-07-22 Tue 14:29]
-** TODO 'setread' should support third string arg
-   When this is added, also add a test to 'dashtap-setread.t' which test how
-   'setread' reacts to input that does not end in newline.
 ** TODO Eliminate as many $(...) as possible
    Each $(...) starts a subshell, which is inefficient, this should be avoided
    whenever possible.
@@ -52,15 +29,13 @@
    system. (Or at least have a very simple way of doing this described in the
    README.)
 ** TODO Merge 'is_changed' and 'is_unchanged' to follow DRY
-** TODO $BAIL_ON_FAIL/$DIE_ON_FAIL messages
-   If $BAIL_ON_FAIL or $DIE_ON_FAIL contains a message, output that before
-   exiting.
 * To think about
 ** TODO Merge 'execute' and 'seteval'?
 ** TODO Should 'error' output be compatible with TAP?
    Currently 'error' just aborts and outputs something on stderr, but should it
    also be prefixed with '# '?
 * Testing
+** TODO Tests should use 'title'
 ** TODO 'dashtap-todo.t' and 'dashtap-skip.t' should be very similar
    Currently there is some testing of ' and " in one of them.
 ** TODO Test 'dashtap_init'
@@ -155,3 +130,32 @@
    CLOSED: [2014-07-22 Tue 01:43]
 ** DONE Test 'execute'
    CLOSED: [2014-07-22 Tue 14:26]
+** DONE 'setread' should support third string arg
+   CLOSED: [2014-07-22 Tue 19:27]
+   When this is added, also add a test to 'dashtap-setread.t' which test how
+   'setread' reacts to input that does not end in newline.
+** DONE 'title' -- Extra fail message
+   CLOSED: [2014-07-23 Wed 03:43]
+   Output as 'note' whenever it occurs, but also added as an extra fail message
+   that can be set by a command, which will be displayed only as a diagnostic
+   if there is a failure, and which is valid until it is reset.
+
+   E.g. 'extra "TODO-related tests"' would add an extra line to the beginning
+   of the failure message, like this:
+
+       not ok 35 - Exit status
+       #   TODO-related tests
+       #   Failed test 'Exit status'
+       #   in 'xt/dashtap-todo.t'
+       #     GOT   : 255
+       #     WANTED: 1
+*** DONE 'seteval' argument change
+    CLOSED: [2014-07-22 Tue 21:17]
+    '+' should be first arg in parallel to 'setread'
+*** DONE 'setread' argument change
+    CLOSED: [2014-07-22 Tue 19:25]
+    '+' should be first arg, to allow for unambiguous 3rd argument.
+** DONE Test 'title'
+   CLOSED: [2014-07-23 Wed 03:48]
+** DONE Test 'end_title'
+   CLOSED: [2014-07-23 Wed 03:49]
