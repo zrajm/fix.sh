@@ -224,7 +224,7 @@ strip_newline() {
     fi
 }
 
-# Usage: indent PROMPT [MSG] [<<"EOF"
+# Usage: indent PROMPT [MSG] [<<-"EOF"
 #            CONTENT
 #        EOF]
 #
@@ -367,7 +367,7 @@ BAIL_OUT() {
     error
 }
 
-# Usage: diag [MSG] [<<"EOF"
+# Usage: diag [MSG] [<<-"EOF"
 #            CONTENT
 #        EOF]
 #
@@ -520,10 +520,10 @@ stdin() {
 # which strips ALL trailing newlines. 'setread' is intentionally more
 # restrictive since the strings are used in string comparison tests.
 #
-#     setread   X <<-EOF               # set X to "hello"
+#     setread   X <<-"EOF"             # set X to "hello"
 #         hello
 #         EOF
-#     setread + X <<-EOF               # set X to "hello" + newline
+#     setread + X <<-"EOF"             # set X to "hello" + newline
 #         hello
 #         EOF
 #

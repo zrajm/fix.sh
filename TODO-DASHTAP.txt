@@ -29,6 +29,8 @@
    system. (Or at least have a very simple way of doing this described in the
    README.)
 ** TODO Merge 'is_changed' and 'is_unchanged' to follow DRY
+** TODO Fix space-in-filename problem with timestamps                   :BUG:
+   'timestamp'/'is_changed'/'is_unchanged'
 * To think about
 ** TODO Merge 'execute' and 'seteval'?
 ** TODO Should 'error' output be compatible with TAP?
