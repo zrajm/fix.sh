@@ -364,7 +364,7 @@ diag() {
     return 1
 }
 
-# Usage: note [MSG] [<<"EOF"
+# Usage: note [MSG] [<<-"EOF"
 #            CONTENT
 #        EOF]
 #
@@ -484,7 +484,7 @@ stdin() {
 
 # Usage: setread [+] VARNAME CONTENT
 #    or: setread [+] VARNAME [<FILE]
-#    or: setread [+] VARNAME <<"EOF"
+#    or: setread [+] VARNAME <<-"EOF"
 #            CONTENT
 #        EOF
 #
@@ -530,7 +530,7 @@ setread() {
 
 # Usage: seteval [+] VARNAME STATEMENTS
 #    or: seteval [+] VARNAME [<FILE]
-#    or: seteval [+] VARNAME <<"EOF"
+#    or: seteval [+] VARNAME <<-"EOF"
 #            STATEMENTS
 #        EOF
 #
@@ -758,7 +758,7 @@ init_test() {
 }
 
 # Usage: execute COMMAND TRAPFILE
-#    or: execute TRAPFILE <<"EOF"
+#    or: execute TRAPFILE <<-"EOF"
 #            COMMAND
 #        EOF
 #
@@ -808,7 +808,7 @@ chtime() {
     touch -t"$TIME" "$FILE" || error "chtime: 'touch' cannot update '$FILE'"
 }
 
-# Usage: write_file [BITS] [TIME] FILE [<<"EOF"
+# Usage: write_file [BITS] [TIME] FILE [<<-"EOF"
 #            CONTENT
 #        EOF]
 #
