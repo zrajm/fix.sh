@@ -17,6 +17,9 @@ END_SCRIPT
 ERRMSG="ERROR: Buildscript 'fix/TARGET.fix' returned exit status 1
     (Old target unchanged. New, failed target written to 'build/TARGET--fixing'.)"
 
+file_not_exists build/TARGET         "Before build: Target shouldn't exist"
+file_not_exists .fix/state/TARGET    "Before build: Metadata file shouldn't exist"
+
 "$TESTCMD" TARGET >stdout 2>stderr
 is              $?                   5             "Exit status"
 file_is         stdout               "$NADA"       "Standard output"

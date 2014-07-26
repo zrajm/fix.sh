@@ -19,6 +19,9 @@ END_SCRIPT
 ERRMSG="ERROR: Cannot create lockfile '.fix/lock.pid'
     (Is fix.sh is already running? Is lockfile dir writeable?)"
 
+file_not_exists build/TARGET         "Before build: Target shouldn't exist"
+file_not_exists .fix/state/TARGET    "Before build: Metadata file shouldn't exist"
+
 ## First instance of fix: This is run in the background, and has a buildscript
 ## that reads from a fifo, causing the buildscript to hang until something is
 ## written to that fifo.
@@ -46,7 +49,7 @@ file_is         stdout1              "$NADA"       "Standard output"
 file_is         stderr1              "$NADA"       "Standard error"
 file_not_exists build/TARGET--fixing               "Target tempfile shouldn't exist"
 file_is         build/TARGET         "PIPED"       "Target"
-file_exists     .fix/state/TARGET                  "Metadata file"
+file_exists     .fix/state/TARGET                  "Metadata file should exist"
 
 done_testing
 

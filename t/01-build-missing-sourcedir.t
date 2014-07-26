@@ -9,6 +9,9 @@ init_test
 
 ERRMSG="ERROR: Source dir 'src' does not exist"
 
+file_not_exists build/TARGET         "Before build: Target shouldn't exist"
+file_not_exists .fix/state/TARGET    "Before build: Metadata file shouldn't exist"
+
 "$TESTCMD" TARGET >stdout 2>stderr
 is              $?                   10            "Exit status"
 file_is         stdout               "$NADA"       "Standard output"
