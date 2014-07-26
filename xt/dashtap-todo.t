@@ -12,9 +12,7 @@ function_exists     END_TODO   "Function 'END_TODO' exists"
 
 cd "$(mktemp -d)"
 STDOUT="not ok 1 - descr # TODO with reason"
-note <<-EOF
-	Test description + TODO with reason in description.
-	EOF
+title "TODO: Test description + TODO with reason in description"
 
 execute <<"EOF" trap >out 2>err
     dashtap_init
@@ -29,9 +27,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 
 cd "$(mktemp -d)"
 STDOUT="not ok 1 - descr # TODO"
-note <<-EOF
-	Test description + TODO without reason in description.
-	EOF
+title "TODO: Test description + TODO without reason in description"
 
 execute <<"EOF" trap >out 2>err
     dashtap_init
@@ -46,9 +42,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 
 cd "$(mktemp -d)"
 STDOUT="not ok 1 # TODO with reason"
-note <<-EOF
-	No test description + TODO with reason in description.
-	EOF
+title "TODO: No test description + TODO with reason in description"
 
 execute <<"EOF" trap >out 2>err
     dashtap_init
@@ -63,9 +57,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 
 cd "$(mktemp -d)"
 STDOUT="not ok 1 # TODO"
-note <<-EOF
-	No test description + TODO without reason in description.
-	EOF
+title "TODO: No test description + TODO without reason in description"
 
 execute <<"EOF" trap >out 2>err
     dashtap_init
@@ -80,9 +72,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 
 cd "$(mktemp -d)"
 STDOUT="not ok 1 - descr # TODO '\"with reason"
-note <<-EOF
-	Test description + TODO with reason as separate function.
-	EOF
+title "TODO: Test description + TODO with reason as separate function"
 
 execute <<"EOF" trap >out 2>err
     dashtap_init
@@ -98,9 +88,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 
 cd "$(mktemp -d)"
 STDOUT="not ok 1 - descr # TODO"
-note <<-EOF
-	Test description + TODO without reason as separate function.
-	EOF
+title "TODO: Test description + TODO without reason as separate function"
 
 execute <<"EOF" trap >out 2>err
     dashtap_init
@@ -116,9 +104,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 
 cd "$(mktemp -d)"
 STDOUT="not ok 1 # TODO with reason"
-note <<-EOF
-	No test description + TODO with reason as separate function.
-	EOF
+title "TODO: No test description + TODO with reason as separate function"
 
 execute <<"EOF" trap >out 2>err
     dashtap_init
@@ -134,9 +120,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 
 cd "$(mktemp -d)"
 STDOUT="not ok 1 # TODO"
-note <<-EOF
-	No test description + TODO without reason as separate function.
-	EOF
+title "TODO: No test description + TODO without reason as separate function"
 
 execute <<"EOF" trap >out 2>err
     dashtap_init
@@ -157,9 +141,7 @@ STDERR="
 #   in 'xt/dashtap-todo.t'
 #     GOT   : 1
 #     WANTED: 2"
-note <<-EOF
-	Test description + no TODO.
-	EOF
+title "TODO: Test description + no TODO"
 
 execute <<"EOF" trap >out 2>err
     dashtap_init
@@ -181,9 +163,7 @@ STDERR="
 #   Failed test in 'xt/dashtap-todo.t'
 #     GOT   : 1
 #     WANTED: 2"
-note <<-EOF
-	No test description + no TODO.
-	EOF
+title "TODO: No test description + no TODO"
 
 execute <<"EOF" trap >out 2>err
     dashtap_init

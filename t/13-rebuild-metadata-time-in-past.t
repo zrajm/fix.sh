@@ -1,7 +1,7 @@
 #!/usr/bin/env dash
 # -*- sh -*-
 . "t/dashtap.sh"
-note <<"EOF"
+title - <<"EOF"
 Rebuild target that has already been built after target's metadata file's
 timestamp have been moved into the past. (Based on 07.)
 EOF

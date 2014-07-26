@@ -52,12 +52,14 @@ is  "$(cat trap)"  "EXIT"      "Didn't call exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-title "title: Setting a title"
+title "title: Pass when setting a title"
 STDOUT="# Test title
-not ok 1 - Test description
+not ok 1
+not ok 2 - Test description
 "
 STDERR="
-#   Test title
+# Test title
+#   Failed test in 'xt/dashtap-title.t'
 #   Failed test 'Test description'
 #   in 'xt/dashtap-title.t'
 "
@@ -65,6 +67,7 @@ STDERR="
     dashtap_init
     trap 'echo EXIT >trap' 0
     title "Test title"
+    fail
     fail "Test description"
     trap - 0
     echo FULL >trap

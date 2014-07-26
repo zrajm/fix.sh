@@ -13,7 +13,7 @@ function_exists     setread    "Function 'setread' exists"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "setread: Fail when more than two args are used without '+'"
+title "setread: Fail when more than two args are used without '+'"
 STDERR="setread: Bad number of args"
 (
     trap 'echo EXIT >trap' 0
@@ -29,7 +29,7 @@ is  "$(cat trap)"  "EXIT"     "Called exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "setread: Fail when more than three args are used"
+title "setread: Fail when more than three args are used"
 STDERR="setread: Bad number of args"
 (
     trap 'echo EXIT >trap' 0
@@ -45,7 +45,7 @@ is  "$(cat trap)"  "EXIT"     "Called exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "setread: Fail when called with no args"
+title "setread: Fail when called with no args"
 STDERR="setread: Bad number of args"
 (
     trap 'echo EXIT >trap' 0
@@ -61,7 +61,7 @@ is  "$(cat trap)"  "EXIT"     "Called exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "setread: Fail when called with bad variable name"
+title "setread: Fail when called with bad variable name"
 STDERR="setread: Bad VARNAME '_'"
 (
     trap 'echo EXIT >trap' 0
@@ -77,7 +77,7 @@ is  "$(cat trap)"  "EXIT"     "Called exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "setread: Ignore STDIN when two args are used"
+title "setread: Ignore STDIN when two args are used"
 VALUE="ARG\No newline at end."
 (
     trap 'echo EXIT >trap' 0
@@ -97,7 +97,7 @@ is  "$(cat trap)"  "FULL"     "Didn't call exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "setread: Ignore STDIN when two args are used + don't strip newline"
+title "setread: Ignore STDIN when two args are used + don't strip newline"
 VALUE="ARG."
 (
     trap 'echo EXIT >trap' 0
@@ -117,7 +117,7 @@ is  "$(cat trap)"  "FULL"     "Didn't call exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "setread: Process STDIN when one arg is used"
+title "setread: Process STDIN when one arg is used"
 VALUE="STDIN."
 (
     trap 'echo EXIT >trap' 0
@@ -137,7 +137,7 @@ is  "$(cat trap)"  "FULL"     "Didn't call exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "setread: Process STDIN when one arg is used + don't strip newline"
+title "setread: Process STDIN when one arg is used + don't strip newline"
 VALUE="STDIN
 ."
 (
@@ -158,7 +158,7 @@ is  "$(cat trap)"  "FULL"     "Didn't call exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "setread: Process STDIN when one arg is used + no input"
+title "setread: Process STDIN when one arg is used + no input"
 VALUE="."
 (
     trap 'echo EXIT >trap' 0
@@ -176,7 +176,7 @@ is  "$(cat trap)"  "FULL"     "Didn't call exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "setread: Overwriting previously set variable"
+title "setread: Overwriting previously set variable"
 VALUE="NEW."
 (
     trap 'echo EXIT >trap' 0
@@ -195,7 +195,7 @@ is  "$(cat trap)"  "FULL"     "Didn't call exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "setread: Process STDIN with space and quotes"
+title "setread: Process STDIN with space and quotes"
 VALUE="  '  \"  ."
 (
     trap 'echo EXIT >trap' 0
@@ -215,7 +215,7 @@ is  "$(cat trap)"  "FULL"     "Didn't call exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "setread: Process arg with space and quotes"
+title "setread: Process arg with space and quotes"
 VALUE="  '  \"  \No newline at end."
 (
     trap 'echo EXIT >trap' 0

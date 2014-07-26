@@ -10,7 +10,7 @@ function_exists         match        "Function 'match' exists"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "match: Fail when more than two args are used"
+title "match: Fail when more than two args are used"
 STDERR="match: Bad number of args"
 execute <<"EOF" trapout >stdout 2>stderr
     match TOO MANY ARGS
@@ -23,7 +23,7 @@ file_is      trapout    "EXIT"       "Called exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "match: Fail when called with no args"
+title "match: Fail when called with no args"
 STDERR="match: Bad number of args"
 execute <<"EOF" trapout >stdout 2>stderr
     match
@@ -36,7 +36,7 @@ file_is      trapout    "EXIT"       "Called exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "match: Ignore STDIN when two args are used"
+title "match: Ignore STDIN when two args are used"
 execute <<"EOF" trapout >stdout 2>stderr
     echo "STDIN" | match "ARG" "ARG"
 EOF
@@ -48,7 +48,7 @@ file_is      trapout    "FULL"       "Didn't call exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "match: Process STDIN when one arg is used"
+title "match: Process STDIN when one arg is used"
 execute <<"EOF" trapout >stdout 2>stderr
     echo "STDIN" | match "STDIN"
 EOF
@@ -60,7 +60,7 @@ file_is      trapout    "FULL"       "Didn't call exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "match: Fail to find '*' when missing in string"
+title "match: Fail to find '*' when missing in string"
 execute <<"EOF" trapout >stdout 2>stderr
     match "*" "ABC"
 EOF
@@ -72,7 +72,7 @@ file_is      trapout    "FULL"       "Didn't call exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "match: Find '*' last in string"
+title "match: Find '*' last in string"
 execute <<"EOF" trapout >stdout 2>stderr
     match "*" "AB*"
 EOF
@@ -84,7 +84,7 @@ file_is      trapout    "FULL"       "Didn't call exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "match: Find '*' in middle of string"
+title "match: Find '*' in middle of string"
 execute <<"EOF" trapout >stdout 2>stderr
     match "*" "A*C"
 EOF
@@ -96,7 +96,7 @@ file_is      trapout    "FULL"       "Didn't call exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "match: Find '*' at beginning of string"
+title "match: Find '*' at beginning of string"
 execute <<"EOF" trapout >stdout 2>stderr
     match "*" "*BC"
 EOF

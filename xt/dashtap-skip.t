@@ -12,9 +12,7 @@ function_exists     END_SKIP   "Function 'END_SKIP' exists"
 
 cd "$(mktemp -d)"
 STDOUT="ok 1 - descr # SKIP with reason"
-note <<-EOF
-	Test description + SKIP with reason in description.
-	EOF
+title "SKIP: Test description + SKIP with reason in description"
 
 execute <<"EOF" trap >out 2>err
     dashtap_init
@@ -29,9 +27,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 
 cd "$(mktemp -d)"
 STDOUT="ok 1 - descr # SKIP"
-note <<-EOF
-	Test description + SKIP without reason in description.
-	EOF
+title "SKIP: Test description + SKIP without reason in description"
 
 execute <<"EOF" trap >out 2>err
     dashtap_init
@@ -46,9 +42,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 
 cd "$(mktemp -d)"
 STDOUT="ok 1 # SKIP with reason"
-note <<-EOF
-	No test description + SKIP with reason in description.
-	EOF
+title "SKIP: No test description + SKIP with reason in description"
 
 execute <<"EOF" trap >out 2>err
     dashtap_init
@@ -63,9 +57,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 
 cd "$(mktemp -d)"
 STDOUT="ok 1 # SKIP"
-note <<-EOF
-	No test description + SKIP without reason in description.
-	EOF
+title "SKIP: No test description + SKIP without reason in description"
 
 execute <<"EOF" trap >out 2>err
     dashtap_init
@@ -80,9 +72,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 
 cd "$(mktemp -d)"
 STDOUT="ok 1 - descr # SKIP with reason"
-note <<-EOF
-	Test description + SKIP with reason as separate function.
-	EOF
+title "SKIP: Test description + SKIP with reason as separate function"
 
 execute <<"EOF" trap >out 2>err
     dashtap_init
@@ -98,9 +88,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 
 cd "$(mktemp -d)"
 STDOUT="ok 1 - descr # SKIP"
-note <<-EOF
-	Test description + SKIP without reason as separate function.
-	EOF
+title "SKIP: Test description + SKIP without reason as separate function"
 
 execute <<"EOF" trap >out 2>err
     dashtap_init
@@ -116,9 +104,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 
 cd "$(mktemp -d)"
 STDOUT="ok 1 # SKIP with reason"
-note <<-EOF
-	No test description + SKIP with reason as separate function.
-	EOF
+title "SKIP: No test description + SKIP with reason as separate function"
 
 execute <<"EOF" trap >out 2>err
     dashtap_init
@@ -134,9 +120,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 
 cd "$(mktemp -d)"
 STDOUT="ok 1 # SKIP"
-note <<-EOF
-	No test description + SKIP without reason as separate function.
-	EOF
+title "SKIP: No test description + SKIP without reason as separate function"
 
 execute <<"EOF" trap >out 2>err
     dashtap_init
@@ -157,9 +141,7 @@ STDERR="
 #   in 'xt/dashtap-skip.t'
 #     GOT   : 1
 #     WANTED: 2"
-note <<-EOF
-	Test description + no SKIP.
-	EOF
+title "SKIP: Test description + no SKIP"
 
 execute <<"EOF" trap >out 2>err
     dashtap_init
@@ -181,9 +163,7 @@ STDERR="
 #   Failed test in 'xt/dashtap-skip.t'
 #     GOT   : 1
 #     WANTED: 2"
-note <<-EOF
-	No test description + no SKIP.
-	EOF
+title "SKIP: No test description + no SKIP"
 
 execute <<"EOF" trap >out 2>err
     dashtap_init

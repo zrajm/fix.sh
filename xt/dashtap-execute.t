@@ -10,7 +10,7 @@ function_exists     execute    "Function 'execute' exists"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "execute: Fail when more than two args are used"
+title "execute: Fail when more than two args are used"
 STDERR="execute: Bad number of args"
 (
     trap 'echo EXIT >trap' 0
@@ -26,7 +26,7 @@ file_is   trap      "EXIT"       "Called exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "execute: Fail when called with no args"
+title "execute: Fail when called with no args"
 STDERR="execute: Bad number of args"
 (
     trap 'echo EXIT >trap' 0
@@ -42,7 +42,7 @@ file_is   trap      "EXIT"     "Called exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "execute: Ignore STDIN when two args are used"
+title "execute: Ignore STDIN when two args are used"
 (
     execute 'echo ARG' trap >out 2>err <<-"EOF"
 	echo STDIN
@@ -56,7 +56,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "execute: Process STDIN when one arg is used"
+title "execute: Process STDIN when one arg is used"
 (
     execute trap >out 2>err <<-"EOF"
 	echo STDIN
@@ -70,7 +70,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "execute: Returning false"
+title "execute: Returning false"
 (
     execute trap >out 2>err <<-"EOF"
 	! :
@@ -84,7 +84,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "execute: Exiting with true exit status"
+title "execute: Exiting with true exit status"
 (
     execute trap >out 2>err <<-"EOF"
 	exit 0
@@ -98,7 +98,7 @@ file_is   trap      "EXIT"     "Called exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-note "execute: Exiting with false exit status"
+title "execute: Exiting with false exit status"
 (
     execute trap >out 2>err <<-"EOF"
 	exit 1

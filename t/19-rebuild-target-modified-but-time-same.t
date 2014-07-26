@@ -1,7 +1,7 @@
 #!/usr/bin/env dash
 # -*- sh -*-
 . "t/dashtap.sh"
-note <<"EOF"
+title - <<"EOF"
 Attempt to rebuild target when previous target exist and is modified, but its
 timestamp and size is the same as last time. (Based on 07.)
 EOF

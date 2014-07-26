@@ -215,7 +215,7 @@ varname() {
 # still having a predictable result (as opposed to the shell's builtin $(...)
 # which strips any number of trailing newlines).
 strip_newline() {
-    [ $# != 1 ]  && error "strip_newline: Too many args"
+    [ $# = 1   ] || error "strip_newline: Bad number of args"
     varname "$1" || error "strip_newline: Bad VARNAME '$1'"
     eval 'set $1 "$'$1'" "
 "'  # $1 = variable name / $2 = variable content / $3 = newline
@@ -302,16 +302,24 @@ descr() {
 }
 
 # Usage: title TITLE
+#    or: title - <<-"EOF"
+#            TITLE
+#        EOF
 #
 # Set TITLE for subsequent tests, to unset title use 'end_title' (very rarely
 # needed).
 #
-# If set, TITLE is included in the diagnostics output of each failing test, and
-# in the debug output at the point where 'title' was called (this is visible
-# only if the test harness is in verbose mode).
+# If set, TITLE is included in the diagnostics output of the first failing test
+# (which is always visible if one or more tests fail), and in the debug output
+# at the point where 'title' was called (which is visible only if the test
+# harness is in verbose mode).
 title() {
     [ $# = 1 ] || error "title: Bad number of args"
-    DASHTAP_TITLE="$1"
+    if [ "$1" = "-" ]; then
+        setread DASHTAP_TITLE
+    else
+        DASHTAP_TITLE="$1"
+    fi
     note "$DASHTAP_TITLE"
 }
 
@@ -447,11 +455,15 @@ fail() {
     local DESCR="$(descr TODO "$1")" MSG="$2"
     result "not ok" "$DESCR"
     match "# TODO" "$DESCR" && return 0        # no diagnostics for TODO tests
+    # Insert one extra newline before the first error when piped (this makes
+    # 'prove' output look ok). -- Not needed if we're bailing out after the
+    # failure.
+    [ -z "$BAIL_ON_FAIL" -a "$DASHTAP_FAILS" = 0 -a ! -t 1 ] && echo >&2
     DASHTAP_FAILS="$(( DASHTAP_FAILS + 1 ))"
-    # Insert extra newline when piped (so 'prove' output looks ok).
-    # (Skip this if we're bailing out after the failure.)
-    [ -n "$BAIL_ON_FAIL" -o -t 1 ] || echo >&2
-    [ -n "$DASHTAP_TITLE"        ] && indent " " "$DASHTAP_TITLE" | diag
+    if [ -n "$DASHTAP_TITLE" ]; then
+        diag "$DASHTAP_TITLE" <&-
+        DASHTAP_TITLE=""
+    fi
     if [ -z "$DESCR" ]; then
         diag <<-EOF
 	  Failed test in '$0'

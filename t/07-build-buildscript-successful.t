@@ -1,7 +1,7 @@
 #!/usr/bin/env dash
 # -*- sh -*-
 . "t/dashtap.sh"
-note <<"EOF"
+title - <<"EOF"
 Build target with buildscript that returns zero exit status.
 EOF
 

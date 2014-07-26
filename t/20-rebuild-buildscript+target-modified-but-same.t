@@ -1,7 +1,7 @@
 #!/usr/bin/env dash
 # -*- sh -*-
 . "t/dashtap.sh"
-note <<"EOF"
+title - <<"EOF"
 Rebuild target when previous target exist and is modified, but buildscript is
 also modified and builds a target identical to modified the modified one.
 EOF

@@ -10,11 +10,11 @@ function_exists strip_newline  "Function 'strip_newline' exists"
 ##############################################################################
 
 cd "$(mktemp -d)"
-STDERR="strip_newline: Too many args"
-note "strip_newline with too many args"
+STDERR="strip_newline: Bad number of args"
+title "strip_newline: Fail when two or more args are used"
 execute <<"EOF" trap >out 2>err
     LINE=""
-    strip_newline LINE B C
+    strip_newline MANY ARGS
     echo "$LINE"
 EOF
 is        $?        255        "Exit status"
@@ -26,7 +26,7 @@ file_is   trap      "EXIT"     "Called exit"
 
 cd "$(mktemp -d)"
 STDERR="strip_newline: Bad VARNAME 'BAD-VAR'"
-note "strip_newline with bad variable name"
+title "strip_newline: Fail when bad variable name is used"
 execute <<"EOF" trap >out 2>err
     strip_newline "BAD-VAR"
     echo "$BAD-VAR"
@@ -40,7 +40,7 @@ file_is   trap      "EXIT"     "Called exit"
 
 cd "$(mktemp -d)"
 STDOUT="\\No newline at end"
-note "strip_newline with zero length string"
+title "strip_newline: Zero length string"
 execute <<"EOF" trap >out 2>err
     LINE=""
     strip_newline LINE
@@ -55,7 +55,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 
 cd "$(mktemp -d)"
 STDOUT="Hello\\No newline at end"
-note "strip_newline with string not ending in newline"
+title "strip_newline: String with no newline at end"
 execute <<"EOF" trap >out 2>err
     LINE="Hello"
     strip_newline LINE
@@ -70,7 +70,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 
 cd "$(mktemp -d)"
 STDOUT="  1  2  spaces  \\No newline at end"
-note "strip_newline with string leading + trailing spaces"
+title "strip_newline: String leading + trailing spaces"
 execute <<"EOF" trap >out 2>err
     LINE="  1  2  spaces  "
     strip_newline LINE
@@ -85,7 +85,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 
 cd "$(mktemp -d)"
 STDOUT="Hello"
-note "strip_newline with string ending in newline"
+title "strip_newline: String ending in newline"
 execute <<"EOF" trap >out 2>err
     LINE="Hello
 "
@@ -102,7 +102,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 cd "$(mktemp -d)"
 STDOUT="Hello
 "
-note "strip_newline with string ending in two newlines"
+title "strip_newline: with string ending in two newlines"
 execute <<"EOF" trap >out 2>err
     LINE="Hello
 
