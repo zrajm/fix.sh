@@ -710,18 +710,61 @@ file_not_exists() {
 	EOF
 }
 
-# Usage: TIMESTAMP="$(timestamp FILE)"
+# Usage: timestamp TIMESTAMP FILE
 #
-# Stats FILE to get a timestamp (for passing on to is_unchanged, later).
+# Collects TIMESTAMP from FILE. TIMESTAMP contains info on the current state if
+# FILE, and can later be passed to 'is_changed' or 'is_unchanged' to see if the
+# file has schanged since 'timestamp' wass called.
+#
+# See also: 'timestamp_file' and 'timestamp_time'.
 timestamp() {
-    [ $# = 1 ] || error "timestamp: Bad number of args"
-    local FILE="$1"
-    if [ -e "$FILE" ]; then
-        local SHA="$(sha1sum "$FILE")"
-        echo "${SHA%% *} $(ls --full-time "$FILE")"
+    [ $# != 2  ] && error "timestamp_time: Bad number of args"
+    varname "$1" || error "settimestamp: Bad VARNAME '$1'"
+    if [ -e "$2" ]; then
+        # $1 = VARNAME; $2 = FILE; $3 = SHA; $4 = 'ls' output
+        set -- "$@" "$(sha1sum "$2")" "$(ls -l --time-style="+[%s.%N]" "$2")"
+        eval $1'="${3%% *} $4"'
     else
-        echo "<NON-EXISTING FILE> $FILE"
+        eval $1'="[NON-EXISTING FILE] $1"'
     fi
+}
+
+# Usage: timestamp_file VARNAME TIMESTAMP
+#
+# Sets VARNAME to the filename found in TIMESTAMP.
+timestamp_file() {
+    [ $# != 2  ] && error "timestamp_file: Bad number of args"
+    varname "$1" || error "timestamp_file: Bad VARNAME '$1'"
+    set -- "$1" "$2" "${2#*\] }"
+    [ "$2" = "$3" ] && error "timestamp_file: Bad TIMESTAMP '$TIMESTAMP'"
+    eval $1'="$3"'
+}
+
+# Usage: timestamp_mtime VARNAME TIMESTAMP
+#
+# Sets VARNAME to the mtime found in TIMESTAMP. Time is expressed in the
+# traditional Unix epoch format (i.e. seconds since midnight 1970-01-01) plus
+# nanoseconds (which will be all zeroes if your file system only have second
+# resolution).
+timestamp_time() {
+    [ $# != 2  ] && error "timestamp_file: Bad number of args"
+    varname "$1" || error "timestamp_file: Bad VARNAME '$1'"
+    set -- "$1" "$2" "${2#* \[}"
+    set -- "$1" "$2" "${3%%\] *}"
+    [ "$2" = "$3" ] && error "timestamp_time: Bad TIMESTAMP '$2'"
+    eval $1'="$3"'
+}
+
+# Usage: reset_timestamp TIMESTAMP
+#
+# Resets the file mtime of the file in TIMESTAMP, so that the new mtime of that
+# file becomes the same as when TIMESTAMP was originally collected.
+reset_timestamp() {
+    [ $# != 1 ] && error "reset_timestamp: Bad number of args"
+    local TIMESTAMP="$1" FILE TIME
+    timestamp_file FILE "$TIMESTAMP"
+    timestamp_time TIME "$TIMESTAMP"
+    touch -d "@$TIME" "$FILE"
 }
 
 # Usage: is_changed TIMESTAMP [DESCRIPTION]
@@ -731,10 +774,10 @@ timestamp() {
 # TIMESTAMP was obtained, true if it has not changed.
 is_changed() {
     [ $# = 1 -o $# = 2 ] || error "is_changed: Bad number of args"
-    local OLD_TIMESTAMP="$1" DESCR="$(descr SKIP "$2")"
+    local OLD_TIMESTAMP="$1" DESCR="$(descr SKIP "$2")" FILE NEW_TIMESTAMP
     match "# SKIP" "$DESCR" && pass "$DESCR" && return
-    local FILE="${OLD_TIMESTAMP##* }"
-    local NEW_TIMESTAMP="$(timestamp "$FILE")"
+    timestamp_file FILE          "$OLD_TIMESTAMP"
+    timestamp      NEW_TIMESTAMP "$FILE"
     if [ "$NEW_TIMESTAMP" != "$OLD_TIMESTAMP" ]; then
         pass "$DESCR"
         return
@@ -755,10 +798,10 @@ is_changed() {
 # TIMESTAMP was obtained, true if it has not changed.
 is_unchanged() {
     [ $# = 1 -o $# = 2 ] || error "is_unchanged: Bad number of args"
-    local OLD_TIMESTAMP="$1" DESCR="$(descr SKIP "$2")"
+    local OLD_TIMESTAMP="$1" DESCR="$(descr SKIP "$2")" FILE NEW_TIMESTAMP
     match "# SKIP" "$DESCR" && pass "$DESCR" && return
-    local FILE="${OLD_TIMESTAMP##* }"
-    local NEW_TIMESTAMP="$(timestamp "$FILE")"
+    timestamp_file FILE          "$OLD_TIMESTAMP"
+    timestamp      NEW_TIMESTAMP "$FILE"
     if [ "$NEW_TIMESTAMP" = "$OLD_TIMESTAMP" ]; then
         pass "$DESCR"
         return
@@ -848,7 +891,7 @@ mkpath() {
 chtime() {
     local TIME="$1" FILE="$2"
     [ -e "$FILE" ] || error "chtime: file '$FILE' not found"
-    if [ "${TIME#+}" != "${TIME#-}" ]; then    # plus/minus time
+    if [ "${TIME#+}" != "${TIME#-}" ]; then    # time starts with '+' or '-'
         touch -r"$FILE" -d"$TIME" "$FILE" \
             || error "chtime: cannot set file '$FILE' time to '$TIME'"
         return

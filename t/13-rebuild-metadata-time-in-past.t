@@ -16,8 +16,8 @@ write_file -1sec build/TARGET <<-"END_TARGET"
 END_TARGET
 chtime 2000-01-01 .fix/state/TARGET
 
-TARGET="$(timestamp build/TARGET)"
-METADATA="$(timestamp .fix/state/TARGET)"
+timestamp TARGET        build/TARGET
+timestamp METADATA .fix/state/TARGET
 
 "$TESTCMD" TARGET >stdout 2>stderr
 file_is         stdout               "$NADA"       "Standard output"

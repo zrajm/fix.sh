@@ -19,8 +19,8 @@ END_TARGET
 ERRMSG="ERROR: Buildscript 'fix/TARGET.fix' returned exit status 1
     (Old target unchanged. New, failed target written to 'build/TARGET--fixing'.)"
 
-TARGET="$(timestamp build/TARGET)"
-METADATA="$(timestamp .fix/state/TARGET)"
+timestamp TARGET        build/TARGET
+timestamp METADATA .fix/state/TARGET
 
 "$TESTCMD" TARGET >stdout 2>stderr
 is              $?                   5             "Exit status"

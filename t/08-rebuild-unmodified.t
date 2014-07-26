@@ -14,8 +14,8 @@ write_file -1sec build/TARGET <<-"END_TARGET"
 	OUTPUT
 END_TARGET
 
-TARGET="$(timestamp build/TARGET)"
-METADATA="$(timestamp .fix/state/TARGET)"
+timestamp TARGET        build/TARGET
+timestamp METADATA .fix/state/TARGET
 
 "$TESTCMD" TARGET >stdout 2>stderr
 is              $?                   0             "Exit status"

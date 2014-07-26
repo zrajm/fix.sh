@@ -18,8 +18,8 @@ END_TARGET
 ERRMSG="ERROR: Old target 'build/TARGET' modified by user, won't overwrite
     (Erase old target before rebuild. New target kept in 'build/TARGET--fixing'.)"
 
-TARGET="$(timestamp build/TARGET)"
-METADATA="$(timestamp .fix/state/TARGET)"
+timestamp TARGET        build/TARGET
+timestamp METADATA .fix/state/TARGET
 
 "$TESTCMD" TARGET >stdout 2>stderr
 is              $?                   1             "Exit status"

@@ -29,8 +29,6 @@
    system. (Or at least have a very simple way of doing this described in the
    README.)
 ** TODO Merge 'is_changed' and 'is_unchanged' to follow DRY
-** TODO Fix space-in-filename problem with timestamps                   :BUG:
-   'timestamp'/'is_changed'/'is_unchanged'
 * To think about
 ** TODO Merge 'execute' and 'seteval'?
 ** TODO Should 'error' output be compatible with TAP?
@@ -168,3 +166,10 @@
    CLOSED: [2014-07-26 Sat 18:26]
 ** DONE Added 'isnt' function + tests
    CLOSED: [2014-07-26 Sat 19:44]
+** DONE Fix space-in-filename problem with timestamps                   :BUG:
+   CLOSED: [2014-07-26 Sat 19:46]
+   'timestamp'/'is_changed'/'is_unchanged'
+
+** DONE Added 'reset_timestamp' function
+   CLOSED: [2014-07-26 Sat 19:46]
+   Plus related functions 'timestamp_file' and 'timestamp_time'.
