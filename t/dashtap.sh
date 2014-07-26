@@ -624,11 +624,11 @@ seteval() {
 ## function).
 ##
 
+# Usage: is GOT WANTED [DESCRIPTION]
 is() {
-    local GOT="$1" WANTED="$2" DESCR="$(descr SKIP "$3")" NL="
-"   # NB: intentional newline
+    [ $# = 2 -o $# = 3 ] || error "is: Bad number of args"
+    local GOT="$1" WANTED="$2" DESCR="$(descr SKIP "$3")"
     match "# SKIP" "$DESCR" && pass "$DESCR" && return
-    [ $# -gt 3 ] && error "is: Too many args"
     if [ "$GOT" = "$WANTED" ]; then
         pass "$DESCR"
         return
@@ -641,7 +641,9 @@ is() {
 	EOF
 }
 
+# Usage: function_exists FUNCTION [DESCRIPTION]
 function_exists() {
+    [ $# = 1 -o $# = 2 ] || error "function_exists: Bad number of args"
     local FUNCTION="$1" DESCR="$(descr SKIP "$2")"
     match "# SKIP" "$DESCR" && pass "$DESCR" && return
     if type "$FUNCTION" | match "function"; then
@@ -653,7 +655,9 @@ function_exists() {
 	EOF
 }
 
+# Usage: file_is FILE WANTED [DESCRIPTION]
 file_is() {
+    [ $# = 2 -o $# = 3 ] || error "file_is: Bad number of args"
     local FILE="$1" WANTED="$2" DESCR="$(descr SKIP "$3")" GOT=""
     match "# SKIP" "$DESCR" && pass "$DESCR" && return
     [ -r "$FILE" ] || error "file_is: Can't read file '$FILE'"
@@ -661,7 +665,9 @@ file_is() {
     is "$GOT" "$WANTED" "$DESCR"
 }
 
+# Usage: file_exists FILE [DESCRIPTION]
 file_exists() {
+    [ $# = 1 -o $# = 2 ] || error "file_exists: Bad number of args"
     local FILE="$1" DESCR="$(descr SKIP "$2")"
     match "# SKIP" "$DESCR" && pass "$DESCR" && return
     if [ -e "$FILE" ]; then
@@ -673,7 +679,9 @@ file_exists() {
 	EOF
 }
 
+# Usage: file_not_exists FILE [DESCRIPTION]
 file_not_exists() {
+    [ $# = 1 -o $# = 2 ] || error "file_not_exists: Bad number of args"
     local FILE="$1" DESCR="$(descr SKIP "$2")"
     match "# SKIP" "$DESCR" && pass "$DESCR" && return
     if [ ! -e "$FILE" ]; then
@@ -689,6 +697,7 @@ file_not_exists() {
 #
 # Stats FILE to get a timestamp (for passing on to is_unchanged, later).
 timestamp() {
+    [ $# = 1 ] || error "timestamp: Bad number of args"
     local FILE="$1"
     if [ -e "$FILE" ]; then
         local SHA="$(sha1sum "$FILE")"
@@ -698,12 +707,13 @@ timestamp() {
     fi
 }
 
-# Usage: is_changed TIMESTAMP
+# Usage: is_changed TIMESTAMP [DESCRIPTION]
 #
 # Compares TIMESTAMP with the file from which the TIMESTAMP was originally
 # gotten, return false if the files mtime or other metadata have been modified
 # TIMESTAMP was obtained, true if it has not changed.
 is_changed() {
+    [ $# = 1 -o $# = 2 ] || error "is_changed: Bad number of args"
     local OLD_TIMESTAMP="$1" DESCR="$(descr SKIP "$2")"
     match "# SKIP" "$DESCR" && pass "$DESCR" && return
     local FILE="${OLD_TIMESTAMP##* }"
@@ -721,12 +731,13 @@ is_changed() {
 	EOF
 }
 
-# Usage: is_unchanged TIMESTAMP
+# Usage: is_unchanged TIMESTAMP [DESCRIPTION]
 #
 # Compares TIMESTAMP with the file from which the TIMESTAMP was originally
 # gotten, return false if the files mtime or other metadata have been modified
 # TIMESTAMP was obtained, true if it has not changed.
 is_unchanged() {
+    [ $# = 1 -o $# = 2 ] || error "is_unchanged: Bad number of args"
     local OLD_TIMESTAMP="$1" DESCR="$(descr SKIP "$2")"
     match "# SKIP" "$DESCR" && pass "$DESCR" && return
     local FILE="${OLD_TIMESTAMP##* }"

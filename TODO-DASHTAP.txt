@@ -51,7 +51,8 @@
 ** TODO Test 'pass'
 ** TODO Test 'fail'
 ** TODO Test 'ok'
-** TODO Test 'is'
+** TODO Improve 'is' tests
+   FIXMEs in 'xt/dashtap-is.t' have more info
 ** TODO Test 'file_is'
 ** TODO Test 'file_exist'
 ** TODO Test 'file_not_exist'
@@ -161,3 +162,5 @@
    CLOSED: [2014-07-23 Wed 03:48]
 ** DONE Test 'end_title'
    CLOSED: [2014-07-23 Wed 03:49]
+** DONE Test 'is'
+   CLOSED: [2014-07-26 Sat 18:26]
