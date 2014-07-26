@@ -211,20 +211,21 @@ Exit status:
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: existing
-
-** TODO ##. Rebuild, target modified but time same
+** DONE 19. Rebuild, target modified but time same
+   CLOSED: [2014-07-26 Sat 21:43]
    Attempt to rebuild target when previous target exist and is modified, but
-   its timestamp remains unchanged. (Based on 07.)
+   its timestamp and size is the same as last time. (Based on 07.)
 
-   FIXME: Preferably its entire stat fingerprint should be the same, i.e. the
-   filesize should remain the same (and its inode number?).
+   Note that we only fiddle with the timestamp, not the the entire stat
+   fingerprint. The stat fingerprint could (conceivably) be tricked, but this
+   really beyond the scope of these test, as this is highly unlikely.
 
    * FAILURE
      + Exit status: 1
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: existing
-** DONE 19. Rebuild, buildscript+target modified but same
+** DONE 20. Rebuild, buildscript+target modified but same
    CLOSED: [2014-07-11 Fri 19:40]
    Rebuild target when previous target exist and is modified, but buildscript
    is also modified and builds a target identical to modified the modified one.
@@ -234,8 +235,8 @@ Exit status:
      + Target: unmodified
      + Metadata: modified
      + Tempfile: not existing
-** TODO 20. Rebuild, buildscript modified
-** TODO 20. Rebuild, buildscript modified but time same
+** TODO 21. Rebuild, buildscript modified
+** TODO 22. Rebuild, buildscript modified but time same
 * Lockfile-related stuff
   Check that lockfile is cleared on non-normal termination. And that it works
   to avert parallel execution of fix.

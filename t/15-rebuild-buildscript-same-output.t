@@ -6,7 +6,10 @@ Rebuild target after buildscript modified (by a comment or similar) in such a
 way that it still produces the same output as it previously did. (Based on 07.)
 EOF
 
-init_test fix src
+init_test
+mkdir  fix src
+cpdir .fix
+
 write_file a+x -1sec fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
 	# added comment

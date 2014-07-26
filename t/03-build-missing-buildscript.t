@@ -5,7 +5,9 @@ note <<"EOF"
 Attempt to build target when there is no build script for it.
 EOF
 
-init_test fix src
+init_test
+mkdir fix src
+
 ERRMSG="ERROR: Buildscript 'fix/TARGET.fix' does not exist"
 
 "$TESTCMD" TARGET >stdout 2>stderr

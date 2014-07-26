@@ -4,7 +4,8 @@
 ** TODO Dependencies
 ** TODO Automatic unlocking of stale lockfile
 * Testing
-** TODO test_init should set state dir root
+** TODO Test scripts should use 'title'
+** TODO 'test_init' should set state dir root
    '.fix/state' is the current state dir root, this should be exported in a
    variable from test_init so we won't have to change it in a hundred different
    test files if it ever changes.
@@ -34,3 +35,12 @@
    work for this.
 
    Test time went down from 14 seconds to 2 seconds (with 20 tests).
+** DONE Modified 'init_test' + added 'cpdir'
+   CLOSED: [2014-07-26 Sat 21:45]
+   'init_test' no longer helps in creating the directory structure of the
+   test's tempdir. Instead this has to be done manually (which simplifies
+   reading the test script, since you can immediately see which directories are
+   created).
+
+   Added help function 'cpdir' which simplifies copying the relevant data
+   directories from the test script data dir.

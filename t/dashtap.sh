@@ -148,6 +148,8 @@ dashtap_init() {
     DASHTAP_TITLE=""                           # test title (if any)
     DASHTAP_TODO=""                            # TODO reason (if any)
     DASHTAP_SKIP=""                            # SKIP reason (if any)
+    DASHTAP_FILE="$PWD/$0"                     # name of script file
+    DASHTAP_DIR="${DASHTAP_FILE%.t}"           # data dir for script
     trap 'dashtap_exit; trap - 0' 0            # exit messages
 }
 dashtap_init
@@ -841,12 +843,19 @@ is_unchanged() {
 init_test() {
     NADA=""; strip_newline NADA                # NADA = '\No newline at end'
     readonly TESTCMD="$PWD/fix.sh" NADA
-    local TESTFILE="$PWD/$0" TESTDIR="$PWD/${0%.t}"
-    local TMPDIR="$(mktemp -dt "fix-test-${TESTDIR##*/}.XXXXXX")"
+    local TMPDIR="$(mktemp -dt "fix-test-${DASHTAP_DIR##*/}.XXXXXX")"
     cd "$TMPDIR"
     note "DIR: $TMPDIR"
-    [ $# -gt 0 ] && mkdir -p "$@"
-    [ -e "$TESTDIR" ] && cp -rH "$TESTDIR" .fix
+}
+
+# Usage: cpdir DIR...
+#
+# Copies the specified DIR(s) from the data directory of the current dashtap
+# script, to it execution directory (tempdir).
+cpdir() {
+    for DIR; do
+        cp -a "$DASHTAP_DIR/$DIR" .
+    done
 }
 
 # Usage: execute COMMAND TRAPFILE

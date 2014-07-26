@@ -5,7 +5,9 @@ note <<"EOF"
 Attempt to build target with buildscript with execute bits unset.
 EOF
 
-init_test fix src
+init_test
+mkdir fix src
+
 write_file fix/TARGET.fix
 ERRMSG="ERROR: No execute permission for buildscript 'fix/TARGET.fix'"
 

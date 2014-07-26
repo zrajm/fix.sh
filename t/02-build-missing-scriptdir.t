@@ -5,7 +5,9 @@ note <<"EOF"
 Attempt to build target when there is no script dir.
 EOF
 
-init_test src
+init_test
+mkdir src
+
 ERRMSG="ERROR: Script dir 'fix' does not exist"
 
 "$TESTCMD" TARGET >stdout 2>stderr

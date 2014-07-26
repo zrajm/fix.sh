@@ -6,6 +6,7 @@ Attempt to build target when there is no source dir.
 EOF
 
 init_test
+
 ERRMSG="ERROR: Source dir 'src' does not exist"
 
 "$TESTCMD" TARGET >stdout 2>stderr

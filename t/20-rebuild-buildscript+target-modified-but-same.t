@@ -6,7 +6,10 @@ Rebuild target when previous target exist and is modified, but buildscript is
 also modified and builds a target identical to modified the modified one.
 EOF
 
-init_test fix src
+init_test
+mkdir  fix src
+cpdir .fix
+
 write_file a+x -1sec fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
 	echo "OUTPUT2"

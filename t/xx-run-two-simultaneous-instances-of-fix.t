@@ -6,8 +6,10 @@ Attempt to run two copies of fix at once. First instance should build, second
 instance should detect lockfile and refuse to start.
 EOF
 
-init_test fix src .fix
+init_test
+mkdir  fix src .fix
 mkfifo fifo                                        # buildscript reads fifo
+
 write_file a+x fix/TARGET.fix <<"END_SCRIPT"
 	#!/bin/sh
 	read LINE <fifo

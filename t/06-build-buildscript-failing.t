@@ -5,7 +5,9 @@ note <<"EOF"
 Attempt to build target with buildscript that returns non-zero exit status.
 EOF
 
-init_test fix src
+init_test
+mkdir fix src
+
 write_file a+x fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
 	echo "OUTPUT"

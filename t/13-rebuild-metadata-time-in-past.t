@@ -6,7 +6,10 @@ Rebuild target that has already been built after target's metadata file's
 timestamp have been moved into the past. (Based on 07.)
 EOF
 
-init_test fix src
+init_test
+mkdir  fix src
+cpdir .fix
+
 write_file a+x -1sec fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
 	echo "OUTPUT"
