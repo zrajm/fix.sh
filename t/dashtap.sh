@@ -641,6 +641,23 @@ is() {
 	EOF
 }
 
+# Usage: isnt GOT WANTED [DESCRIPTION]
+isnt() {
+    [ $# = 2 -o $# = 3 ] || error "isnt: Bad number of args"
+    local GOT="$1" WANTED="$2" DESCR="$(descr SKIP "$3")"
+    match "# SKIP" "$DESCR" && pass "$DESCR" && return
+    if [ "$GOT" != "$WANTED" ]; then
+        pass "$DESCR"
+        return
+    fi
+    seteval GOT    'indent "GOT   :" "$GOT"'
+    seteval WANTED 'indent "WANTED:" "anything else"'
+    fail "$DESCR" <<-EOF
+	$GOT
+	$WANTED
+	EOF
+}
+
 # Usage: function_exists FUNCTION [DESCRIPTION]
 function_exists() {
     [ $# = 1 -o $# = 2 ] || error "function_exists: Bad number of args"

@@ -53,6 +53,8 @@
 ** TODO Test 'ok'
 ** TODO Improve 'is' tests
    FIXMEs in 'xt/dashtap-is.t' have more info
+** TODO Improve 'isnt' tests
+   FIXMEs in 'xt/dashtap-isnt.t' have more info
 ** TODO Test 'file_is'
 ** TODO Test 'file_exist'
 ** TODO Test 'file_not_exist'
@@ -164,3 +166,5 @@
    CLOSED: [2014-07-23 Wed 03:49]
 ** DONE Test 'is'
    CLOSED: [2014-07-26 Sat 18:26]
+** DONE Added 'isnt' function + tests
+   CLOSED: [2014-07-26 Sat 19:44]
