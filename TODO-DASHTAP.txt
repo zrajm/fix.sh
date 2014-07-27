@@ -1,6 +1,7 @@
 -*- org -*-
 
 * Program
+** TODO Test functions should use 'else', not 'return'
 ** TODO Functions that read stdin shouldn't test stdin to determine when
    Functions that read standard input should not determine whether or not to
    read it by testing whether there is anything to read. Instead some other
@@ -17,6 +18,13 @@
 *** DONE 'match'
 *** DONE 'execute'
     CLOSED: [2014-07-22 Tue 14:29]
+** TODO Is 'file_is' failure diagnostic good enough?
+   'file_is' simply calls 'is', which means that the file name is not included
+   in the diagnostics -- it probably should be.
+** TODO Is 'file_is', 'is_changed' and 'is_unchanged' fail good enough?
+   What kind of fail message do we get if the file is missing? They all output
+   the same thing, which means that these tests cannot be distinguished on the
+   diagnostics output alone. :/
 ** TODO Eliminate as many $(...) as possible
    Each $(...) starts a subshell, which is inefficient, this should be avoided
    whenever possible.
@@ -30,11 +38,9 @@
    system. (Or at least have a very simple way of doing this described in the
    README.)
 ** TODO Merge 'is_changed' and 'is_unchanged' to follow DRY
+** TODO Make sure all error messages use 'error'
 * To think about
 ** TODO Merge 'execute' and 'seteval'?
-** TODO Should 'error' output be compatible with TAP?
-   Currently 'error' just aborts and outputs something on stderr, but should it
-   also be prefixed with '# '?
 * Testing
 ** TODO Tests should use 'title'
 ** TODO 'dashtap-todo.t' and 'dashtap-skip.t' should be very similar
@@ -117,7 +123,7 @@
    CLOSED: [2014-07-21 Mon 22:02]
 ** DONE Rename test functions '*_exist' -> '*_exists'
    CLOSED: [2014-07-22 Tue 00:47]
-** NOTDONE 'setread' should refuse pipe input
+** WONT 'setread' should refuse pipe input
    CLOSED: [2014-07-22 Tue 00:59]
    We could use [ -p /dev/stdin ] in 'setread' to test whether was invoked in a
    pipe or not. But stopping the user from doing this would backfire, since it
@@ -173,3 +179,16 @@
 ** DONE Added 'reset_timestamp' function
    CLOSED: [2014-07-26 Sat 19:46]
    Plus related functions 'timestamp_file' and 'timestamp_time'.
+** WONT Should 'error' output be compatible with TAP?
+   CLOSED: [2014-07-27 Sun 22:22]
+   Currently 'error' just aborts and outputs something on stderr, but should it
+   also be prefixed with '# '?
+
+   -- No. Tests should only be evaluated by the test functions, because if an
+   error messages throw a test fail, the user will not have any control over
+   the test description string. (And TODO/SKIP etc. gets inherited -- not
+   acceptable.)
+
+   It is, however acceptable to have a function like 'is_changed' (a test
+   function) to fail, and advisable to have some special output acknowledging
+   this fact.

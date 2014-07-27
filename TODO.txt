@@ -1,16 +1,16 @@
 -*- org -*-
 
 * Program
+** TODO Source dependencies
 ** TODO Dependencies
+** TODO Automatic adding of buildscript as target dependency
 ** TODO Automatic unlocking of stale lockfile
 * Testing
-** TODO Test scripts should use 'title'
 ** TODO 'test_init' should set state dir root
    '.fix/state' is the current state dir root, this should be exported in a
    variable from test_init so we won't have to change it in a hundred different
    test files if it ever changes.
 ** TODO Mooooaaar test cases!
-** TODO Test killing of fix
 ** TODO Profiling the code (using Devel::NYTProf)
 ** TODO Test code coverage (Devel::Cover)
 * DONE
@@ -44,3 +44,5 @@
 
    Added help function 'cpdir' which simplifies copying the relevant data
    directories from the test script data dir.
+** DONE Test scripts should use 'title'
+   CLOSED: [2014-07-25 Sun 00:19]

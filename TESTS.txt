@@ -289,31 +289,95 @@
 * [0%] d. Automatic buildscript dependency
   Checks to see that the automatically added dependency on the buildscript
   works as it should.
-* [0%] e. Source dependency
-** TODO Build, missing sourcedep
+* [100%] e. Source dependency
+** DONE e01. Build, missing sourcedep
+   CLOSED: [2014-07-27 Sun 16:00]
    Attempt to build a target for which there is a missing source dependency.
-** TODO Build, sourcedep missing read bits
-   Attempt to build target with source dependency with read bits unset.
-** TODO Build, sourcedep
+
+   * FAILURE
+     + Exit status: 10
+     + Target: not existing
+     + Metadata: not existing
+     + Tempfile: existing
+** DONE e02. Build, sourcedep missing read bits
+   CLOSED: [2014-07-27 Sun 16:09]
+   Attempt to build target with a source dependency that have its read bits
+   unset.
+
+   * FAILURE
+     + Exit status: 10
+     + Target: not existing
+     + Metadata: not existing
+     + Tempfile: existing
+** DONE e03. Build, sourcedep
+   CLOSED: [2014-07-27 Sun 17:58]
    Build target with source dependency.
 
    The target should include the source dependency, and checks should see that
    it's included.
-** TODO Rebuild, sourcedep unmodified
-   Rebuild target with source dependency that has already been built.
-** TODO Rebuild, sourcedep time in past
+
+   * SUCCESS
+     + Exit status: 0
+     + Target: existing
+     + Metadata: existing
+     + Tempfile: not existing
+** DONE e04. Rebuild, sourcedep unmodified
+   CLOSED: [2014-07-27 Sun 19:18]
+   Rebuild target with source dependency that has already been built. (Based on
+   e03.)
+
+   * SUCCESS
+     + Exit status: 0
+     + Target: unmodified
+     + Metadata: unmodified
+     + Tempfile: not existing
+** DONE e05. Rebuild, sourcedep time in past
+   CLOSED: [2014-07-27 Sun 19:23]
    Rebuild target with source dependency that has already been built after the
-   source dependency file's timestamp have been moved into the past.
+   source dependency file's timestamp have been moved into the past. (Based on
+   e03.)
 
    Source dependency timestamp is set to: 2000-01-01
-** TODO Rebuild, sourcedep time in future
+
+   * SUCCESS
+     + Exit status: 0
+     + Target: unmodified
+     + Metadata: unmodified
+     + Tempfile: not existing
+** DONE e06. Rebuild, sourcedep time in future
+   CLOSED: [2014-07-27 Sun 19:25]
    Rebuild target with source dependency that has already been built after
    source dependency file's timestamp have been moved into the future. (Based
-   on 07.)
+   on e03.)
 
    Source dependency timestamp is set to: 2030-01-01
-** TODO Rebuild, sourcedep modified
-** TODO Rebuild, sourcedep modified but time same
+
+   * SUCCESS
+     + Exit status: 0
+     + Target: unmodified
+     + Metadata: unmodified
+     + Tempfile: not existing
+** DONE e07. Rebuild, sourcedep modified
+   CLOSED: [2014-07-27 Sun 20:21]
+   Rebuild target with source dependency when previous target exists, after the
+   source dependency has been modified. (Based on e03.)
+
+   * SUCCESS
+     + Exit status: 0
+     + Target: modified
+     + Metadata: modified
+     + Tempfile: not existing
+** DONE e08. Rebuild, sourcedep modified but time same
+   CLOSED: [2014-07-27 Sun 20:47]
+   Rebuild target with source dependency when previous target exists, after the
+   source dependency has been modified, but the source dependency timestamp and
+   size is the same as last time. (Based on e03.)
+
+   * SUCCESS
+     + Exit status: 0
+     + Target: modified
+     + Metadata: modified
+     + Tempfile: not existing
 * [0%] f. Target dependency
 ** TODO Build target with one dependency
    Build target A with dependency B

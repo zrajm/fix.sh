@@ -691,9 +691,14 @@ file_is() {
     [ $# = 2 -o $# = 3 ] || error "file_is: Bad number of args"
     local FILE="$1" WANTED="$2" DESCR="$(descr SKIP "$3")" GOT=""
     match "# SKIP" "$DESCR" && pass "$DESCR" && return
-    [ -r "$FILE" ] || error "file_is: Can't read file '$FILE'"
-    setread GOT <"$FILE"
-    is "$GOT" "$WANTED" "$DESCR"
+    if [ -r "$FILE" ]; then
+        setread GOT <"$FILE"
+        is "$GOT" "$WANTED" "$DESCR"
+    else
+        fail "$DESCR" <<-EOF
+		File '$FILE' should be readable, but it is not
+		EOF
+    fi
 }
 
 # Usage: file_exists FILE [DESCRIPTION]
@@ -763,7 +768,7 @@ timestamp_file() {
 timestamp_time() {
     [ $# != 2  ] && error "timestamp_file: Bad number of args"
     varname "$1" || error "timestamp_file: Bad VARNAME '$1'"
-    set -- "$1" "$2" "${2#* \[}"
+    set -- "$1" "$2" "${2#*\[}"
     set -- "$1" "$2" "${3%%\] *}"
     [ "$2" = "$3" ] && error "timestamp_time: Bad TIMESTAMP '$2'"
     eval $1'="$3"'
@@ -778,7 +783,14 @@ reset_timestamp() {
     local TIMESTAMP="$1" FILE TIME
     timestamp_file FILE "$TIMESTAMP"
     timestamp_time TIME "$TIMESTAMP"
-    touch -d "@$TIME" "$FILE"
+    case "$TIME" in
+        "NON-EXISTING FILE") : ;;
+        *[!0-9.]*|*.*.*)
+            error "reset_timestamp: Bad time in '$TIMESTAMP'" ;;
+        *)  [ -e "$FILE" ] \
+                || error "reset_timestamp: File does not exist in '$TIMESTAMP'"
+            touch -d "@$TIME" "$FILE" ;;
+    esac
 }
 
 # Usage: is_changed TIMESTAMP [DESCRIPTION]
@@ -790,19 +802,25 @@ is_changed() {
     [ $# = 1 -o $# = 2 ] || error "is_changed: Bad number of args"
     local OLD_TIMESTAMP="$1" DESCR="$(descr SKIP "$2")" FILE NEW_TIMESTAMP
     match "# SKIP" "$DESCR" && pass "$DESCR" && return
-    timestamp_file FILE          "$OLD_TIMESTAMP"
-    timestamp      NEW_TIMESTAMP "$FILE"
-    if [ "$NEW_TIMESTAMP" != "$OLD_TIMESTAMP" ]; then
-        pass "$DESCR"
-        return
+    timestamp_file FILE "$OLD_TIMESTAMP"
+    if [ -e "$FILE" ]; then
+        timestamp NEW_TIMESTAMP "$FILE"
+        if [ "$NEW_TIMESTAMP" != "$OLD_TIMESTAMP" ]; then
+            pass "$DESCR"
+        else
+            seteval OLD_TIMESTAMP 'indent OLD: "$OLD_TIMESTAMP"'
+            seteval NEW_TIMESTAMP 'indent NEW: "$NEW_TIMESTAMP"'
+            fail "$DESCR" <<-EOF
+		File '$FILE' has been modified, but it shouldn't have
+		$OLD_TIMESTAMP
+		$NEW_TIMESTAMP
+		EOF
+        fi
+    else
+        fail "$DESCR" <<-EOF
+		File '$FILE' should exist, but it does not
+		EOF
     fi
-    seteval OLD_TIMESTAMP 'indent OLD: "$OLD_TIMESTAMP"'
-    seteval NEW_TIMESTAMP 'indent NEW: "$NEW_TIMESTAMP"'
-    fail "$DESCR" <<-EOF
-	File '$FILE' has been modified, but it shouldn't have
-	$OLD_TIMESTAMP
-	$NEW_TIMESTAMP
-	EOF
 }
 
 # Usage: is_unchanged TIMESTAMP [DESCRIPTION]
@@ -814,19 +832,25 @@ is_unchanged() {
     [ $# = 1 -o $# = 2 ] || error "is_unchanged: Bad number of args"
     local OLD_TIMESTAMP="$1" DESCR="$(descr SKIP "$2")" FILE NEW_TIMESTAMP
     match "# SKIP" "$DESCR" && pass "$DESCR" && return
-    timestamp_file FILE          "$OLD_TIMESTAMP"
-    timestamp      NEW_TIMESTAMP "$FILE"
-    if [ "$NEW_TIMESTAMP" = "$OLD_TIMESTAMP" ]; then
-        pass "$DESCR"
-        return
+    timestamp_file FILE "$OLD_TIMESTAMP"
+    if [ -e "$FILE" ]; then
+        timestamp NEW_TIMESTAMP "$FILE"
+        if [ "$NEW_TIMESTAMP" = "$OLD_TIMESTAMP" ]; then
+            pass "$DESCR"
+        else
+            seteval OLD_TIMESTAMP 'indent OLD: "$OLD_TIMESTAMP"'
+            seteval NEW_TIMESTAMP 'indent NEW: "$NEW_TIMESTAMP"'
+            fail "$DESCR" <<-EOF
+		File '$FILE' has been modified, but it shouldn't have
+		$OLD_TIMESTAMP
+		$NEW_TIMESTAMP
+		EOF
+        fi
+    else
+        fail "$DESCR" <<-EOF
+		File '$FILE' should exist, but it does not
+		EOF
     fi
-    seteval OLD_TIMESTAMP 'indent OLD: "$OLD_TIMESTAMP"'
-    seteval NEW_TIMESTAMP 'indent NEW: "$NEW_TIMESTAMP"'
-    fail "$DESCR" <<-EOF
-	File '$FILE' has been modified, but it shouldn't have
-	$OLD_TIMESTAMP
-	$NEW_TIMESTAMP
-	EOF
 }
 
 ##############################################################################
@@ -866,7 +890,8 @@ init_test() {
 # script, to it execution directory (tempdir).
 cpdir() {
     for DIR; do
-        cp -a "$DASHTAP_DIR/$DIR" .
+        DIR="$DASHTAP_DIR/$DIR"
+        [ -e "$DIR" ] && cp -a "$DIR" .
     done
 }
 
