@@ -1,7 +1,7 @@
 -*- org -*-
 
 * Program
-** TODO Functions that read stdin shouln't test stdin to determine when
+** TODO Functions that read stdin shouldn't test stdin to determine when
    Functions that read standard input should not determine whether or not to
    read it by testing whether there is anything to read. Instead some other
    factor (e.g. number of args) should be used to determine whether or not to
