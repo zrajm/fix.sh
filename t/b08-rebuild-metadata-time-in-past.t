@@ -3,7 +3,7 @@
 . "t/dashtap.sh"
 title - <<"EOF"
 Rebuild target that has already been built after target's metadata file's
-timestamp have been moved into the future. (Based on 07.)
+timestamp have been moved into the past. (Based on b02.)
 EOF
 
 init_test
@@ -17,7 +17,7 @@ END_SCRIPT
 write_file -1sec build/TARGET <<-"END_TARGET"
 	OUTPUT
 END_TARGET
-chtime 2030-01-01 .fix/state/TARGET
+chtime 2000-01-01 .fix/state/TARGET
 
 timestamp TARGET        build/TARGET
 timestamp METADATA .fix/state/TARGET

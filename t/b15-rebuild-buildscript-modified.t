@@ -2,17 +2,17 @@
 # -*- sh -*-
 . "t/dashtap.sh"
 title - <<"EOF"
-Rebuild target that has already been built after target's buildscript's
-timestamp have been moved into the future. (Based on 07.)
+Rebuild target when previous target exists, but the buildscript has been
+modified. (Based on b02.)
 EOF
 
 init_test
 mkdir  fix src
 cpdir .fix
 
-write_file a+x 2030-01-01 fix/TARGET.fix <<-"END_SCRIPT"
+write_file a+x -1sec fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
-	echo "OUTPUT"
+	echo "OUTPUT2"
 END_SCRIPT
 write_file -1sec build/TARGET <<-"END_TARGET"
 	OUTPUT
@@ -28,10 +28,10 @@ file_exists     .fix/state/TARGET    "Before build: Metadata file should exist"
 is              $?                   0             "Exit status"
 file_is         stdout               "$NADA"       "Standard output"
 file_is         stderr               "$NADA"       "Standard error"
-file_is         build/TARGET         "OUTPUT"      "Target"
-is_unchanged    "$TARGET"                          "Target timestamp"
-file_exists     .fix/state/TARGET                  "Metadata file should exist"
-is_unchanged    "$METADATA"                        "Metadata timestamp"
+file_is         build/TARGET         "OUTPUT2"     "Target"
+is_changed      "$TARGET"                          "Target timestamp"
+file_exists     .fix/state/TARGET                  "Metadata file"
+is_changed      "$METADATA"                        "Metadata timestamp"
 file_not_exists build/TARGET--fixing               "Target tempfile shouldn't exist"
 
 done_testing

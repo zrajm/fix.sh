@@ -2,14 +2,15 @@
 # -*- sh -*-
 . "t/dashtap.sh"
 title - <<"EOF"
-Rebuild target that has already been built. (Based on 07.)
+Rebuild target that has already been built after target's buildscript's
+timestamp have been moved into the future. (Based on b02.)
 EOF
 
 init_test
 mkdir  fix src
 cpdir .fix
 
-write_file a+x -1sec fix/TARGET.fix <<-"END_SCRIPT"
+write_file a+x 2030-01-01 fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
 	echo "OUTPUT"
 END_SCRIPT

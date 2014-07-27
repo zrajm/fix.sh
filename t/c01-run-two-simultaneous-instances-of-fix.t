@@ -47,9 +47,9 @@ wait "$PID"
 is              $?                   0             "Exit status"
 file_is         stdout1              "$NADA"       "Standard output"
 file_is         stderr1              "$NADA"       "Standard error"
-file_not_exists build/TARGET--fixing               "Target tempfile shouldn't exist"
 file_is         build/TARGET         "PIPED"       "Target"
 file_exists     .fix/state/TARGET                  "Metadata file should exist"
+file_not_exists build/TARGET--fixing               "Target tempfile shouldn't exist"
 
 done_testing
 
