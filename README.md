@@ -1,11 +1,11 @@
 Fix.sh
 ======
-Fix.sh is a small prototype implementation of [Fix], implemented in [DASH]. I
-use it to play around with Fix features, and to create a end-to-end tests. In
-the end it'll probably a smaller/slower clone of Fix.
+Fix.sh is a small prototype implementation of [Fix], written in [DASH]. I use
+it to play around with Fix features, and to create a end-to-end tests. In the
+end it'll probably become a smaller/slower clone of Fix.
 
-It is in no way complete, in fact it does not even have command line options
-parsing (yet). Options are instead set using environment variables.
+Fix.sh is in no way complete, in fact it does not even have command line
+options parsing (options are currently set using environment variables).
 
 
 Fix
