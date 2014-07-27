@@ -119,7 +119,6 @@
    CLOSED: [2014-07-22 Tue 00:47]
 ** NOTDONE 'setread' should refuse pipe input
    CLOSED: [2014-07-22 Tue 00:59]
-
    We could use [ -p /dev/stdin ] in 'setread' to test whether was invoked in a
    pipe or not. But stopping the user from doing this would backfire, since it
    is sometimes desirable to use it in this way.

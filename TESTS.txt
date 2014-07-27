@@ -225,7 +225,32 @@ Exit status:
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: existing
-** DONE 20. Rebuild, buildscript+target modified but same
+** DONE 20. Rebuild, buildscript modified
+   CLOSED: [2014-07-27 Sun 12:56]
+   Rebuild target when previous target exists, but the buildscript has been
+   modified. (Based on 07.)
+
+   * SUCCESS
+     + Exit status: 0
+     + Target: modified
+     + Metadata: modified
+     + Tempfile: not existing
+** DONE 21. Rebuild, buildscript modified but time same
+   CLOSED: [2014-07-27 Sun 13:07]
+   Attempt to rebuild target when previous target exists, and the buildscript
+   has been modified, but the buildscript timestamp and size is the same as
+   last time. (Based on 07.)
+
+   Note that we only fiddle with the timestamp, not the the entire stat
+   fingerprint. The stat fingerprint could (conceivably) be tricked, but this
+   really beyond the scope of these test, as this is highly unlikely.
+
+   * SUCCESS
+     + Exit status: 0
+     + Target: modified
+     + Metadata: modified
+     + Tempfile: not existing
+** DONE 22. Rebuild, buildscript+target modified but same
    CLOSED: [2014-07-11 Fri 19:40]
    Rebuild target when previous target exist and is modified, but buildscript
    is also modified and builds a target identical to modified the modified one.
@@ -235,8 +260,6 @@ Exit status:
      + Target: unmodified
      + Metadata: modified
      + Tempfile: not existing
-** TODO 21. Rebuild, buildscript modified
-** TODO 22. Rebuild, buildscript modified but time same
 * Lockfile-related stuff
   Check that lockfile is cleared on non-normal termination. And that it works
   to avert parallel execution of fix.

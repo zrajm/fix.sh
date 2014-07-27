@@ -17,7 +17,7 @@ END_SCRIPT
 
 # Replace 'build/TARGET' but keep its old timestamp and filesize.
 timestamp TARGET build/TARGET
-write_file -1sec build/TARGET <<-"END_TARGET"
+write_file build/TARGET <<-"END_TARGET"
 	XXXXXX
 END_TARGET
 reset_timestamp "$TARGET"
