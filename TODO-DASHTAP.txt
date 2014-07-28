@@ -1,7 +1,6 @@
 -*- org -*-
 
 * Program
-** TODO Test functions should use 'else', not 'return'
 ** TODO Functions that read stdin shouldn't test stdin to determine when
    Functions that read standard input should not determine whether or not to
    read it by testing whether there is anything to read. Instead some other
@@ -25,6 +24,17 @@
    What kind of fail message do we get if the file is missing? They all output
    the same thing, which means that these tests cannot be distinguished on the
    diagnostics output alone. :/
+** TODO Rewrite 'descr' so as to not use $(...)
+   Instead of calling as:
+
+       local XX=$(descr SKIP "$1")
+
+   it should maybe be called as:
+
+       local XX="$1"
+       descr XX SKIP
+
+   or somesuch.
 ** TODO Eliminate as many $(...) as possible
    Each $(...) starts a subshell, which is inefficient, this should be avoided
    whenever possible.
@@ -204,3 +214,7 @@
    and 'fail' directly, this must be supported. Currently this involves quite a
    if cases all testing to see if '# SKIP' is part of the current test
    description, however. :( -- Well, it works, anyway!
+** DONE Test functions should use 'else', not 'return'
+   CLOSED: [2014-07-28 Mon 02:19]
+** DONE Explicit return values when return is used
+   CLOSED: [2014-07-28 Mon 02:19]

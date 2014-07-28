@@ -410,10 +410,11 @@ diag() {
 note() {
     local MSG="$1"
     [ -n "$MSG" ] && echo "$MSG" | note
-    [ -t 0 ] && return
+    [ -t 0 ] && return 0
     while IFS='' read -r MSG; do
         echo "#${MSG:+ $MSG}"
     done
+    return 0
 }
 
 # Usage: result RESULT [DESCR]
@@ -441,9 +442,9 @@ result() {
 # (just as if you would've called 'note' just after 'pass').
 pass() {
     local DESCR="$1" MSG="$2"
-    match "# SKIP" "$DESCR" && result "ok" "$DESCR" && return
+    match "# SKIP" "$DESCR" && result "ok" "$DESCR" && return 0
     DESCR="$(descr SKIP "$DESCR")"
-    match "# SKIP" "$DESCR" && result "ok" "$DESCR" && return
+    match "# SKIP" "$DESCR" && result "ok" "$DESCR" && return 0
     DESCR="$(descr TODO "$1")"
     result "ok" "$DESCR"
     note "$MSG"
@@ -460,7 +461,7 @@ pass() {
 # 'verbose' mode or not).
 fail() {
     local DESCR="$(descr SKIP "$1")" MSG="$2"
-    match "# SKIP" "$DESCR" && pass "$DESCR" && return
+    match "# SKIP" "$DESCR" && pass "$DESCR" && return 0
     DESCR="$(descr TODO "$1")"
     result "not ok" "$DESCR"
     match "# TODO" "$DESCR" && return 0        # no diagnostics for TODO tests
@@ -503,12 +504,12 @@ ok() {
     fi
     if [ $RESULT = 0 ]; then
         pass "$DESCR"
-        return
+    else
+        fail "$DESCR" <<-EOF
+		Expression should evaluate to true, but it isn't
+		$EXPR
+		EOF
     fi
-    fail "$DESCR" <<-EOF
-	Expression should evaluate to true, but it isn't
-	$EXPR
-	EOF
 }
 
 # Usage: VARNAME="$(stdin)"             # to truncate trailing newlines
@@ -651,55 +652,55 @@ seteval() {
 is() {
     [ $# = 2 -o $# = 3 ] || error "is: Bad number of args"
     local GOT="$1" WANTED="$2" DESCR="$(descr SKIP "$3")"
-    match "# SKIP" "$DESCR" && pass "$DESCR" && return
+    match "# SKIP" "$DESCR" && pass "$DESCR" && return 0
     if [ "$GOT" = "$WANTED" ]; then
         pass "$DESCR"
-        return
+    else
+        seteval GOT    'indent "GOT   :" "$GOT"'
+        seteval WANTED 'indent "WANTED:" "$WANTED"'
+        fail "$DESCR" <<-EOF
+		$GOT
+		$WANTED
+		EOF
     fi
-    seteval GOT    'indent "GOT   :" "$GOT"'
-    seteval WANTED 'indent "WANTED:" "$WANTED"'
-    fail "$DESCR" <<-EOF
-	$GOT
-	$WANTED
-	EOF
 }
 
 # Usage: isnt GOT WANTED [DESCRIPTION]
 isnt() {
     [ $# = 2 -o $# = 3 ] || error "isnt: Bad number of args"
     local GOT="$1" WANTED="$2" DESCR="$(descr SKIP "$3")"
-    match "# SKIP" "$DESCR" && pass "$DESCR" && return
+    match "# SKIP" "$DESCR" && pass "$DESCR" && return 0
     if [ "$GOT" != "$WANTED" ]; then
         pass "$DESCR"
-        return
+    else
+        seteval GOT    'indent "GOT   :" "$GOT"'
+        seteval WANTED 'indent "WANTED:" "anything else"'
+        fail "$DESCR" <<-EOF
+		$GOT
+		$WANTED
+		EOF
     fi
-    seteval GOT    'indent "GOT   :" "$GOT"'
-    seteval WANTED 'indent "WANTED:" "anything else"'
-    fail "$DESCR" <<-EOF
-	$GOT
-	$WANTED
-	EOF
 }
 
 # Usage: function_exists FUNCTION [DESCRIPTION]
 function_exists() {
     [ $# = 1 -o $# = 2 ] || error "function_exists: Bad number of args"
     local FUNCTION="$1" DESCR="$(descr SKIP "$2")"
-    match "# SKIP" "$DESCR" && pass "$DESCR" && return
+    match "# SKIP" "$DESCR" && pass "$DESCR" && return 0
     if type "$FUNCTION" | match "function"; then
         pass "$DESCR"
-        return
+    else
+        fail "$DESCR" <<-EOF
+		Function '$FUNCTION' should exist, but it does not
+		EOF
     fi
-    fail "$DESCR" <<-EOF
-	Function '$FUNCTION' should exist, but it does not
-	EOF
 }
 
 # Usage: file_is FILE WANTED [DESCRIPTION]
 file_is() {
     [ $# = 2 -o $# = 3 ] || error "file_is: Bad number of args"
     local FILE="$1" WANTED="$2" DESCR="$(descr SKIP "$3")" GOT=""
-    match "# SKIP" "$DESCR" && pass "$DESCR" && return
+    match "# SKIP" "$DESCR" && pass "$DESCR" && return 0
     if [ -r "$FILE" ]; then
         setread GOT <"$FILE"
         is "$GOT" "$WANTED" "$DESCR"
@@ -714,28 +715,28 @@ file_is() {
 file_exists() {
     [ $# = 1 -o $# = 2 ] || error "file_exists: Bad number of args"
     local FILE="$1" DESCR="$(descr SKIP "$2")"
-    match "# SKIP" "$DESCR" && pass "$DESCR" && return
+    match "# SKIP" "$DESCR" && pass "$DESCR" && return 0
     if [ -e "$FILE" ]; then
         pass "$DESCR"
-        return
+    else
+        fail "$DESCR" <<-EOF
+		File '$FILE' should exist, but it does not
+		EOF
     fi
-    fail "$DESCR" <<-EOF
-	File '$FILE' should exist, but it does not
-	EOF
 }
 
 # Usage: file_not_exists FILE [DESCRIPTION]
 file_not_exists() {
     [ $# = 1 -o $# = 2 ] || error "file_not_exists: Bad number of args"
     local FILE="$1" DESCR="$(descr SKIP "$2")"
-    match "# SKIP" "$DESCR" && pass "$DESCR" && return
+    match "# SKIP" "$DESCR" && pass "$DESCR" && return 0
     if [ ! -e "$FILE" ]; then
         pass "$DESCR"
-        return
+    else
+        fail "$DESCR" <<-EOF
+		File '$FILE' should not exist, but it does
+		EOF
     fi
-    fail "$DESCR" <<-EOF
-	File '$FILE' should not exist, but it does
-	EOF
 }
 
 # Usage: timestamp TIMESTAMP FILE
@@ -810,7 +811,7 @@ reset_timestamp() {
 is_changed() {
     [ $# = 1 -o $# = 2 ] || error "is_changed: Bad number of args"
     local OLD_TIMESTAMP="$1" DESCR="$(descr SKIP "$2")" FILE NEW_TIMESTAMP
-    match "# SKIP" "$DESCR" && pass "$DESCR" && return
+    match "# SKIP" "$DESCR" && pass "$DESCR" && return 0
     timestamp_file FILE "$OLD_TIMESTAMP"
     if [ -e "$FILE" ]; then
         timestamp NEW_TIMESTAMP "$FILE"
@@ -840,7 +841,7 @@ is_changed() {
 is_unchanged() {
     [ $# = 1 -o $# = 2 ] || error "is_unchanged: Bad number of args"
     local OLD_TIMESTAMP="$1" DESCR="$(descr SKIP "$2")" FILE NEW_TIMESTAMP
-    match "# SKIP" "$DESCR" && pass "$DESCR" && return
+    match "# SKIP" "$DESCR" && pass "$DESCR" && return 0
     timestamp_file FILE "$OLD_TIMESTAMP"
     if [ -e "$FILE" ]; then
         timestamp NEW_TIMESTAMP "$FILE"
@@ -949,10 +950,11 @@ chtime() {
     if [ "${TIME#+}" != "${TIME#-}" ]; then    # time starts with '+' or '-'
         touch -r"$FILE" -d"$TIME" "$FILE" \
             || error "chtime: cannot set file '$FILE' time to '$TIME'"
-        return
+    else
+        TIME="$(echo "$TIME"|tr -d -)0000"
+        touch -t"$TIME" "$FILE" \
+            || error "chtime: 'touch' cannot update '$FILE'"
     fi
-    TIME="$(echo "$TIME"|tr -d -)0000"
-    touch -t"$TIME" "$FILE" || error "chtime: 'touch' cannot update '$FILE'"
 }
 
 # Usage: write_file [BITS] [TIME] FILE [<<-"EOF"
