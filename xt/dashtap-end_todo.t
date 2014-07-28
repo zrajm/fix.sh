@@ -7,21 +7,20 @@ cat() { stdin <"$1"; }
 
 ##############################################################################
 
-function_exists  end_title  "Function 'end_title' exists"
+function_exists  END_TODO  "Function 'END_TODO' exists"
 
 ##############################################################################
 
 cd "$(mktemp -d)"
-title "end_title: Fail when called with one (or more) args"
-STDOUT="# Test title
-"
-STDERR="end_title: No args allowed
+title "END_TODO: Fail when called with one (or more) args"
+STDOUT=""
+STDERR="END_TODO: No args allowed
 "
 (
     dashtap_init
     trap 'echo EXIT >trap' 0
-    title "Test title"
-    end_title ARG
+    TODO "Reason"
+    END_TODO ARG
     trap - 0
     echo FULL >trap
 ) >out 2>err
@@ -33,14 +32,14 @@ is  "$(cat trap)"  "EXIT"      "Didn't call exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-title "end_title: Fail when called without first setting a title"
+title "END_TODO: Fail when called without first using TODO"
 STDOUT=""
-STDERR="end_title: Title not set
+STDERR="END_TODO: TODO not set
 "
 (
     dashtap_init
     trap 'echo EXIT >trap' 0
-    end_title
+    END_TODO
     fail "Test description"
     trap - 0
     echo FULL >trap
@@ -53,20 +52,33 @@ is  "$(cat trap)"  "EXIT"      "Didn't call exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-title "end_title: Unsetting the title"
-STDOUT="# Test title
-not ok 1 - Test description
+title "END_TODO: Unsetting the TODO"
+STDOUT="ok 1 - pass # TODO Reason
+not ok 2 - fail # TODO Reason
+not ok 3 - is # TODO Reason
+ok 4 - pass
+not ok 5 - fail
+not ok 6 - is
 "
 STDERR="
-#   Failed test 'Test description'
-#   in 'xt/dashtap-end_title.t'
+#   Failed test 'fail'
+#   in 'xt/dashtap-end_todo.t'
+#   Failed test 'is'
+#   in 'xt/dashtap-end_todo.t'
+#     GOT   : 1
+#     WANTED: 2
 "
 (
     dashtap_init
     trap 'echo EXIT >trap' 0
-    title "Test title"
-    end_title
-    fail "Test description"
+    TODO "Reason"
+    pass "pass"
+    fail "fail"
+    is 1 2 "is"
+    END_TODO
+    pass "pass"
+    fail "fail"
+    is 1 2 "is"
     trap - 0
     echo FULL >trap
 ) >out 2>err

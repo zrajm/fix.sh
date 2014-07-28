@@ -324,7 +324,8 @@ title() {
 }
 
 end_title() {
-    [ $# = 0 ] || error "end_title: No args allowed"
+    [ $# = 0              ] || error "end_title: No args allowed"
+    [ -z "$DASHTAP_TITLE" ] && error "end_title: Title not set"
     DASHTAP_TITLE=""
 }
 
@@ -358,7 +359,8 @@ TODO() {
 #
 # Turn off TODO mode. Takes no arguments.
 END_TODO() {
-    [ $# = 0 ] || error "END_TODO: No args allowed"
+    [ $# = 0             ] || error "END_TODO: No args allowed"
+    [ -z "$DASHTAP_TODO" ] && error "END_TODO: TODO not set"
     DASHTAP_TODO=""
 }
 
@@ -368,7 +370,8 @@ SKIP() {
 }
 
 END_SKIP() {
-    [ $# = 0 ] || error "END_SKIP: No args allowed"
+    [ $# = 0             ] || error "END_SKIP: No args allowed"
+    [ -z "$DASHTAP_SKIP" ] && error "END_SKIP: SKIP not set"
     DASHTAP_SKIP=""
 }
 
@@ -437,7 +440,11 @@ result() {
 # will only be visible if you're running your test harness in 'verbose' mode
 # (just as if you would've called 'note' just after 'pass').
 pass() {
-    local DESCR="$(descr TODO "$1")" MSG="$2"
+    local DESCR="$1" MSG="$2"
+    match "# SKIP" "$DESCR" && result "ok" "$DESCR" && return
+    DESCR="$(descr SKIP "$DESCR")"
+    match "# SKIP" "$DESCR" && result "ok" "$DESCR" && return
+    DESCR="$(descr TODO "$1")"
     result "ok" "$DESCR"
     note "$MSG"
     return 0
@@ -452,7 +459,9 @@ pass() {
 # messages) always displayed (regardless of whether the test harness is in
 # 'verbose' mode or not).
 fail() {
-    local DESCR="$(descr TODO "$1")" MSG="$2"
+    local DESCR="$(descr SKIP "$1")" MSG="$2"
+    match "# SKIP" "$DESCR" && pass "$DESCR" && return
+    DESCR="$(descr TODO "$1")"
     result "not ok" "$DESCR"
     match "# TODO" "$DESCR" && return 0        # no diagnostics for TODO tests
     # Insert one extra newline before the first error when piped (this makes

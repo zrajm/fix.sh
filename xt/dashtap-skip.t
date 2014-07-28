@@ -6,7 +6,6 @@ NADA=""; strip_newline NADA                    # NADA = '\No newline at end'
 ##############################################################################
 
 function_exists     SKIP       "Function 'SKIP' exists"
-function_exists     END_SKIP   "Function 'END_SKIP' exists"
 
 ##############################################################################
 

@@ -7,21 +7,20 @@ cat() { stdin <"$1"; }
 
 ##############################################################################
 
-function_exists  end_title  "Function 'end_title' exists"
+function_exists  END_SKIP  "Function 'END_SKIP' exists"
 
 ##############################################################################
 
 cd "$(mktemp -d)"
-title "end_title: Fail when called with one (or more) args"
-STDOUT="# Test title
-"
-STDERR="end_title: No args allowed
+title "END_SKIP: Fail when called with one (or more) args"
+STDOUT=""
+STDERR="END_SKIP: No args allowed
 "
 (
     dashtap_init
     trap 'echo EXIT >trap' 0
-    title "Test title"
-    end_title ARG
+    SKIP "Reason"
+    END_SKIP ARG
     trap - 0
     echo FULL >trap
 ) >out 2>err
@@ -33,14 +32,14 @@ is  "$(cat trap)"  "EXIT"      "Didn't call exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-title "end_title: Fail when called without first setting a title"
+title "END_SKIP: Fail when called without first using SKIP"
 STDOUT=""
-STDERR="end_title: Title not set
+STDERR="END_SKIP: SKIP not set
 "
 (
     dashtap_init
     trap 'echo EXIT >trap' 0
-    end_title
+    END_SKIP
     fail "Test description"
     trap - 0
     echo FULL >trap
@@ -53,20 +52,33 @@ is  "$(cat trap)"  "EXIT"      "Didn't call exit"
 ##############################################################################
 
 cd "$(mktemp -d)"
-title "end_title: Unsetting the title"
-STDOUT="# Test title
-not ok 1 - Test description
+title "END_SKIP: Unsetting the SKIP"
+STDOUT="ok 1 - pass # SKIP Reason
+ok 2 - fail # SKIP Reason
+ok 3 - is # SKIP Reason
+ok 4 - pass
+not ok 5 - fail
+not ok 6 - is
 "
 STDERR="
-#   Failed test 'Test description'
-#   in 'xt/dashtap-end_title.t'
+#   Failed test 'fail'
+#   in 'xt/dashtap-end_skip.t'
+#   Failed test 'is'
+#   in 'xt/dashtap-end_skip.t'
+#     GOT   : 1
+#     WANTED: 2
 "
 (
     dashtap_init
     trap 'echo EXIT >trap' 0
-    title "Test title"
-    end_title
-    fail "Test description"
+    SKIP "Reason"
+    pass "pass"
+    fail "fail"
+    is 1 2 "is"
+    END_SKIP
+    pass "pass"
+    fail "fail"
+    is 1 2 "is"
     trap - 0
     echo FULL >trap
 ) >out 2>err

@@ -192,3 +192,15 @@
    It is, however acceptable to have a function like 'is_changed' (a test
    function) to fail, and advisable to have some special output acknowledging
    this fact.
+** DONE Test 'END_TODO'
+   CLOSED: [2014-07-28 Mon 01:56]
+** DONE Test 'END_SKIP'
+   CLOSED: [2014-07-28 Mon 01:57]
+** DONE Improve 'end_title' tests
+   CLOSED: [2014-07-28 Mon 01:57]
+** DONE 'fail' and 'pass' now also adheres to 'SKIP' mode
+   CLOSED: [2014-07-28 Mon 01:57]
+   Not the neatest solution, maybe. But since user is allowed to call 'pass'
+   and 'fail' directly, this must be supported. Currently this involves quite a
+   if cases all testing to see if '# SKIP' is part of the current test
+   description, however. :( -- Well, it works, anyway!

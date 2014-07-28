@@ -6,7 +6,6 @@ NADA=""; strip_newline NADA                    # NADA = '\No newline at end'
 ##############################################################################
 
 function_exists     TODO       "Function 'TODO' exists"
-function_exists     END_TODO   "Function 'END_TODO' exists"
 
 ##############################################################################
 
