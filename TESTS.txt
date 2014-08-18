@@ -45,7 +45,7 @@
      + Target: not existing
      + Metadata: not existing
      + Tempfile: not existing
-* [80%] b. One target with no dependencies
+* [100%] b. One target with no dependencies
   Check buildscript return values, that target and metadata files are only
   updated when they should, and that file timestamps does not affect this.
 ** DONE b01. Build, buildscript failing
@@ -147,7 +147,8 @@
      + Target: modified
      + Metadata: modified
      + Tempfile: not existing
-** TODO b10. Rebuild, buildscript modified, metadata erased
+** DONE b10. Rebuild, buildscript modified, metadata erased
+   CLOSED: [2014-08-18 Mon 09:42]
    Attempt to rebuild target after buildscript have been changed so that it
    outputs something new and target's metadata file has been erased. (Based
    on b02.)
@@ -155,7 +156,7 @@
    * FAILURE
      + Exit status: 1
      + Target: unmodified
-     + Metadata: unmodified
+     + Metadata: not existing
      + Tempfile: existing
 ** DONE b11. Rebuild, target time in past
    CLOSED: [2014-07-08 Tue 08:44]
@@ -205,14 +206,15 @@
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: existing
-** TODO b15. Rebuild, target modified, metadata erased
+** DONE b15. Rebuild, target modified, metadata erased
+   CLOSED: [2014-08-18 Mon 09:52]
    Attempt to rebuild target when previous target exist and is modified, and
    target's metadata file has been erased. (Based on b02.)
 
    * FAILURE
      + Exit status: 1
      + Target: unmodified
-     + Metadata: unmodified
+     + Metadata: not existing
      + Tempfile: existing
 ** DONE b16. Rebuild, metadata time in past
    CLOSED: [2014-07-09 Wed 09:12]
@@ -238,7 +240,8 @@
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: not existing
-** TODO b18. Rebuild, metadata erased
+** DONE b18. Rebuild, metadata erased
+   CLOSED: [2014-08-18 Mon 09:58]
    Rebuild target that has already been built after target's metadata file has
    been erased. (Based on b02.)
 
@@ -257,7 +260,8 @@
      + Target: unmodified
      + Metadata: modified
      + Tempfile: not existing
-** TODO b20. Rebuild, buildscript+target modified but same, metadata erased
+** DONE b20. Rebuild, buildscript+target modified but same, metadata erased
+   CLOSED: [2014-08-18 Mon 10:05]
    Rebuild target when previous target exist and is modified, but buildscript
    is also modified and builds a target identical to modified the modified one,
    AND target's metadata file has been erased. (Based on b02.)
@@ -265,7 +269,7 @@
    * SUCCESS
      + Exit status: 0
      + Target: unmodified
-     + Metadata: modified
+     + Metadata: created
      + Tempfile: not existing
 * [25%] c. Lockfile-related stuff
   Check that lockfile is cleared on non-normal termination. And that it works
