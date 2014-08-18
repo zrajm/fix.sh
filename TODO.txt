@@ -46,3 +46,5 @@
    directories from the test script data dir.
 ** DONE Test scripts should use 'title'
    CLOSED: [2014-07-25 Sun 00:19]
+** DONE Add test for descriptions in TESTS.txt
+   CLOSED: [2014-08-18 Mon 02:38]

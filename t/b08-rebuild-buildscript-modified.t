@@ -3,7 +3,7 @@
 . "t/dashtap.sh"
 title - <<"EOF"
 Rebuild target when previous target exists, but the buildscript has been
-modified. (Based on b02.)
+modified so that it outputs something new. (Based on b02.)
 EOF
 
 init_test
@@ -30,7 +30,7 @@ file_is         stdout               "$NADA"       "Standard output"
 file_is         stderr               "$NADA"       "Standard error"
 file_is         build/TARGET         "OUTPUT2"     "Target"
 is_changed      "$TARGET"                          "Target timestamp"
-file_exists     .fix/state/TARGET                  "Metadata file"
+file_exists     .fix/state/TARGET                  "Metadata file should exist"
 is_changed      "$METADATA"                        "Metadata timestamp"
 file_not_exists build/TARGET--fixing               "Target tempfile shouldn't exist"
 

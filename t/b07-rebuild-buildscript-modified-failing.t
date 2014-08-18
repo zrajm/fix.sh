@@ -2,8 +2,8 @@
 # -*- sh -*-
 . "t/dashtap.sh"
 title - <<"EOF"
-Rebuild target after buildscript have been changed so that it now fails. (Based
-on b02.)
+Attempt to rebuild target after buildscript have been changed so that it now
+fails. (Based on b02.)
 EOF
 
 init_test

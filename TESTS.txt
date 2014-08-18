@@ -45,7 +45,7 @@
      + Target: not existing
      + Metadata: not existing
      + Tempfile: not existing
-* [100%] b. One target with no dependencies
+* [80%] b. One target with no dependencies
   Check buildscript return values, that target and metadata files are only
   updated when they should, and that file timestamps does not affect this.
 ** DONE b01. Build, buildscript failing
@@ -66,7 +66,7 @@
      + Target: existing
      + Metadata: existing
      + Tempfile: not existing
-** DONE b03. Rebuild, unmodified
+** DONE b03. Rebuild
    CLOSED: [2014-07-07 Mon 09:04]
    Rebuild target that has already been built. (Based on b02.)
 
@@ -75,31 +75,7 @@
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: not existing
-** DONE b04. Rebuild, target time in past
-   CLOSED: [2014-07-08 Tue 08:44]
-   Rebuild target that has already been built after target file's timestamp
-   have been moved into the past. (Based on b02.)
-
-   Target timestamp is set to: 2000-01-01
-
-   * SUCCESS
-     + Exit status: 0
-     + Target: unmodified
-     + Metadata: unmodified
-     + Tempfile: not existing
-** DONE b05. Rebuild, target time in future
-   CLOSED: [2014-07-08 Tue 08:44]
-   Rebuild target that has already been built after target file's timestamp
-   have been moved into the future. (Based on b02.)
-
-   Target timestamp is set to: 2030-01-01
-
-   * SUCCESS
-     + Exit status: 0
-     + Target: unmodified
-     + Metadata: unmodified
-     + Tempfile: not existing
-** DONE b06. Rebuild, buildscript time in past
+** DONE b04. Rebuild, buildscript time in past
    CLOSED: [2014-07-08 Tue 14:13]
    Rebuild target that has already been built after target's buildscript's
    timestamp have been moved into the past. (Based on b02.)
@@ -111,7 +87,7 @@
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: not existing
-** DONE b07. Rebuild, buildscript time in future
+** DONE b05. Rebuild, buildscript time in future
    CLOSED: [2014-07-08 Tue 14:29]
    Rebuild target that has already been built after target's buildscript's
    timestamp have been moved into the future. (Based on b02.)
@@ -123,34 +99,10 @@
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: not existing
-** DONE b08. Rebuild, metadata time in past
-   CLOSED: [2014-07-09 Wed 09:12]
-   Rebuild target that has already been built after target's metadata file's
-   timestamp have been moved into the past. (Based on b02.)
-
-   Target timestamp is set to: 2000-01-01
-
-   * SUCCESS
-     + Exit status: 0
-     + Target: unmodified
-     + Metadata: unmodified
-     + Tempfile: not existing
-** DONE b09. Rebuild, metadata time in future
-   CLOSED: [2014-07-09 Wed 09:11]
-   Rebuild target that has already been built after target's metadata file's
-   timestamp have been moved into the future. (Based on b02.)
-
-   Target timestamp is set to: 2030-01-01
-
-   * SUCCESS
-     + Exit status: 0
-     + Target: unmodified
-     + Metadata: unmodified
-     + Tempfile: not existing
-** DONE b10. Rebuild, buildscript same output
+** DONE b06. Rebuild, buildscript modified same output
    CLOSED: [2014-07-11 Fri 17:15]
    Rebuild target after buildscript modified (by a comment or similar) in such
-   a way that it still produces the same output as it previously did. (Based on
+   a way that it still produces the same output it previously did. (Based on
    b02.)
 
    FIXME: TODO test - Metadata should be updated to contain buildscript checksum
@@ -160,25 +112,74 @@
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: not existing
-** DONE b11. Rebuild, buildscript failing
+** DONE b07. Rebuild, buildscript modified failing
    CLOSED: [2014-07-11 Fri 17:32]
-   Rebuild target after buildscript have been changed so that it now fails.
-   (Based on b02.)
+   Attempt to rebuild target after buildscript have been changed so that it now
+   fails. (Based on b02.)
 
-   * SUCCESS
+   * FAILURE
      + Exit status: 5
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: existing
-** DONE b12. Rebuild, buildscript new output
+** DONE b08. Rebuild, buildscript modified
    CLOSED: [2014-07-11 Fri 17:23]
-   Rebuild target after buildscript have been changed so that it outputs
-   something new. (Based on b02.)
+   Rebuild target when previous target exists, but the buildscript has been
+   modified so that it outputs something new. (Based on b02.)
 
    * SUCCESS
      + Exit status: 0
      + Target: modified
      + Metadata: modified
+     + Tempfile: not existing
+** DONE b09. Rebuild, buildscript modified but time same
+   CLOSED: [2014-07-27 Sun 13:07]
+   Rebuild target when previous target exists, and the buildscript has been
+   modified, but the buildscript timestamp and size is the same as last time.
+   (Based on b02.)
+
+   Note that we only fiddle with the timestamp, not the the entire stat
+   fingerprint. The stat fingerprint could (conceivably) be tricked, but this
+   really beyond the scope of these test, as this is highly unlikely.
+
+   * SUCCESS
+     + Exit status: 0
+     + Target: modified
+     + Metadata: modified
+     + Tempfile: not existing
+** TODO b10. Rebuild, buildscript modified, metadata erased
+   Attempt to rebuild target after buildscript have been changed so that it
+   outputs something new and target's metadata file has been erased. (Based
+   on b02.)
+
+   * FAILURE
+     + Exit status: 1
+     + Target: unmodified
+     + Metadata: unmodified
+     + Tempfile: existing
+** DONE b11. Rebuild, target time in past
+   CLOSED: [2014-07-08 Tue 08:44]
+   Rebuild target that has already been built after target file's timestamp
+   have been moved into the past. (Based on b02.)
+
+   Target timestamp is set to: 2000-01-01
+
+   * SUCCESS
+     + Exit status: 0
+     + Target: unmodified
+     + Metadata: unmodified
+     + Tempfile: not existing
+** DONE b12. Rebuild, target time in future
+   CLOSED: [2014-07-08 Tue 08:44]
+   Rebuild target that has already been built after target file's timestamp
+   have been moved into the future. (Based on b02.)
+
+   Target timestamp is set to: 2030-01-01
+
+   * SUCCESS
+     + Exit status: 0
+     + Target: unmodified
+     + Metadata: unmodified
      + Tempfile: not existing
 ** DONE b13. Rebuild, target modified
    CLOSED: [2014-07-11 Fri 17:46]
@@ -204,35 +205,62 @@
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: existing
-** DONE b15. Rebuild, buildscript modified
-   CLOSED: [2014-07-27 Sun 12:56]
-   Rebuild target when previous target exists, but the buildscript has been
-   modified. (Based on b02.)
+** TODO b15. Rebuild, target modified, metadata erased
+   Attempt to rebuild target when previous target exist and is modified, and
+   target's metadata file has been erased. (Based on b02.)
+
+   * FAILURE
+     + Exit status: 1
+     + Target: unmodified
+     + Metadata: unmodified
+     + Tempfile: existing
+** DONE b16. Rebuild, metadata time in past
+   CLOSED: [2014-07-09 Wed 09:12]
+   Rebuild target that has already been built after target's metadata file's
+   timestamp have been moved into the past. (Based on b02.)
+
+   Target timestamp is set to: 2000-01-01
 
    * SUCCESS
      + Exit status: 0
-     + Target: modified
-     + Metadata: modified
+     + Target: unmodified
+     + Metadata: unmodified
      + Tempfile: not existing
-** DONE b16. Rebuild, buildscript modified but time same
-   CLOSED: [2014-07-27 Sun 13:07]
-   Rebuild target when previous target exists, and the buildscript has been
-   modified, but the buildscript timestamp and size is the same as last time.
-   (Based on b02.)
+** DONE b17. Rebuild, metadata time in future
+   CLOSED: [2014-07-09 Wed 09:11]
+   Rebuild target that has already been built after target's metadata file's
+   timestamp have been moved into the future. (Based on b02.)
 
-   Note that we only fiddle with the timestamp, not the the entire stat
-   fingerprint. The stat fingerprint could (conceivably) be tricked, but this
-   really beyond the scope of these test, as this is highly unlikely.
+   Target timestamp is set to: 2030-01-01
 
    * SUCCESS
      + Exit status: 0
-     + Target: modified
-     + Metadata: modified
+     + Target: unmodified
+     + Metadata: unmodified
      + Tempfile: not existing
-** DONE b17. Rebuild, buildscript+target modified but same
+** TODO b18. Rebuild, metadata erased
+   Rebuild target that has already been built after target's metadata file has
+   been erased. (Based on b02.)
+
+   * SUCCESS
+     + Exit status: 0
+     + Target: unmodified
+     + Metadata: existing
+     + Tempfile: not existing
+** DONE b19. Rebuild, buildscript+target modified but same
    CLOSED: [2014-07-11 Fri 19:40]
    Rebuild target when previous target exist and is modified, but buildscript
    is also modified and builds a target identical to modified the modified one.
+
+   * SUCCESS
+     + Exit status: 0
+     + Target: unmodified
+     + Metadata: modified
+     + Tempfile: not existing
+** TODO b20. Rebuild, buildscript+target modified but same, metadata erased
+   Rebuild target when previous target exist and is modified, but buildscript
+   is also modified and builds a target identical to modified the modified one,
+   AND target's metadata file has been erased. (Based on b02.)
 
    * SUCCESS
      + Exit status: 0
@@ -379,30 +407,140 @@
      + Metadata: modified
      + Tempfile: not existing
 * [0%] f. Target dependency
-** TODO Build target with one dependency
-   Build target A with dependency B
+** TODO f01. Build, missing targetdep buildscript
+   Attempt to build a target with a target dependency, where the target
+   dependency buildscript is missing.
+
+   * FAILURE
+     + Exit status: 10
+     + Dependency target: not existing
+     + Dependency metadata: not existing
+     + Dependency tempfile: not existing
+     + Target: not existing
+     + Metadata: not existing
+     + Tempfile: existing
+** TODO f02. Build, targetdep buildscript missing read bits
+   Attempt to build a target with a target dependency, where the target
+   dependency buildscript does not have read bits.
+
+   * FAILURE
+     + Exit status: 10
+     + Dependency target: not existing
+     + Dependency metadata: not existing
+     + Dependency tempfile: not existing
+     + Target: not existing
+     + Metadata: not existing
+     + Tempfile: existing
+** TODO f03. Build, targetdep buildscript missing execute bits
+   Attempt to build a target with a target dependency, where the target
+   dependency buildscript does not have execute bits.
+
+   * FAILURE
+     + Exit status: 10
+     + Dependency target: not existing
+     + Dependency metadata: not existing
+     + Dependency tempfile: not existing
+     + Target: not existing
+     + Metadata: not existing
+     + Tempfile: existing
+** TODO f04. Build, targetdep
+   Build a target with a target dependency.
+
    * SUCCESS
      + Exit status: 0
-     + Both targets created.
-     + Both metadata files created.
-** TODO Rebuild target with one dependency
-  * SUCCESS
-    + Exit status: 0
-    + Neither target modified.
-    + Neither metadata file modified.
-** TODO Rebuild target with modified dependency
-** TODO Rebuild target with erased metadata and modified buildscript
+     + Dependency target: existing
+     + Dependency metadata: existing
+     + Dependency tempfile: not existing
+     + Target: existing
+     + Metadata: existing
+     + Tempfile: not existing
+** TODO f05. Rebuild, targetdep buildscript unmodified
+   Rebuild a target with a target dependency, that has already been built.
+   (Based on f04.)
+
+   * SUCCESS
+     + Exit status: 0
+     + Dependency target: unmodified
+     + Dependency metadata: unmodified
+     + Dependency tempfile: not existing
+     + Target: unmodified
+     + Metadata: unmodified
+     + Tempfile: not existing
+** TODO f06. Rebuild, targetdep buildscript time in past
+   Rebuild target with a target dependency, that has already been built after
+   target file's timestamp have been moved into the past. (Based on f04.)
+
+   Target timestamp is set to: 2000-01-01
+
+   * SUCCESS
+     + Exit status: 0
+     + Dependency target: unmodified
+     + Dependency metadata: unmodified
+     + Dependency tempfile: not existing
+     + Target: unmodified
+     + Metadata: unmodified
+     + Tempfile: not existing
+** TODO f07. Rebuild, targetdep buildscript time in future
+   Rebuild target with a target dependency, that has already been built after
+   target file's timestamp have been moved into the future. (Based on f04.)
+
+   Target timestamp is set to: 2030-01-01
+
+   * SUCCESS
+     + Exit status: 0
+     + Dependency target: unmodified
+     + Dependency metadata: unmodified
+     + Dependency tempfile: not existing
+     + Target: unmodified
+     + Metadata: unmodified
+     + Tempfile: not existing
+** TODO f08. Rebuild, targetdep buildscript, erased target metadata
+   Rebuild target with a target dependency, when previous target and dependency
+   target exists, mut the metadata for the target has been erased. (Based on
+   f04.)
+
+   * SUCCESS
+     + Exit status: 0
+     + Dependency target: unmodified
+     + Dependency metadata: unmodified
+     + Dependency tempfile: not existing
+     + Target: unmodified
+     + Metadata: existing (created)
+     + Tempfile: not existing
+** TODO f09. Rebuild, targetdep buildscript, erased targetdep metadata
+   Rebuild target with a target dependency, when previous target and dependency
+   target exists, but the metadata for the dependency target has been erased.
+   (Based on f04.)
+
+   * SUCCESS
+     + Exit status: 0
+     + Dependency target: unmodified
+     + Dependency metadata: existing (created)
+     + Dependency tempfile: not existing
+     + Target: unmodified
+     + Metadata: unmodified
+     + Tempfile: not existing
+** TODO f10. Rebuild, targetdep buildscript, erased target+targetdep metadata
+   Rebuild target with a target dependency, when previous target and dependency
+   target exists, but the metadata for them both have been erased. (Based on
+   f04.)
+
+   * SUCCESS
+     + Exit status: 0
+     + Dependency target: unmodified
+     + Dependency metadata: existing (created)
+     + Dependency tempfile: not existing
+     + Target: unmodified
+     + Metadata:  existing (created)
+     + Tempfile: not existing
+** TODO Rebuild, targetdep buildscript modified
+** TODO Rebuild, targetdep buildscript modified but time same
+** TODO Rebuild, targetdep buildscript modified metadata erased
    Attempt to rebuild target when previous target exist but have no metadata
    stored, and the newly built target differs from the old target.
 
    * FAILURE
      + Exit status: 1
-** TODO Rebuild target with erased metadata
-   Rebuild target when previous target exist but have no metadata stored, and
-   the newly built target is the same as the old target.
-
-   * SUCCESS
-     + Exit status: 0
 * [0%] g. 'default.fix' target dependency
 ** TODO Build using default buildscript ('default.fix')
    Build target using default.fix.
