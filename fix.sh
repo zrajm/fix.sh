@@ -12,6 +12,7 @@
 
 debug() {
     [ "$FIX_DEBUG" ] && echo "$1" >&2
+    return 0
 }
 
 error() {
@@ -144,9 +145,8 @@ fi
 ##                                                                          ##
 ##############################################################################
 
-while [ $# -gt 0 ]; do                         # for each argument
-    build $1
-    shift
+for ARG; do
+    build "$ARG"
 done
 
 #[eof]
