@@ -3,6 +3,10 @@
 # May be set by user:
 #   * FIX_DEBUG
 #   * FIX_FORCE
+#   * FIX_SOURCE
+
+# FIX_PARENT and FIX_METADATA is set for all child invocations.
+
 
 ##############################################################################
 ##                                                                          ##
@@ -125,6 +129,8 @@ build() {
 [ $# = 0 ] && error 15 "No target(s) specified"
 if is_mother; then                             # mother process
     # FIX_FORCE FIX_DEBUG
+    [ -n "$FIX_SOURCE" ] \
+        && error 15 "Option '--source' must be used inside buildscript"
     export FIX="$(readlink -f $0)"
     export FIX_LEVEL=0
     export FIX_PID=$$
@@ -150,8 +156,13 @@ fi
 ##                                                                          ##
 ##############################################################################
 
-for ARG; do
-    build "$ARG"
+for TARGET; do
+    if [ "$FIX_SOURCE" ]; then
+        # register $TARGET as dependency to parent
+        :
+    else
+        build "$TARGET"
+    fi
 done
 
 #[eof]

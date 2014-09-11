@@ -41,7 +41,7 @@ END_TODO
 "$TESTCMD" TARGET >stdout 2>stderr
 is              $?                   0             "Exit status"
 file_is         stdout               "$NADA"       "Standard output"
-file_is         stderr               "$NADA"       "Standard error # TODO"
+file_is         stderr               "$NADA"       "Standard error"
 file_is         build/TARGET         "$OUTPUT"     "Target"
 is_changed      "$TARGET"                          "Target timestamp # TODO"
 file_exists     .fix/state/TARGET                  "Metadata file should exist"

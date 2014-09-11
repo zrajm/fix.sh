@@ -46,7 +46,7 @@
      + Metadata: not existing
      + Tempfile: not existing
 ** DONE a06. Using '--source' option outside buildscript
-   CLOSED: [2014-09-10 Wed 08:58]
+   CLOSED: [2014-09-11 Thu 08:57]
    Attempt to declare source dependency outside of a buildscript (i.e. using
    '--source' option from the command line).
 
