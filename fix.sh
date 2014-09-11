@@ -39,6 +39,11 @@ file_checksum() {
     echo "${CHECKSUM%% *}"                     # checksum without filename
 }
 
+# Return true if process has a parent fix process, false otherwise.
+is_mother() {
+    [ -z "$FIX" -a -z "$FIX_PARENT" ]
+}
+
 establish_lock() {
     local LOCKFILE="$1" SIG
     mkpath "$LOCKFILE" || error 7 "Cannot create dir for lockfile '$LOCKFILE'"
@@ -118,7 +123,7 @@ build() {
 ##############################################################################
 
 [ $# = 0 ] && error 15 "No target(s) specified"
-if [ ! "$FIX" ]; then                          # mother process
+if is_mother; then                             # mother process
     # FIX_FORCE FIX_DEBUG
     export FIX="$(readlink -f $0)"
     export FIX_LEVEL=0

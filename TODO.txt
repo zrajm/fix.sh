@@ -4,6 +4,11 @@
 ** TODO Write dependencies to tempfile, finalize when build is done
 ** TODO Add source dependencies
 ** TODO Dependencies
+** TODO More thorough is_mother() tests
+   Should be able to detect an inconsistent state and abort. I.e. it should
+   check *all* parent/child variables, and return true/false if they're all set
+   or unset and abort with an error message if there's something inconsistent
+   about them.
 ** TODO Automatic adding of buildscript as target dependency
 ** TODO Automatic unlocking of stale lockfile
 * Testing
