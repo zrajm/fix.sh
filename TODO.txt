@@ -1,11 +1,19 @@
 -*- org -*-
 
 * Program
-** TODO Source dependencies
+** TODO Write dependencies to tempfile, finalize when build is done
+** TODO Add source dependencies
 ** TODO Dependencies
 ** TODO Automatic adding of buildscript as target dependency
 ** TODO Automatic unlocking of stale lockfile
 * Testing
+** TODO Test metadata contents
+   Add a function to the end of 'dashtap.sh' which can create the expected
+   content for the metadata file, given the names of the files which should be
+   in there.
+
+   In (some of?) the failing cases we'll need to generate this before running
+   the actual tests.
 ** TODO 'test_init' should set state dir root
    '.fix/state' is the current state dir root, this should be exported in a
    variable from test_init so we won't have to change it in a hundred different
@@ -13,6 +21,26 @@
 ** TODO Mooooaaar test cases!
 ** TODO Profiling the code (using Devel::NYTProf)
 ** TODO Test code coverage (Devel::Cover)
+* FUTURE
+** [0%] Parallel builds
+*** TODO Make compatible job server?
+*** TODO Writing build metadata in parallel
+    When building with multiple targets, each target should build in parallel,
+    and each should write its build metadata to a separate file. E.g. invoking
+    `fix a.txt b.txt c.txt` from inside `above.txt.fix` should cause three
+    temporary build metadata files to be written (one for each argument):
+
+        above.txt--fixing.1      # tempfile of first target
+        above.txt--fixing.2      # .. second target
+        above.txt--fixing.3      # etc.
+
+    Upon finalizing the build these should be concatenated by fix before being
+    renamed to their permanent name, e.g. something like this:
+
+        cat above.txt--fixing.1 \
+            above.txt--fixing.2 \
+            above.txt--fixing.3 >above.txt--fixing
+        mv above.txt--fixing above.txt
 * DONE
 ** DONE Tests should be run in tempdir
    CLOSED: [2014-07-07 Mon 00:28]

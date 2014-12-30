@@ -31,7 +31,13 @@ sleep .1
 
 ## Second instance of fix: This should fail immediately since the first
 ## instance should have established a lockfile.
-"$TESTCMD" TARGET >stdout2 2>stderr2
+"$TESTCMD" TARGET >stdout2 2>stderr2 &
+PID2=$!
+# Set up a background process that will wait for two seconds before killing the
+# second instance of fix.
+{ sleep 2; kill "$PID2" 2>/dev/null; } >&- 2>&- &
+wait "$PID2"
+
 is              $?                   8             "Blocked's exit status"
 file_is         stdout2              "$NADA"       "Blocked's standard output"
 file_is         stderr2              "$ERRMSG"     "Blocked's standard error"

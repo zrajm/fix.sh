@@ -45,6 +45,16 @@
      + Target: not existing
      + Metadata: not existing
      + Tempfile: not existing
+** DONE a06. Using '--source' option outside buildscript
+   CLOSED: [2014-09-10 Wed 08:58]
+   Attempt to declare source dependency outside of a buildscript (i.e. using
+   '--source' option from the command line).
+
+   * FAILURE
+     + Exit status: 15
+     + Target: not existing
+     + Metadata: not existing
+     + Tempfile: not existing
 * [100%] b. One target with no dependencies
   Check buildscript return values, that target and metadata files are only
   updated when they should, and that file timestamps does not affect this.
