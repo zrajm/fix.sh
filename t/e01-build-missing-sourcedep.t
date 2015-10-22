@@ -22,8 +22,9 @@ ERROR: Cannot find source dependency needed by buildscript 'fix/TARGET.fix'"
 file_not_exists build/TARGET         "Before build: Target shouldn't exist"
 file_not_exists .fix/state/TARGET    "Before build: Metadata file shouldn't exist"
 
-"$TESTCMD" TARGET >stdout 2>stderr
-is              $?                   10            "Exit status # TODO"
+"$TESTCMD" TARGET >stdout 2>stderr; RC="$?"
+
+is              "$RC"                10            "Exit status # TODO"
 file_is         stdout               "$NADA"       "Standard output"
 TODO
 file_is         stderr               "$ERRMSG"     "Standard error"

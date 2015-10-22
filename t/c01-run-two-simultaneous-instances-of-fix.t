@@ -26,7 +26,8 @@ file_not_exists .fix/state/TARGET    "Before build: Metadata file shouldn't exis
 ## that reads from a fifo, causing the buildscript to hang until something is
 ## written to that fifo.
 "$TESTCMD" TARGET >stdout1 2>stderr1 &
-PID=$!                                             # PID of 1st instance
+
+PID="$!"                                           # PID of 1st instance
 sleep .1
 
 ## Second instance of fix: This should fail immediately since the first
@@ -36,9 +37,9 @@ PID2=$!
 # Set up a background process that will wait for two seconds before killing the
 # second instance of fix.
 { sleep 2; kill "$PID2" 2>/dev/null; } >&- 2>&- &
-wait "$PID2"
+wait "$PID2"; RC="$?"
 
-is              $?                   8             "Blocked's exit status"
+is              "$RC"                8             "Blocked's exit status"
 file_is         stdout2              "$NADA"       "Blocked's standard output"
 file_is         stderr2              "$ERRMSG"     "Blocked's standard error"
 
@@ -49,8 +50,9 @@ echo PIPED >fifo
 
 ## Wait for the first instance fix to terminate, then test its output to see
 ## that it wasn't disturbed somehow.
-wait "$PID"
-is              $?                   0             "Exit status"
+wait "$PID"; RC="$?"
+
+is              "$RC"                0             "Exit status"
 file_is         stdout1              "$NADA"       "Standard output"
 file_is         stderr1              "$NADA"       "Standard error"
 file_is         build/TARGET         "PIPED"       "Target"

@@ -34,8 +34,9 @@ file_exists          build/TARGET    "Before build: Target should exist"
 file_exists     .fix/state/TARGET    "Before build: Metadata file should exist"
 END_TODO
 
-"$TESTCMD" TARGET >stdout 2>stderr
-is              $?                   0             "Exit status"
+"$TESTCMD" TARGET >stdout 2>stderr; RC="$?"
+
+is              "$RC"                0             "Exit status"
 file_is         stdout               "$NADA"       "Standard output"
 file_is         stderr               "$NADA"       "Standard error"
 file_is         build/TARGET         "$OUTPUT"     "Target"
