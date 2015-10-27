@@ -81,3 +81,12 @@
    CLOSED: [2014-07-25 Sun 00:19]
 ** DONE Add test for descriptions in TESTS.txt
    CLOSED: [2014-08-18 Mon 02:38]
+** DONE Support for SCRIPT|SOURCE|TAGET dirs in metadata
+   CLOSED: [2015-10-27 Tue 08:58]
+   Metadata now has a third word for each file, specifying whether the file is
+   a SCRIPT (*.fix) file, SOURCE file (dependency declared with `fix
+   --source`), or a TARGET file.
+
+   This distinction is maintained in order to allow there three different types
+   of files to be stored in different directories, and allowing the user to set
+   these directories between invocations.

@@ -942,14 +942,12 @@ mkmetadata() {
     CHECKSUM="$(sha1sum)"                      # reads stdin
     CHECKSUM="${CHECKSUM%% *}"
     case "$TYPE" in
-        SCRIPT) FILE="fix/$FILE"   ;;
-        SOURCE) FILE="src/$FILE"   ;;
-        TARGET) FILE="build/$FILE" ;;
+        SCRIPT|SOURCE|TARGET)
+            echo "$CHECKSUM $TYPE $FILE" ;;
         *)  echo "mkmetadata: ERROR: Bad type '$TYPE'" \
                 "(allowed are SCRIPT|SOURCE|TARGET)"
             error 127 ;;
     esac
-    echo "$CHECKSUM $FILE"
 }
 
 mkpath() {

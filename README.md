@@ -54,6 +54,7 @@ The following exit status values are used:
       10 = Couldn't read buildscript or source (permission denied, or file
            missing, or missing buildscript or source directories).
       15 = Bad options provided.
+      30 = Internal error: build_finalize() was given an incorrect argument.
     >128 = Terminated by 'kill' or ctrl-c (subtract 128 from exit status to
            find out which signal was received). NOTA BENE: When stopping fix
            with 'kill', use the negated PID of the mother process. The mother

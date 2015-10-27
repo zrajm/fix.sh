@@ -77,10 +77,11 @@ build_run() {
 
 # After build: Overwrite target with tempfile, and store result in metadata.
 build_finalize() {
-    local DBFILE="$1" TARGET="$2" TARGET_TMP="$3"
+    local DBFILE="$1" TYPE="$2" TARGET="$3" TARGET_TMP="$4"
     local META_CHECKSUM="$(meta_checksum "$DBFILE")"
     local OLD_CHECKSUM="$(file_checksum "$TARGET")"
     local NEW_CHECKSUM="$(file_checksum "$TARGET_TMP")"
+    local FILE=""
 
     # update target
     if [ ! -e "$TARGET" ]; then
@@ -105,7 +106,15 @@ build_finalize() {
         mkpath "$DBFILE" \
             || error 7 "Cannot create dir for metadata file '$DBFILE'"
         debug "$TARGET: Writing metadata"
-        echo "$NEW_CHECKSUM $TARGET" >"$DBFILE"
+
+        case "$TYPE" in
+            SCRIPT) FILE="${SCRIPT#$FIX_SCRIPT_DIR/}" ;;
+            SOURCE) FILE="${SOURCE#$FIX_SOURCE_DIR/}" ;;
+            TARGET) FILE="${TARGET#$FIX_TARGET_DIR/}" ;;
+            *) error 30 "build_finalize: Failed to write metadata" \
+                "Internal error: unknown type '$TYPE' for file '$TARGET'" ;;
+        esac
+        echo "$NEW_CHECKSUM $TYPE $FILE" >"$DBFILE"
     else
         debug "$TARGET: Metadata is up-to-date"
     fi
@@ -117,7 +126,7 @@ build() {
         TARGET="$FIX_TARGET_DIR/$1"
     mkpath "$TARGET" || error 6 "Cannot create dir for target '$TARGET'"
     build_run "$SCRIPT" "$TARGET--fixing"
-    build_finalize "$DBFILE" "$TARGET" "$TARGET--fixing"
+    build_finalize "$DBFILE" TARGET "$TARGET" "$TARGET--fixing"
 }
 
 ##############################################################################
