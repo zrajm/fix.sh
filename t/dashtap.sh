@@ -936,6 +936,22 @@ execute() {
     )
 }
 
+mkmetadata() {
+    local TYPE="$1" FILE="$2" CHECKSUM
+    [ -t 0 ] && error "mkmetadata: Input required on STDIN"
+    CHECKSUM="$(sha1sum)"                      # reads stdin
+    CHECKSUM="${CHECKSUM%% *}"
+    case "$TYPE" in
+        SCRIPT) FILE="fix/$FILE"   ;;
+        SOURCE) FILE="src/$FILE"   ;;
+        TARGET) FILE="build/$FILE" ;;
+        *)  echo "mkmetadata: ERROR: Bad type '$TYPE'" \
+                "(allowed are SCRIPT|SOURCE|TARGET)"
+            error 127 ;;
+    esac
+    echo "$CHECKSUM $FILE"
+}
+
 mkpath() {
     local DIR="${1%/*}"                        # strip trailing filename
     [ -d "$DIR" ] || mkdir -p -- "$DIR"

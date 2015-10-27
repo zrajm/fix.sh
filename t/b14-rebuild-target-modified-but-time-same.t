@@ -18,7 +18,7 @@ END_SCRIPT
 # Replace 'build/TARGET' but keep its old timestamp and filesize.
 timestamp TARGET build/TARGET
 write_file build/TARGET <<-"END_TARGET"
-	XXXXXX
+	6BYTES
 END_TARGET
 reset_timestamp "$TARGET"
 
@@ -33,12 +33,18 @@ file_exists     .fix/state/TARGET    "Before build: Metadata file should exist"
 
 "$TESTCMD" TARGET >stdout 2>stderr; RC="$?"
 
+DBDATA="$(
+    set -e
+    echo OUTPUT | mkmetadata TARGET TARGET
+    # mkmetadata SCRIPT TARGET.fix <fix/TARGET.fix  # TODO script dep
+)" || fail "Failed to calculate metadata"
+
 is              "$RC"                1             "Exit status"
 file_is         stdout               "$NADA"       "Standard output"
 file_is         stderr               "$ERRMSG"     "Standard error"
-file_is         build/TARGET         "XXXXXX"      "Target"
+file_is         build/TARGET         "6BYTES"      "Target"
 is_unchanged    "$TARGET"                          "Target timestamp"
-file_exists     .fix/state/TARGET                  "Metadata file should exist"
+file_is         .fix/state/TARGET    "$DBDATA"     "Metadata"
 is_unchanged    "$METADATA"                        "Metadata timestamp"
 file_is         build/TARGET--fixing "OUTPUT"      "Target tempfile"
 

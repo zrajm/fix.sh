@@ -30,6 +30,9 @@ file_not_exists .fix/state/TARGET    "Before build: Metadata file shouldn't exis
 PID="$!"                                           # PID of 1st instance
 sleep .1
 
+file_exists build/TARGET--fixing          "1st build should create tempfile"
+timestamp TEMPFILE build/TARGET--fixing
+
 ## Second instance of fix: This should fail immediately since the first
 ## instance should have established a lockfile.
 "$TESTCMD" TARGET >stdout2 2>stderr2 &
@@ -39,9 +42,12 @@ PID2=$!
 { sleep 2; kill "$PID2" 2>/dev/null; } >&- 2>&- &
 wait "$PID2"; RC="$?"
 
-is              "$RC"                8             "Blocked's exit status"
-file_is         stdout2              "$NADA"       "Blocked's standard output"
-file_is         stderr2              "$ERRMSG"     "Blocked's standard error"
+is              "$RC"                8             "2nd build's exit status"
+file_is         stdout2              "$NADA"       "2nd build's standard output"
+file_is         stderr2              "$ERRMSG"     "2nd build's standard error"
+file_not_exists build/TARGET         "2nd build shouldn't create build target"
+file_not_exists .fix/state/TARGET    "2nd build shouldn't create metadata file"
+is_unchanged    "$TEMPFILE"          "1st build's tempfile should be unchanged"
 
 ## This fifo is read by the buildscript (which is currently just hanging,
 ## waiting for input) when we write to it the buildscript will write this input
@@ -52,12 +58,18 @@ echo PIPED >fifo
 ## that it wasn't disturbed somehow.
 wait "$PID"; RC="$?"
 
-is              "$RC"                0             "Exit status"
-file_is         stdout1              "$NADA"       "Standard output"
-file_is         stderr1              "$NADA"       "Standard error"
-file_is         build/TARGET         "PIPED"       "Target"
-file_exists     .fix/state/TARGET                  "Metadata file should exist"
-file_not_exists build/TARGET--fixing               "Target tempfile shouldn't exist"
+DBDATA="$(
+    set -e
+    echo "PIPED" | mkmetadata TARGET TARGET
+    # mkmetadata SCRIPT TARGET.fix <fix/TARGET.fix  # TODO script dep
+)" || fail "Failed to calculate metadata"
+
+is              "$RC"                0             "2nd build exit status"
+file_is         stdout1              "$NADA"       "2nd build standard output"
+file_is         stderr1              "$NADA"       "2nd build standard error"
+file_is         build/TARGET         "PIPED"       "2nd build target"
+file_is         .fix/state/TARGET    "$DBDATA"     "2nd build metadata"
+file_not_exists build/TARGET--fixing "2nd build shouldn't create tempfile"
 
 done_testing
 

@@ -15,7 +15,7 @@ cpdir .fix fix
 timestamp BUILDSCRIPT fix/TARGET.fix
 write_file a+x fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
-	echo "XXXXXX"
+	echo "6BYTES"   # same length as 'OUTPUT'
 END_SCRIPT
 reset_timestamp "$BUILDSCRIPT"
 
@@ -31,12 +31,21 @@ file_exists     .fix/state/TARGET    "Before build: Metadata file should exist"
 
 "$TESTCMD" TARGET >stdout 2>stderr; RC="$?"
 
+DBDATA="$(
+    set -e
+    mkmetadata TARGET TARGET     <build/TARGET
+#    mkmetadata SCRIPT TARGET.fix <<-END_SCRIPT     # TODO script dep
+#	#!/bin/sh
+#	echo "OUTPUT"
+#	END_SCRIPT
+)" || fail "Failed to calculate metadata"
+
 is              "$RC"                0             "Exit status"
 file_is         stdout               "$NADA"       "Standard output"
 file_is         stderr               "$NADA"       "Standard error"
-file_is         build/TARGET         "XXXXXX"      "Target"
+file_is         build/TARGET         "6BYTES"      "Target"
 is_changed      "$TARGET"                          "Target timestamp"
-file_exists     .fix/state/TARGET                  "Metadata file"
+file_is         .fix/state/TARGET    "$DBDATA"     "Metadata"
 is_changed      "$METADATA"                        "Metadata timestamp"
 file_not_exists build/TARGET--fixing               "Target tempfile shouldn't exist"
 
