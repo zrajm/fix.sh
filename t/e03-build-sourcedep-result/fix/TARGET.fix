@@ -1,0 +1,5 @@
+#!/bin/sh
+echo "PRE"
+FIX_SOURCE=yes $FIX SOURCE.txt
+cat "$FIX_SOURCE_DIR/SOURCE.txt"
+echo "POST"

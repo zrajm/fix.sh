@@ -12,13 +12,20 @@
 ** TODO Automatic adding of buildscript as target dependency
 ** TODO Automatic unlocking of stale lockfile
 * Testing
-** TODO Test metadata contents
+** DONE Test metadata contents
+   CLOSED: [2015-10-29 Thu 15:40]
    Add a function to the end of 'dashtap.sh' which can create the expected
    content for the metadata file, given the names of the files which should be
    in there.
 
    In (some of?) the failing cases we'll need to generate this before running
    the actual tests.
+** TODO Remove TODO tests in all `t/e*sourcedep*.t` tests
+** TODO t/e*sourcedep*.t test cases need to look at dependency data     :NOW:
+   (they now *pass* even though FIX_SOURCE doesn't do anything!)
+** TODO Test FIX_TARGET & FIX_PARENT environment variables              :NOW:
+   Add a buncha testcases that look to see if buildscripts have the right
+   FIX_TARGET & FIX_PARENT, at start and further down the dependency tree
 ** TODO 'test_init' should set state dir root
    '.fix/state' is the current state dir root, this should be exported in a
    variable from test_init so we won't have to change it in a hundred different

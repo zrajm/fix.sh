@@ -158,6 +158,7 @@ if is_mother; then                             # mother process
 else                                           # child
     FIX_LEVEL=$(( FIX_LEVEL + 1 ))
 fi
+#export FIX_PARENT="$FIX_TARGET"
 
 ##############################################################################
 ##                                                                          ##
@@ -170,6 +171,7 @@ for TARGET; do
         # register $TARGET as dependency to parent
         :
     else
+        #export FIX_TARGET="$TARGET"
         build "$TARGET"
     fi
 done

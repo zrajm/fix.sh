@@ -706,7 +706,7 @@ file_is() {
         is "$GOT" "$WANTED" "$DESCR"
     else
         fail "$DESCR" <<-EOF
-		File '$FILE' should be readable, but it is not
+		File '$FILE' should exist and be readable, but it is not
 		EOF
     fi
 }
