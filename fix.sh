@@ -139,7 +139,7 @@ build() {
 if is_mother; then                             # mother process
     # FIX_FORCE FIX_DEBUG
     [ -n "$FIX_SOURCE" ] \
-        && error 15 "Option '--source' must be used inside buildscript"
+        && error 15 "Option '--source' can only be used inside buildscript"
     export FIX="$(readlink -f $0)"
     export FIX_LEVEL=0
     export FIX_PID=$$

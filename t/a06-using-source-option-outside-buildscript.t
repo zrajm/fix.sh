@@ -10,7 +10,7 @@ init_test
 mkdir fix src
 
 write_file fix/TARGET.fix
-ERRMSG="ERROR: Option '--source' must be used inside buildscript"
+ERRMSG="ERROR: Option '--source' can only be used inside buildscript"
 
 file_not_exists build/TARGET         "Before build: Target shouldn't exist"
 file_not_exists .fix/state/TARGET    "Before build: Metadata file shouldn't exist"
