@@ -69,6 +69,9 @@
    `set -u` - Write a message to standard error when attempting to expand a
    variable that is not set, and exit immediately.
 ** TODO Proper signal handling
+   Nota bene: Rewrite trapping of lockfile so these traps do not clobber each
+   other.
+
    [[http://www.cons.org/cracauer/sigint.html][Proper handling of SIGINT/SIGQUIT]] is an interesting on how to handle
    signals. Under the headline "How to be a proper shell" there is a
    description of what to do when catching a child signal, while wait()ing.
@@ -91,8 +94,9 @@
    | KILL |  9 | Kill. Unconditionally fatal. No cleanup possible.      |
    | TERM | 15 | Terminate. Default `kill` signal.                      |
    |------+----+--------------------------------------------------------|
-** TODO Quote all variables
+** TODO Pass arguments to buildscripts
 * Testing
+** TODO Test $FIX_LEVEL
 ** TODO Test cases should describe outcome of test explicitly
    The test case descriptions should be rephrased to use the word 'should'.
 
@@ -188,3 +192,5 @@
    most common error).
 ** DONE Kill invoking buildscript (if any) on error
    CLOSED: [2015-11-12 Thu 22:26]
+** DONE Quote all variables
+   CLOSED: [2015-11-12 Thu 22:58]

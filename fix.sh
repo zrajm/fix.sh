@@ -56,25 +56,21 @@ establish_lock() {
     trap "rm -f '$LOCKFILE'" EXIT
     for SIG in HUP INT TERM; do
         # remove lockfile, then re-kill myself without trapping the signal
-        trap "rm -f '$LOCKFILE'; trap - EXIT $SIG; kill -$SIG $$" $SIG
+        trap "rm -f '$LOCKFILE'; trap -- EXIT $SIG; kill -$SIG $$" "$SIG"
     done
 }
 
 # Run buildscript, write tempfile. React to exit status.
 build_run() {
-    local CMD="$1" TMPFILE="$2" STATUS=0
+    local CMD="$1" TMPFILE="$2"
     [ -e "$CMD" ] || error 1 "Buildscript '$CMD' does not exist"
     [ -r "$CMD" ] || error 1 "No read permission for buildscript '$CMD'"
     [ -x "$CMD" ] || error 1 "No execute permission for buildscript '$CMD'"
 
     # FIXME: Catch a failure to write to $TMPFILE
     "$CMD" >"$TMPFILE" <&- &                   # run buildscript
-    wait "$!"
-    STATUS=$?                                  # check buildscript exit status
-    if [ $STATUS -ne 0 ]; then
-        error 1 "Buildscript '$CMD' returned exit status $STATUS" \
-            "Old target unchanged. New, failed target written to '$TMPFILE'."
-    fi
+    wait "$!" || error 1 "Buildscript '$CMD' returned exit status $?" \
+        "Old target unchanged. New, failed target written to '$TMPFILE'."
 }
 
 # After build: Overwrite target with tempfile, and store result in metadata.
@@ -137,12 +133,12 @@ build() {
 ##                                                                          ##
 ##############################################################################
 
-[ $# = 0 ] && error 15 "No target(s) specified"
+[ "$#" = 0 ] && error 15 "No target(s) specified"
 if is_mother; then                             # mother process
     # FIX_FORCE FIX_DEBUG
-    export FIX="$(readlink -f $0)"
+    export FIX="$(readlink -f "$0")"
     export FIX_LEVEL=0
-    export FIX_PID=$$
+    export FIX_PID="$$"
     export FIX_DIR=".fix"
     export FIX_LOCK="$FIX_DIR/lock.pid"
     export FIX_SCRIPT_DIR="fix"
@@ -158,7 +154,7 @@ if is_mother; then                             # mother process
         || error 8 "Cannot create lockfile '$FIX_LOCK'" \
         "Is ${FIX##*/} is already running? Is lockfile dir writeable?"
 else                                           # child
-    FIX_LEVEL=$(( FIX_LEVEL + 1 ))
+    FIX_LEVEL="$(( FIX_LEVEL + 1 ))"
 fi
 #export FIX_PARENT="$FIX_TARGET"
 
