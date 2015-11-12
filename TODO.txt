@@ -1,7 +1,6 @@
 -*- org -*-
 
 * Program
-** TODO error() function should be called die()
 ** TODO Allow target to be specified relative to current dir
    Currently, if you're rebuilding a target called `build/TARGET`, and
    $FIX_TARGET_DIR is set to `build`, you'll need to be in the root of the
@@ -194,3 +193,5 @@
    CLOSED: [2015-11-12 Thu 22:26]
 ** DONE Quote all variables
    CLOSED: [2015-11-12 Thu 22:58]
+** DONE error() function should be called die()
+   CLOSED: [2015-11-12 Thu 23:23]
