@@ -57,16 +57,6 @@
    be overwritten unless the new target has been updated. But the new target
    does not ever have to be built if we know no changes has been made to any of
    the dependencies.
-** TODO Use `set -eu` "strict mode"
-   See [[http://redsymbol.net/articles/unofficial-bash-strict-mode/][The Unofficial Bash Strict Mode]].
-
-   `set -e` - Exit immediately if any untested command fails. The exit status
-   of a command is considered to be explicitly tested if the command is used to
-   control an `if`, `elif`, `while`, or `until`; or if the command is the left
-   hand operand of an `&&` or `||` operator.
-
-   `set -u` - Write a message to standard error when attempting to expand a
-   variable that is not set, and exit immediately.
 ** TODO Proper signal handling
    Nota bene: Rewrite trapping of lockfile so these traps do not clobber each
    other.
@@ -94,6 +84,12 @@
    | TERM | 15 | Terminate. Default `kill` signal.                      |
    |------+----+--------------------------------------------------------|
 ** TODO Pass arguments to buildscripts
+** TODO Parsing of options
+   Initially add the following options:
+   --debug
+   --force
+   --help
+   --source
 * Testing
 ** TODO Test $FIX_LEVEL
 ** TODO Test cases should describe outcome of test explicitly
@@ -195,3 +191,14 @@
    CLOSED: [2015-11-12 Thu 22:58]
 ** DONE error() function should be called die()
    CLOSED: [2015-11-12 Thu 23:23]
+** DONE Use `set -eu` "strict mode"
+   CLOSED: [2015-11-13 Fri 00:42]
+   Inspired by [[http://redsymbol.net/articles/unofficial-bash-strict-mode/][The Unofficial Bash Strict Mode]].
+
+   `set -e` - Exit immediately if any untested command fails. The exit status
+   of a command is considered to be explicitly tested if the command is used to
+   control an `if`, `elif`, `while`, or `until`; or if the command is the left
+   hand operand of an `&&` or `||` operator.
+
+   `set -u` - Write a message to standard error when attempting to expand a
+   variable that is not set, and exit immediately.

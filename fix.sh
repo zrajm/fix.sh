@@ -7,6 +7,7 @@
 
 # FIX_PARENT and FIX_METADATA is set for all child invocations.
 
+set -ue
 
 ##############################################################################
 ##                                                                          ##
@@ -20,10 +21,10 @@ debug() {
 }
 
 die() {
-    local STATUS="$1" MSG="$2" EXTRA="$3"
+    local STATUS="$1" MSG="$2" EXTRA="${3:-}"
     echo "ERROR: $MSG" >&2
     [ "$EXTRA" ] && echo "    ($EXTRA)" >&2
-    [ "$FIX_LEVEL" -gt 0 ] && kill "$PPID"     # kill buildscript (if any)
+    is_mother || kill "$PPID"                  # kill parent buildscript
     exit "$STATUS"
 }
 
@@ -44,9 +45,10 @@ file_checksum() {
     echo "${CHECKSUM%% *}"                     # checksum without filename
 }
 
-# Return true if process has a parent fix process, false otherwise.
+# Return true if this Fix process was invoked from command line, false if it
+# was invoked from a buildscript.
 is_mother() {
-    [ -z "$FIX" -a -z "$FIX_PARENT" ]
+    [ "$FIX_LEVEL" -eq 0 ]
 }
 
 establish_lock() {
@@ -133,11 +135,16 @@ build() {
 ##                                                                          ##
 ##############################################################################
 
+: ${FIX_DEBUG:=""}                             # --debug  (default off)
+: ${FIX_FORCE:=""}                             # --force  (default off)
+: ${FIX_SOURCE:=""}                            # --source (default off)
+: ${FIX_LEVEL:=-1}                             # 0 = ran from command line
+FIX_LEVEL="$(( FIX_LEVEL + 1 ))"               #   +1 for each invokation
+
 [ "$#" = 0 ] && die 15 "No target(s) specified"
 if is_mother; then                             # mother process
-    # FIX_FORCE FIX_DEBUG
     export FIX="$(readlink -f "$0")"
-    export FIX_LEVEL=0
+    export FIX_LEVEL
     export FIX_PID="$$"
     export FIX_DIR=".fix"
     export FIX_LOCK="$FIX_DIR/lock.pid"
@@ -153,8 +160,6 @@ if is_mother; then                             # mother process
     establish_lock "$FIX_LOCK" \
         || die 8 "Cannot create lockfile '$FIX_LOCK'" \
         "Is ${FIX##*/} is already running? Is lockfile dir writeable?"
-else                                           # child
-    FIX_LEVEL="$(( FIX_LEVEL + 1 ))"
 fi
 #export FIX_PARENT="$FIX_TARGET"
 
