@@ -23,6 +23,7 @@ error() {
     local STATUS="$1" MSG="$2" EXTRA="$3"
     echo "ERROR: $MSG" >&2
     [ "$EXTRA" ] && echo "    ($EXTRA)" >&2
+    [ "$FIX_LEVEL" -gt 0 ] && kill "$PPID"     # kill buildscript (if any)
     exit "$STATUS"
 }
 
@@ -62,15 +63,16 @@ establish_lock() {
 # Run buildscript, write tempfile. React to exit status.
 build_run() {
     local CMD="$1" TMPFILE="$2" STATUS=0
-    [ -e "$CMD" ] || error 10 "Buildscript '$CMD' does not exist"
-    [ -r "$CMD" ] || error 10 "No read permission for buildscript '$CMD'"
-    [ -x "$CMD" ] || error 10 "No execute permission for buildscript '$CMD'"
+    [ -e "$CMD" ] || error 1 "Buildscript '$CMD' does not exist"
+    [ -r "$CMD" ] || error 1 "No read permission for buildscript '$CMD'"
+    [ -x "$CMD" ] || error 1 "No execute permission for buildscript '$CMD'"
 
-    # FIXME: Catch a failure to write to $TMPFILE (fail with exit status 6)
-    "$CMD" >"$TMPFILE" <&-                     # run buildscript
+    # FIXME: Catch a failure to write to $TMPFILE
+    "$CMD" >"$TMPFILE" <&- &                   # run buildscript
+    wait "$!"
     STATUS=$?                                  # check buildscript exit status
     if [ $STATUS -ne 0 ]; then
-        error 5 "Buildscript '$CMD' returned exit status $STATUS" \
+        error 1 "Buildscript '$CMD' returned exit status $STATUS" \
             "Old target unchanged. New, failed target written to '$TMPFILE'."
     fi
 }
@@ -138,8 +140,6 @@ build() {
 [ $# = 0 ] && error 15 "No target(s) specified"
 if is_mother; then                             # mother process
     # FIX_FORCE FIX_DEBUG
-    [ -n "$FIX_SOURCE" ] \
-        && error 15 "Option '--source' can only be used inside buildscript"
     export FIX="$(readlink -f $0)"
     export FIX_LEVEL=0
     export FIX_PID=$$
@@ -148,6 +148,8 @@ if is_mother; then                             # mother process
     export FIX_SCRIPT_DIR="fix"
     export FIX_SOURCE_DIR="src"
     export FIX_TARGET_DIR="build"
+    [ -n "$FIX_SOURCE" ] \
+        && error 15 "Option '--source' can only be used inside buildscript"
     [ -d "$FIX_SOURCE_DIR" ] \
         || error 10 "Source dir '$FIX_SOURCE_DIR' does not exist"
     [ -d "$FIX_SCRIPT_DIR" ] \

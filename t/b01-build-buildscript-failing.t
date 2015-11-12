@@ -22,7 +22,7 @@ file_not_exists .fix/state/TARGET    "Before build: Metadata file shouldn't exis
 
 "$TESTCMD" TARGET >stdout 2>stderr; RC="$?"
 
-is              "$RC"                5             "Exit status"
+is              "$RC"                1             "Exit status"
 file_is         stdout               "$NADA"       "Standard output"
 file_is         stderr               "$ERRMSG"     "Standard error"
 file_not_exists build/TARGET                       "Target shouldn't exist"

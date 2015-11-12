@@ -36,7 +36,7 @@ DBDATA="$(
     # mkmetadata SCRIPT TARGET.fix <fix/TARGET.fix  # TODO script dep
 )" || fail "Failed to calculate metadata"
 
-is              "$RC"                5             "Exit status"
+is              "$RC"                1             "Exit status"
 file_is         stdout               "$NADA"       "Standard output"
 file_is         stderr               "$ERRMSG"     "Standard error"
 file_is         build/TARGET         "OUTPUT"      "Target"

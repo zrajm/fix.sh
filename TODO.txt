@@ -1,6 +1,31 @@
 -*- org -*-
 
 * Program
+** TODO error() function should be called die()
+** TODO Allow target to be specified relative to current dir
+   Currently, if you're rebuilding a target called `build/TARGET`, and
+   $FIX_TARGET_DIR is set to `build`, you'll need to be in the root of the
+   worktree and invoke Fix as:
+
+       fix TARGET
+
+   This should not be the case. Targets should always be specified relative to
+   the users current directory, so that if you were *inside* $FIX_TARGET_DIR,
+   you should use the above command, but at the root of the worktree you should
+   instead name the target dir explicitly and use:
+
+       fix build/TARGET
+
+   And if you were inside a dir called `build/x` you should be able to invoke
+   Fix with:
+
+       fix ../TARGET
+
+   And from inside your $FIX_SCRIPT_DIR, you might use:
+
+       fix ../build/TARGET
+
+   Etc.
 ** TODO Write dependencies to tempfile, finalize when build is done
 ** TODO Add source dependencies
 ** TODO Dependencies
@@ -10,8 +35,68 @@
    or unset and abort with an error message if there's something inconsistent
    about them.
 ** TODO Automatic adding of buildscript as target dependency
+** TODO Support for listdeps
+   Tag certain dependencies as 'listing dependencies' (or listdeps) in Fix's
+   internal state. A listdep is a dependency, that lists (or defines) which
+   other dependencies. Whenever a listdep has changed we can no longer be sure
+   that the dependency graph is the same without first rebuilding the target
+   whose listdep(s) has changed.
+
+   If no listdeps has changed in the full dependency graph, then we still know
+   the exact shape of the graph, though we might still have to rebuild a couple
+   of files here or there.
+
+   All buildscripts are listdeps (and presumably there will be no other
+   listdeps but the buildscripts in most projects), but let's say that a
+   buildscript pulled in content from several files, which were all listed in a
+   file called `list.txt`. If `list.txt` were to change, the number of files
+   read by the buildscript would also change. Thus `list.txt` should be
+   declared as a listdep.
 ** TODO Automatic unlocking of stale lockfile
+** TODO Don't build target (at all) if up-to-date target already exists
+   Currently new target built into a tempfile, and existing target will never
+   be overwritten unless the new target has been updated. But the new target
+   does not ever have to be built if we know no changes has been made to any of
+   the dependencies.
+** TODO Use `set -eu` "strict mode"
+   See [[http://redsymbol.net/articles/unofficial-bash-strict-mode/][The Unofficial Bash Strict Mode]].
+
+   `set -e` - Exit immediately if any untested command fails. The exit status
+   of a command is considered to be explicitly tested if the command is used to
+   control an `if`, `elif`, `while`, or `until`; or if the command is the left
+   hand operand of an `&&` or `||` operator.
+
+   `set -u` - Write a message to standard error when attempting to expand a
+   variable that is not set, and exit immediately.
+** TODO Proper signal handling
+   [[http://www.cons.org/cracauer/sigint.html][Proper handling of SIGINT/SIGQUIT]] is an interesting on how to handle
+   signals. Under the headline "How to be a proper shell" there is a
+   description of what to do when catching a child signal, while wait()ing.
+
+   1. While waiting for child process, take note of any signal received.
+   2. Wait for child to exit, get exit status.
+   3. If signal any signal was received during wait:
+      1. Check whether child received one of the trapped signals: If so re-kill
+         yourself with the same signal (so that programs upstream can determine
+         that you received a signal).
+
+   [[http://mywiki.wooledge.org/SignalTrap][Sending and Trapping Signals]] says: There is a core set of signals common to
+   all Unix-like operating systems whose numbers realistically never change;
+   the most common of these are:
+
+   |------+----+--------------------------------------------------------|
+   | HUP  |  1 | Hang Up. The controlling terminal has gone away.       |
+   | INT  |  2 | Interrupt. The user has pressed Ctrl-C.                |
+   | QUIT |  3 | Quit. The user has pressed Ctrl-\. Exit and dump core. |
+   | KILL |  9 | Kill. Unconditionally fatal. No cleanup possible.      |
+   | TERM | 15 | Terminate. Default `kill` signal.                      |
+   |------+----+--------------------------------------------------------|
+** TODO Quote all variables
 * Testing
+** TODO Test cases should describe outcome of test explicitly
+   The test case descriptions should be rephrased to use the word 'should'.
+
+   + 'e09-rebuild-dep-target-modified.t' is an example of this.
 ** TODO Remove TODO tests in all `t/e*sourcedep*.t` tests
 ** TODO t/e*sourcedep*.t test cases need to look at dependency data     :NOW:
    (they now *pass* even though FIX_SOURCE doesn't do anything!)
@@ -97,3 +182,9 @@
 
    In (some of?) the failing cases we'll need to generate this before running
    the actual tests.
+** DONE Build failure should terminate with exit status: 1
+   CLOSED: [2015-11-12 Thu 22:15]
+   Exit status 1 should be used for build errors (since it'll presumably be the
+   most common error).
+** DONE Kill invoking buildscript (if any) on error
+   CLOSED: [2015-11-12 Thu 22:26]

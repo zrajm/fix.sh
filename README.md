@@ -40,21 +40,49 @@ exit value).
 The following exit status values are used:
 
        0 = Success.
-       1 = Won't overwrite target (anything fixable by --force).
-       5 = Build failed (build script returned non-zero exit value).
+
+       1 = A buildscript failed to execute. This usually means that a
+           buildscript (or a buildscript invoked to build one of its
+           dependencies) terminated with non-zero exit status, but it could
+           also mean that it failed for some other reason, e.g. it wasn't
+           executable, could not be found, or that Fix refused to overwrite its
+           target file because it had been modified and `--force` wasn't used.
+
+               It is worth noting that when Fix is run from inside a
+           buildscript and fail, it will kill the invoking buildscript by means
+           of a SIGTERM signal. This guarantees that failure in dependency
+           building (or source dependency declaring) abort the build at that
+           point, and make sure that the buildscript in question terminates
+           with a non-zero exit status, thereby aborting the building of
+           everything that depended on it.
+
+               This also means that you don't have to explicitly catch and
+           react to dependency errors in your buildscripts (there is no need to
+           use `set -e`, or to look at the exit value of each Fix invocation in
+           your buildscripts). If you have a buildscript that needs to do
+           cleanup in the event of a failure, trap SIGTERM then make sure you
+           exit by removing the trap and terminating your script by re-killing
+           yourself (e.g. `trap -- TERM; kill -TERM $$`).
+
        6 = Build succeeded, but failed to write target. E.g. target dir could
            not be created, old target (or target directory) was write protected
            or similar.
+
        7 = Failed to write metadata.
+
        8 = Failed to create lockfile. (Most likely this means that another copy
            of fix is currently running, but it could also be caused by lack of
            write permissions bits, or a stale lockfile if a previous instance
            of fix was terminated by 'kill -KILL' or somehow failed to remove
            its lockfile.)
-      10 = Couldn't read buildscript or source (permission denied, or file
-           missing, or missing buildscript or source directories).
-      15 = Bad options provided.
+
+      10 = Source buildscript or directory is missing.
+
+      15 = Bad options provided (e.g. using `--source` from the command line
+           rather than from inside a buildscript.)
+
       30 = Internal error: build_finalize() was given an incorrect argument.
+
     >128 = Terminated by 'kill' or ctrl-c (subtract 128 from exit status to
            find out which signal was received). NOTA BENE: When stopping fix
            with 'kill', use the negated PID of the mother process. The mother
