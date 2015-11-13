@@ -1,7 +1,12 @@
 -*- org -*-
 
 * Program
+** TODO Dependencies
 ** TODO Add man page
+** TODO Automatic adding of buildscript as target dependency
+** TODO Pass arguments to buildscripts
+** TODO Write dependencies to tempfile, finalize when build is done
+** TODO Add source dependencies
 ** TODO Allow target to be specified relative to current dir
    Currently, if you're rebuilding a target called `build/TARGET`, and
    $FIX_TARGET_DIR is set to `build`, you'll need to be in the root of the
@@ -26,32 +31,11 @@
        fix ../build/TARGET
 
    Etc.
-** TODO Write dependencies to tempfile, finalize when build is done
-** TODO Add source dependencies
-** TODO Dependencies
 ** TODO More thorough is_mother() tests
    Should be able to detect an inconsistent state and abort. I.e. it should
    check *all* parent/child variables, and return true/false if they're all set
    or unset and abort with an error message if there's something inconsistent
    about them.
-** TODO Automatic adding of buildscript as target dependency
-** TODO Support for listdeps
-   Tag certain dependencies as 'listing dependencies' (or listdeps) in Fix's
-   internal state. A listdep is a dependency, that lists (or defines) which
-   other dependencies. Whenever a listdep has changed we can no longer be sure
-   that the dependency graph is the same without first rebuilding the target
-   whose listdep(s) has changed.
-
-   If no listdeps has changed in the full dependency graph, then we still know
-   the exact shape of the graph, though we might still have to rebuild a couple
-   of files here or there.
-
-   All buildscripts are listdeps (and presumably there will be no other
-   listdeps but the buildscripts in most projects), but let's say that a
-   buildscript pulled in content from several files, which were all listed in a
-   file called `list.txt`. If `list.txt` were to change, the number of files
-   read by the buildscript would also change. Thus `list.txt` should be
-   declared as a listdep.
 ** TODO Automatic unlocking of stale lockfile
 ** TODO Don't build target (at all) if up-to-date target already exists
    Currently new target built into a tempfile, and existing target will never
@@ -84,17 +68,16 @@
    | KILL |  9 | Kill. Unconditionally fatal. No cleanup possible.      |
    | TERM | 15 | Terminate. Default `kill` signal.                      |
    |------+----+--------------------------------------------------------|
-** TODO Pass arguments to buildscripts
-** TODO Mother process see only debug & force opts, not variables(?)
+** TODO Mother process should ignore $FIX_FORCE/$FIX_DEBUG, only use options
    Reset $FIX_DEBUG and $FIX_FORCE (if set), and use only --debug and --force.
    Child processes still need to listen to the environment variables, though.
 * Testing
-** TODO Parsing of command line arguments
+** TODO Add test for --version (and -V) option
+   This should enforce the copyright year and version number.
+** TODO Test for reading of command line arguments
 ** TODO Add test for --debug (and -D) option
 ** TODO Add test for --force (and -f) option
 ** TODO Add test for --help (and -h) option
-** TODO Add test for --version (and -V) option
-   This should enforce the copyright year and version number.
 ** TODO Test cases should describe outcome of test explicitly
    The test case descriptions should be rephrased to use the word 'should'.
 
@@ -110,6 +93,25 @@
 ** TODO Profiling the code (using Devel::NYTProf)
 ** TODO Test code coverage (Devel::Cover)
 * FUTURE
+** TODO Outputting dependency graph
+   As a dotviz file?
+** TODO Support for listdeps
+   Tag certain dependencies as 'listing dependencies' (or listdeps) in Fix's
+   internal state. A listdep is a dependency, that lists (or defines) which
+   other dependencies. Whenever a listdep has changed we can no longer be sure
+   that the dependency graph is the same without first rebuilding the target
+   whose listdep(s) has changed.
+
+   If no listdeps has changed in the full dependency graph, then we still know
+   the exact shape of the graph, though we might still have to rebuild a couple
+   of files here or there.
+
+   All buildscripts are listdeps (and presumably there will be no other
+   listdeps but the buildscripts in most projects), but let's say that a
+   buildscript pulled in content from several files, which were all listed in a
+   file called `list.txt`. If `list.txt` were to change, the number of files
+   read by the buildscript would also change. Thus `list.txt` should be
+   declared as a listdep.
 ** [0%] Parallel builds
 *** TODO Make compatible job server?
 *** TODO Writing build metadata in parallel
