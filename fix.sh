@@ -46,8 +46,22 @@ Options:
   -f, --force    overwrite target files modified by user
   -h, --help     display this information and exit
       --source   declare source dependency (only allowed in buildscripts)
+  -V, --version  output version information and exit
 
 END_USAGE
+exit
+}
+
+version() {
+    cat <<END_VERSION
+fix.sh (Fix)
+Copyright (C) 2014, 2015 zrajm <fix@zrajm.org>
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+For the latest version, see <https://github.com/zrajm/fix.sh>.
+END_VERSION
 exit
 }
 
@@ -189,6 +203,7 @@ while [ "$COUNT" != 0 ]; do                    # read command line options
         -f|--force) FIX_FORCE=1  ;;
         -h|--help)  usage        ;;
         --source)   OPT_SOURCE=1 ;;
+        -V|--version) version    ;;
         --) while [ "$COUNT" != 0 ]; do        #   put remaining args
                 set -- "$@" "$1"               #     last in $@
                 COUNT="$(( COUNT - 1 ))"

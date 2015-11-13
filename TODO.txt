@@ -1,7 +1,6 @@
 -*- org -*-
 
 * Program
-** TODO Add --version option
 ** TODO Add Git hook(?)/test to enforce version number
 ** TODO Add Git hook(?)/test to enforce copyright year
 ** TODO Add man page
@@ -253,3 +252,5 @@
    unset COUNT ARG ARGED HELP
 ** DONE Add --help option
    CLOSED: [2015-11-13 Fri 16:21]
+** DONE Add --version option
+   CLOSED: [2015-11-13 Fri 16:36]
