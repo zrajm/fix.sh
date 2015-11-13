@@ -1,8 +1,6 @@
 -*- org -*-
 
 * Program
-** TODO Add Git hook(?)/test to enforce version number
-** TODO Add Git hook(?)/test to enforce copyright year
 ** TODO Add man page
 ** TODO Allow target to be specified relative to current dir
    Currently, if you're rebuilding a target called `build/TARGET`, and
@@ -92,10 +90,11 @@
    Child processes still need to listen to the environment variables, though.
 * Testing
 ** TODO Parsing of command line arguments
-** TODO Add test for --debug option
-** TODO Add test for --force option
-** TODO Add test for --help option
-** TODO Add test for --version option
+** TODO Add test for --debug (and -D) option
+** TODO Add test for --force (and -f) option
+** TODO Add test for --help (and -h) option
+** TODO Add test for --version (and -V) option
+   This should enforce the copyright year and version number.
 ** TODO Test cases should describe outcome of test explicitly
    The test case descriptions should be rephrased to use the word 'should'.
 

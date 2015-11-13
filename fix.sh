@@ -12,13 +12,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-# May be set by user:
-#   * FIX_DEBUG
-#   * FIX_FORCE
-#   * FIX_SOURCE
-
-# FIX_PARENT and FIX_METADATA is set for all child invocations.
 
 set -ue
 
@@ -28,12 +21,10 @@ set -ue
 ##                                                                          ##
 ##############################################################################
 
-cat() {
-    while IFS="" read -r LINE; do
-        printf "%s\n" "$LINE"
-    done
-    [ "$LINE" ] && printf "%s\n" "$LINE"
-    return 0
+echo() { printf "%s\n" "$@"; }                 # safe 'echo'
+cat() {                                        # 'cat' using shell builtins
+    local TXT IFS=""
+    while read -r TXT; do echo "$TXT"; done    # last line must end in <LF>
 }
 
 usage() {
