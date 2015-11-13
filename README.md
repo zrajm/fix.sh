@@ -148,20 +148,20 @@ Environment Variables
 Fix uses environment variables to pass information to its child processes (for
 a large project these can be quite a few!)
 
-  | Variable       | Explanation                       | Default        |
-  |----------------|-----------------------------------|----------------|
-  | FIX            | Path to Fix executable            | `/PATH/fix.sh` |
-  | FIX_DEBUG      | Set if `--debug` option was used  | empty          |
-  | FIX_DIR        | Dir for build state               | `.fix/`        |
-  | FIX_FORCE      | Set if `--force` option was used  | empty          |
-  | FIX_LEVEL      | 0 = mother process, >0 = child    | number >= 1    |
-  | FIX_LOCK       | Lock file                         | filename       |
-  | FIX_PARENT     | Parent target name                | filename       |
-  | FIX_PID        | Mother process PID                | PID            |
-  | FIX_SCRIPT_DIR | Buildscripts dir                  | `fix/`         |
-  | FIX_SOURCE_DIR | Source file dir                   | `src/`         |
-  | FIX_TARGET     | Current target name               | filename       |
-  | FIX_TARGET_DIR | Target file dir                   | `build/`       |
+| Variable       | Explanation                       | Default        |
+|----------------|-----------------------------------|----------------|
+| FIX            | Path to Fix executable            | `/PATH/fix.sh` |
+| FIX_DEBUG      | Set if `--debug` option was used  | empty          |
+| FIX_DIR        | Dir for build state               | `.fix/`        |
+| FIX_FORCE      | Set if `--force` option was used  | empty          |
+| FIX_LEVEL      | 0 = mother process, >0 = child    | number >= 1    |
+| FIX_LOCK       | Lock file                         | filename       |
+| FIX_PARENT     | Parent target name                | filename       |
+| FIX_PID        | Mother process PID                | PID            |
+| FIX_SCRIPT_DIR | Buildscripts dir                  | `fix/`         |
+| FIX_SOURCE_DIR | Source file dir                   | `src/`         |
+| FIX_TARGET     | Current target name               | filename       |
+| FIX_TARGET_DIR | Target file dir                   | `build/`       |
 
 
 Glossary
