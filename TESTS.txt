@@ -563,4 +563,9 @@
 ** TODO Rebuild target built by default buildscript, now by target
    Rebuild target that was previously build by default.fix, with a new
    TARGET.fix.
+* [100%] h. Environment variables
+** DONE h01. Test if $FIX_LEVEL set correctly in dependencies
+   CLOSED: [2015-11-13 Fri 01:52]
+** DONE h02. Test if $FIX_PARENT set correctly in dependencies
+   CLOSED: [2015-11-13 Fri 01:52]
 * [eof]
