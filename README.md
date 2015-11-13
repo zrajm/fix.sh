@@ -166,39 +166,40 @@ a large project these can be quite a few!)
 
 Glossary
 ========
-Some terms, both those used by build systems in general, and those specific to
-Fix.
+These are some, some of which terms used by build systems in general, and some
+of which are specific to Fix.
 
-  * **child processes** - Any Fix process started from within a buildscript.
+**child process** - A Fix process started from within a buildscript. When a Fix
+child process fails, it will automatically kill the invoking buildscript (by
+means of a `SIGTERM` signal). In a child process `$FIX_LEVEL` will be non-zero.
 
-  * **dependency**
+**dependency**
 
-  * **dependency graph** or **dependency tree** - Is a *directed acyclic graph*
-      (or *DAG* for short) describing all the dependencies for a target. As
-      long as no *listdeps* have been modified we know that the dependency
-      graph will be the same as when we last built all dependencies.
+**dependency graph** or **dependency tree** - Is a _directed acyclic graph_ (or
+_DAG_ for short) describing all the dependencies for a target. As long as no
+_listdeps_ have been modified we know that the dependency graph will be the
+same as when we last built all dependencies.
 
-  * **clean tree** - A Fix project tree in which all target files have been
-      built and are up-to-date. If Fix is invoked to build a clean tree, it
-      will quickly determine that nothing needs to be done and exit with exit
-      status 0.
+**clean tree** - A Fix project tree in which all target files have been built
+and are up-to-date. If Fix is invoked to build a clean tree, it will quickly
+determine that nothing needs to be done and exit with exit status 0.
 
-  * **dirty tree** - A Fix project tree that contains one or more unbuild or
-      unupdated target files.
+**dirty tree** - A Fix project tree that contains one or more unbuild or
+unupdated target files.
 
-  * **listdep** (or **listing dependency**) - A dependency that defines what
-      other dependencies need to be built. Buildscripts (`.fix` files) fall
-      into this category since they declare which other files are needed to
-      build their target.
+**listdep** (or **listing dependency**) - A dependency that defines what other
+dependencies need to be built. Buildscripts (`.fix` files) fall into this
+category since they declare which other files are needed to build their target.
 
-  * **mother process** - The process started from the command line. The mother
-      process will invoke one or more buildscripts, which in turn will invoke
-      Fix to declare and build dependencies their dependency.
+**mother process** - The process started from the command line. The mother
+process will invoke one or more buildscripts, which in turn will invoke Fix to
+declare and build dependencies their dependency. In a mother process
+`$FIX_LEVEL` will be zero.
 
-  * **sourcedep** (or **source dependency**) - A dependency that isn't built by
-      Fix, but is used to produce a target (typically a source file of some
-      kind). Whenever a sourcedep has changed, all targets that depend on it
-      will have to be rebuilt.
+**sourcedep** (or **source dependency**) - A dependency that isn't built by
+Fix, but is used to produce a target (typically a source file of some kind).
+Whenever a sourcedep has changed, all targets that depend on it will have to be
+rebuilt.
 
 ------------------------------------------------------------------------------
 
