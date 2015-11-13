@@ -21,7 +21,7 @@ reset_timestamp "$SOURCEDEP"
 write_file a+x fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
 	echo "PRE"
-	FIX_SOURCE=yes $FIX SOURCE.txt
+	$FIX --source SOURCE.txt
 	cat "$FIX_SOURCE_DIR/SOURCE.txt"
 	echo "POST"
 END_SCRIPT

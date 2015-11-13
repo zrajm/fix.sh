@@ -135,13 +135,33 @@ build() {
 ##                                                                          ##
 ##############################################################################
 
+# OPT_* variables are not exported.
+# FIX_* variables are exported and inherited by child processes.
 : ${FIX_DEBUG:=""}                             # --debug  (default off)
 : ${FIX_FORCE:=""}                             # --force  (default off)
-: ${FIX_SOURCE:=""}                            # --source (default off)
+: ${OPT_SOURCE:=""}                            # --source (default off)
 : ${FIX_TARGET:=""}
 : ${FIX_LEVEL:=-1}                             # 0 = ran from command line
 FIX_LEVEL="$(( FIX_LEVEL + 1 ))"               #   +1 for each invokation
 FIX_PARENT="$FIX_TARGET"
+
+COUNT="$#"
+while [ "$COUNT" != 0 ]; do                    # read command line options
+    ARG="$1"; shift; COUNT="$(( COUNT - 1 ))"
+    case "$ARG" in
+        -D|--debug) FIX_DEBUG=1  ;;
+        -f|--force) FIX_FORCE=1  ;;
+        --source)   OPT_SOURCE=1 ;;
+        --) while [ "$COUNT" != 0 ]; do        #   put remaining args
+                set -- "$@" "$1"               #     last in $@
+                COUNT="$(( COUNT - 1 ))"
+            done; break ;;                     #     and abort
+        -*) die 15 "Unknown option '$ARG'" \
+            "Try '$0 --help' for more information." ;;
+        *)  set -- "$@" "$ARG" ;;              #   put non-option arg back
+    esac
+done
+unset COUNT ARG
 
 [ "$#" = 0 ] && die 15 "No target(s) specified"
 if is_mother; then                             # mother process
@@ -153,7 +173,7 @@ if is_mother; then                             # mother process
     export FIX_SCRIPT_DIR="fix"
     export FIX_SOURCE_DIR="src"
     export FIX_TARGET_DIR="build"
-    [ -n "$FIX_SOURCE" ] \
+    [ -n "$OPT_SOURCE" ] \
         && die 15 "Option '--source' can only be used inside buildscript"
     [ -d "$FIX_SOURCE_DIR" ] \
         || die 10 "Source dir '$FIX_SOURCE_DIR' does not exist"
@@ -171,7 +191,7 @@ fi
 ##############################################################################
 
 for TARGET; do
-    if [ "$FIX_SOURCE" ]; then
+    if [ "$OPT_SOURCE" ]; then
         # register $TARGET as dependency to parent
         :
     else

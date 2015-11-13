@@ -1,6 +1,7 @@
 -*- org -*-
 
 * Program
+** TODO Add --help option
 ** TODO Allow target to be specified relative to current dir
    Currently, if you're rebuilding a target called `build/TARGET`, and
    $FIX_TARGET_DIR is set to `build`, you'll need to be in the root of the
@@ -84,13 +85,12 @@
    | TERM | 15 | Terminate. Default `kill` signal.                      |
    |------+----+--------------------------------------------------------|
 ** TODO Pass arguments to buildscripts
-** TODO Parsing of options
-   Initially add the following options:
-   --debug
-   --force
-   --help
-   --source
+** TODO Mother process see only debug & force opts, not variables(?)
+   Reset $FIX_DEBUG and $FIX_FORCE (if set), and use only --debug and --force.
+   Child processes still need to listen to the environment variables, though.
 * Testing
+** TODO Parsing of command line arguments
+** TODO Add tests for --debug and --force
 ** TODO Test cases should describe outcome of test explicitly
    The test case descriptions should be rephrased to use the word 'should'.
 
@@ -203,4 +203,45 @@
    Add a buncha testcases that look to see if buildscripts have the right
    FIX_TARGET & FIX_PARENT, at start and further down the dependency tree
 ** DONE $FIX_PARENT should be set
-   CLOSED: [2015-11-13 Fre 01:57]
+   CLOSED: [2015-11-13 Fri 01:57]
+** DONE Parsing of options: --debug, --force and --source
+   CLOSED: [2015-11-13 Fri 08:32]
+   Initially add the following options: --debug, --force and --source.
+
+   No support added for options with arguments or bundled options. If support
+   for option arguments is later desired, here's some code I've been using
+   in other projects to achieve that:
+
+   COUNT="$#"
+   HELP="Try '$0 --help' for more information."
+   while [ "$COUNT" != 0 ]; do                    # read command line options
+       ARG="$1"; shift
+       case "$ARG" in                             # handle '--opt=ARG'
+           --[a-z]*=*)                            #   if has '=ARG' part
+               set -- "${ARG#*=}" "$@"            #     put ARG back into $@
+               ARG="${ARG%%=*}"                   #     strip off '=ARG' part
+               ARGED=has_arg ;;
+           *)  COUNT="$(( COUNT - 1 ))"
+               ARGED=no_arg ;;
+       esac
+       case "$ARG" in
+           --opt-with-arg) FIX_DEBUG=1  ; ARGED=used ;;
+           -D|--debug) FIX_DEBUG=1  ;;
+           -f|--force) FIX_FORCE=1  ;;
+           --source)   OPT_SOURCE=1 ;;
+           --) while [ "$COUNT" != 0 ]; do        #   put remaining args
+                   set -- "$@" "$1"               #     last in $@
+                   COUNT="$(( COUNT - 1 ))"
+               done; break ;;                     #     and abort
+           -*) die 15 "Unknown option '$ARG'" "$HELP" ;;
+           *)  set -- "$@" "$ARG" ;;              #   put non-option arg back
+       esac
+       case "$ARGED" in
+           has_arg) die "Option '$ARG' doesn't allow an argument" "$HELP" ;;
+           used)
+               [ "$#" = 0 ] && die "Option '$ARG' requires an argument" "$HELP"
+               COUNT="$(( COUNT - 1 ))"
+               shift ;;
+       esac
+   done
+   unset COUNT ARG ARGED HELP

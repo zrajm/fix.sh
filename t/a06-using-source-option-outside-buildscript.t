@@ -15,7 +15,7 @@ ERRMSG="ERROR: Option '--source' can only be used inside buildscript"
 file_not_exists build/TARGET         "Before build: Target shouldn't exist"
 file_not_exists .fix/state/TARGET    "Before build: Metadata file shouldn't exist"
 
-FIX_SOURCE=yes "$TESTCMD" TARGET >stdout 2>stderr; RC="$?"
+"$TESTCMD" --source TARGET >stdout 2>stderr; RC="$?"
 
 is              "$RC"                15            "Exit status"
 file_is         stdout               "$NADA"       "Standard output"
