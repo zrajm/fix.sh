@@ -1,7 +1,10 @@
 -*- org -*-
 
 * Program
-** TODO Add --help option
+** TODO Add --version option
+** TODO Add Git hook(?)/test to enforce version number
+** TODO Add Git hook(?)/test to enforce copyright year
+** TODO Add man page
 ** TODO Allow target to be specified relative to current dir
    Currently, if you're rebuilding a target called `build/TARGET`, and
    $FIX_TARGET_DIR is set to `build`, you'll need to be in the root of the
@@ -90,7 +93,10 @@
    Child processes still need to listen to the environment variables, though.
 * Testing
 ** TODO Parsing of command line arguments
-** TODO Add tests for --debug and --force
+** TODO Add test for --debug option
+** TODO Add test for --force option
+** TODO Add test for --help option
+** TODO Add test for --version option
 ** TODO Test cases should describe outcome of test explicitly
    The test case descriptions should be rephrased to use the word 'should'.
 
@@ -245,3 +251,5 @@
        esac
    done
    unset COUNT ARG ARGED HELP
+** DONE Add --help option
+   CLOSED: [2015-11-13 Fri 16:21]

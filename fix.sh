@@ -15,6 +15,29 @@ set -ue
 ##                                                                          ##
 ##############################################################################
 
+cat() {
+    while IFS="" read -r LINE; do
+        printf "%s\n" "$LINE"
+    done
+    [ "$LINE" ] && printf "%s\n" "$LINE"
+    return 0
+}
+
+usage() {
+    cat <<END_USAGE
+Usage: ${0##*/} [OPTION]... TARGET...
+Build TARGET(s) based on which dependencies has changed.
+
+Options:
+  -D, --debug    enable debug mode (extra output on standard error)
+  -f, --force    overwrite target files modified by user
+  -h, --help     display this information and exit
+      --source   declare source dependency (only allowed in buildscripts)
+
+END_USAGE
+exit
+}
+
 debug() {
     [ "$FIX_DEBUG" ] && echo "$1" >&2
     return 0
@@ -151,6 +174,7 @@ while [ "$COUNT" != 0 ]; do                    # read command line options
     case "$ARG" in
         -D|--debug) FIX_DEBUG=1  ;;
         -f|--force) FIX_FORCE=1  ;;
+        -h|--help)  usage        ;;
         --source)   OPT_SOURCE=1 ;;
         --) while [ "$COUNT" != 0 ]; do        #   put remaining args
                 set -- "$@" "$1"               #     last in $@
