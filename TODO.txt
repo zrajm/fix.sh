@@ -71,6 +71,7 @@
 ** TODO Mother process should ignore $FIX_FORCE/$FIX_DEBUG, only use options
    Reset $FIX_DEBUG and $FIX_FORCE (if set), and use only --debug and --force.
    Child processes still need to listen to the environment variables, though.
+** TODO Options for setting $FIX_SCRIPT_DIR, $FIX_SOURCE_DIR, $FIX_TARGET_DIR
 * Testing
 ** TODO Add test for --version (and -V) option
    This should enforce the copyright year and version number.

@@ -1,11 +1,13 @@
 Fix.sh
 ======
-Fix.sh is a small prototype implementation of [Fix], written in [DASH]. I use
-it to play around with Fix features, and to create a end-to-end tests. In the
-end it'll probably become a smaller/slower clone of Fix.
+Fix.sh is a small prototype implementation of [Fix], written for POSIX
+compatible shells (using [Dash]). I use it to play around with Fix features,
+and to create end-to-end tests. In the end it'll probably become a
+smaller clone of Fix, suitable for machines without Perl.
 
-Fix.sh is in no way complete, in fact it does not even have command line
-options parsing (options are currently set using environment variables).
+Fix.sh is in no way complete, in fact it is not yet able to figure out
+dependencies properly, it is however maturing slowly, and might some day be
+merged into the the main [Fix] repository.
 
 
 Fix
@@ -15,25 +17,39 @@ lot of other peoples insights][inspiration]. For more info on that see the [Fix
 wiki].
 
 [Fix]: https://github.com/zrajm/fix
-[DASH]: http://gondor.apana.org.au/~herbert/dash/ "Debian Almquist SHell"
+[Dash]: http://gondor.apana.org.au/~herbert/dash/ "Debian Almquist SHell"
 [redo]: http://cr.yp.to/redo.html "D.J. Bernstein's redo"
 [inspiration]: https://github.com/zrajm/fix/wiki/Inspiration-and-References
                "Inspiration and References"
 [Fix wiki]: https://github.com/zrajm/fix/wiki "Fix Wiki (on GitHub)"
 
 
-Writing Files
-=============
-Script and source files are never written to by fix (only target, temp and
-metadata files are written to).
+Options
+=======
+`-D`, `--debug` Enables debug mode, which causes Fix to output extra messages
+on standard error.
+
+`-f`, `--force` Normally Fix will not overwrite any target files that has been
+manually modified since Fix built the file. This option can be used to override
+that.
+
+`-h`, `--help` Display help information, then exit.
+
+`--source` This is used in buildscripts to declare source dependencies for its
+target. Whenever a source dependency has changed, the target becomes dirty and
+will be rebuild next time Fix is invoked. This option cannot be used on the
+command line.
+
+`-V`, `--version` Display version information and copyright information, then
+exit.
 
 
 Exit Status
 ===========
-The exit status reflects whether fix failed or succeeded with its build. More
+The exit status reflects whether Fix failed or succeeded with its build. More
 'severe' errors result in higher exit status value (though the scale is
 somewhat arbitrary). Notably, exit status 1 indicate that the build can be
-forced to pass (using '--force' -- though this might also expose another
+forced to pass (using `--force` -- though this might also expose another
 problem, [e.g. 'permission denied'] making the build fail again with a higher
 exit value).
 
@@ -71,9 +87,9 @@ The following exit status values are used:
        7 = Failed to write metadata.
 
        8 = Failed to create lockfile. (Most likely this means that another copy
-           of fix is currently running, but it could also be caused by lack of
+           of Fix is currently running, but it could also be caused by lack of
            write permissions bits, or a stale lockfile if a previous instance
-           of fix was terminated by 'kill -KILL' or somehow failed to remove
+           of Fix was terminated by 'kill -KILL' or somehow failed to remove
            its lockfile.)
 
       10 = Source buildscript or directory is missing.
@@ -84,7 +100,7 @@ The following exit status values are used:
       30 = Internal error: build_finalize() was given an incorrect argument.
 
     >128 = Terminated by 'kill' or ctrl-c (subtract 128 from exit status to
-           find out which signal was received). NOTA BENE: When stopping fix
+           find out which signal was received). NOTA BENE: When stopping Fix
            with 'kill', use the negated PID of the mother process. The mother
            process is the process group leader, and using a negative PID sends
            the signal to all process group members, thereby making sure all
@@ -103,6 +119,11 @@ all of it.
   * Failing target's metadata will not be modified.
   * *Nota Bene:* Successful dependencies will be built even on error.
 
+Fix will normally refuse to overwrite a build target if it has been manually
+modified since being built, however this behaviour can be overridden using the
+`--force` option.
+
+
 Success
 -------
 A successful build means that your target and all its dependencies were fully
@@ -113,6 +134,71 @@ built.
   * All build tempfiles removed.
   * The current state of all build files stored in metadata.
 
+
+Writing Files
+=============
+Script and source files are never overwritten by Fix (only target, tempfiles
+and metadata files are written to) -- and in the case of target files, those
+will only be overwritten if Fix they have not been modified since last build
+(or `--force` was used).
+
+
+Environment Variables
+=====================
+Fix uses environment variables to pass information to its child processes (for
+a large project these can be quite a few!)
+
+  | Variable       | Explanation                       | Default        |
+  |----------------|-----------------------------------|----------------|
+  | FIX            | Path to Fix executable            | `/PATH/fix.sh` |
+  | FIX_DEBUG      | Set if `--debug` option was used  | empty          |
+  | FIX_DIR        | Dir for build state               | `.fix/`        |
+  | FIX_FORCE      | Set if `--force` option was used  | empty          |
+  | FIX_LEVEL      | 0 = mother process, >0 = child    | number >= 1    |
+  | FIX_LOCK       | Lock file                         | filename       |
+  | FIX_PARENT     | Parent target name                | filename       |
+  | FIX_PID        | Mother process PID                | PID            |
+  | FIX_SCRIPT_DIR | Buildscripts dir                  | `fix/`         |
+  | FIX_SOURCE_DIR | Source file dir                   | `src/`         |
+  | FIX_TARGET     | Current target name               | filename       |
+  | FIX_TARGET_DIR | Target file dir                   | `build/`       |
+
+
+Glossary
+========
+Some terms, both those used by build systems in general, and those specific to
+Fix.
+
+  * **child processes** - Any Fix process started from within a buildscript.
+
+  * **dependency**
+
+  * **dependency graph** or **dependency tree** - Is a *directed acyclic graph*
+      (or *DAG* for short) describing all the dependencies for a target. As
+      long as no *listdeps* have been modified we know that the dependency
+      graph will be the same as when we last built all dependencies.
+
+  * **clean tree** - A Fix project tree in which all target files have been
+      built and are up-to-date. If Fix is invoked to build a clean tree, it
+      will quickly determine that nothing needs to be done and exit with exit
+      status 0.
+
+  * **dirty tree** - A Fix project tree that contains one or more unbuild or
+      unupdated target files.
+
+  * **listdep** (or **listing dependency**) - A dependency that defines what
+      other dependencies need to be built. Buildscripts (`.fix` files) fall
+      into this category since they declare which other files are needed to
+      build their target.
+
+  * **mother process** - The process started from the command line. The mother
+      process will invoke one or more buildscripts, which in turn will invoke
+      Fix to declare and build dependencies their dependency.
+
+  * **sourcedep** (or **source dependency**) - A dependency that isn't built by
+      Fix, but is used to produce a target (typically a source file of some
+      kind). Whenever a sourcedep has changed, all targets that depend on it
+      will have to be rebuilt.
 
 ------------------------------------------------------------------------------
 
