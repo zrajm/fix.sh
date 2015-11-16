@@ -1,5 +1,7 @@
 #!/usr/bin/env dash
 # -*- sh -*-
+# Copyright (C) 2015 zrajm <fix@zrajm.org>
+# License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 . "t/dashtap.sh"
 
 dot() { stdin <"$1"; echo .; }

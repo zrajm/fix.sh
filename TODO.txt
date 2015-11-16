@@ -269,6 +269,24 @@
    CLOSED: [2015-11-13 Fri 16:21]
 ** DONE Add --version option
    CLOSED: [2015-11-13 Fri 16:36]
+** DONE Find decent software license to use
+   CLOSED: [2015-11-13 Fri 16:31]
+   Settled on GPLv3 after reading GitHub's http://choosealicense.com/.
+
+   I want a license that:
+
+   + Require that I'm credited.
+   + Allow people to make derivative work (which may be used for commercial
+     purposes).
+   + Require that derivative work are also freely available and use the same
+     license.
+
+   For non-code I usually use [[https://creativecommons.org/licenses/by-sa/3.0/][Creative Commons Attribution-ShareAlike]], and I
+   want something similar, but suitable for code. (Creative Commons themselves
+   recommend against using their licenses for code.)
+
+   See also:
+   + [[https://wiki.creativecommons.org/wiki/Frequently_Asked_Questions#Can_I_use_a_Creative_Commons_license_for_software.3F][Creative Commons FAQ: Can I apply a Creative Commons license to software?]]
 ** DONE Add version number to --version output + test case for that
    CLOSED: [2015-11-16 Mon 11:38]
    Fix's --version output at the time of implementation.
@@ -329,3 +347,9 @@
    > it into another language. International treaties recognize the English
    > word "Copyright"; translations into other languages do not have legal
    > significance.
+** DONE Renamed license file to follow GitHub standard
+   CLOSED: [2015-11-16 Mon 18:11]
+   Renamed license file `COPYING.txt` -> `LICENSE.txt` to follow GitHub
+   standard repository layout:
+
+   See: [[https://help.github.com/articles/open-source-licensing/#where-does-the-license-live-on-my-repository][GitHub Help: Where does the license live on my repository?]]

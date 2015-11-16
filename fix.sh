@@ -1,20 +1,9 @@
 #!/usr/bin/env dash
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# Copyright (C) 2015 zrajm <fix@zrajm.org>
+# License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -ue
-VERSION=0.10.5
+VERSION=0.10.6
 
 ##############################################################################
 ##                                                                          ##
@@ -41,7 +30,7 @@ Options:
   -V, --version  output version information and exit
 
 END_USAGE
-exit
+    exit
 }
 
 version() {
@@ -54,7 +43,7 @@ There is NO WARRANTY, to the extent permitted by law.
 
 For the latest version of Fix, see <https://github.com/zrajm/fix.sh>.
 END_VERSION
-exit
+    exit
 }
 
 debug() {
