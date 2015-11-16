@@ -564,11 +564,11 @@
    Rebuild target that was previously build by default.fix, with a new
    TARGET.fix.
 * [100%] h. Environment variables
-** DONE h01. Test if $FIX_LEVEL set correctly in dependencies
+** DONE h01. $FIX_LEVEL value in dep
    CLOSED: [2015-11-13 Fri 01:52]
-** DONE h02. Test if $FIX_PARENT set correctly in dependencies
+** DONE h02. $FIX_PARENT value in dep
    CLOSED: [2015-11-13 Fri 01:52]
 * [100%] i. Options
-** DONE i01. Test --version (and -V) options
+** DONE i01. -V and --version options
    CLOSED: [2015-11-16 Mon 11:38]
 * [eof]

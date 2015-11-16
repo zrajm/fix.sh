@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-#-*- zsh -*-
+# -*- perl -*-
 # Copyright (C) 2015 zrajm <fix@zrajm.org>
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
@@ -23,6 +23,8 @@ LINE: while (<>) {
         tr/A-Z/a-z/;
         s/[-'()]//g;
         s/[^a-z0-9+]+/-/g;
+        s/^-+//;
+        s/-+$//;
     }
 
     my $file = sprintf "t/%s%02d-%s.t", $pre, $num, $str;
