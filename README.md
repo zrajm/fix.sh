@@ -164,6 +164,11 @@ a large project these can be quite a few!)
 | `$FIX_TARGET_DIR` | Target file dir                   | `build/`       |
 
 
+Additional Notes
+================
+Fix uses [semantic versioning](http://semver.org/).
+
+
 Glossary
 ========
 These are some, some of which terms used by build systems in general, and some

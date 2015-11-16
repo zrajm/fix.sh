@@ -14,6 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 set -ue
+VERSION=0.10.5
 
 ##############################################################################
 ##                                                                          ##
@@ -45,13 +46,13 @@ exit
 
 version() {
     cat <<END_VERSION
-fix.sh (Fix)
-Copyright (C) 2014, 2015 zrajm <fix@zrajm.org>
+fix.sh (Fix) $VERSION
+Copyright (C) 2015 zrajm <fix@zrajm.org>
 License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 
-For the latest version, see <https://github.com/zrajm/fix.sh>.
+For the latest version of Fix, see <https://github.com/zrajm/fix.sh>.
 END_VERSION
 exit
 }

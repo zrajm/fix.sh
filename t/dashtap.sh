@@ -682,6 +682,37 @@ isnt() {
     fi
 }
 
+# Usage: is_one_of GOT [DESCRIPTION] -- WANTED...
+#
+# Succeeds if at least one of the WANTED values are the same as GOT.
+is_one_of() {
+    local GOT="$1" DESCR="$2"
+    if [ "$2" = "--" ]; then
+        DESCR=""
+        shift 2
+    elif [ "$3" = "--" ]; then
+        shift 3
+    else
+         error "is_one_of: Missing '--' argument"
+    fi
+    for WANTED; do
+        # ':|' protects from environment changes (since 'is' will run in pipe).
+        if :|is "$GOT" "$WANTED" 2>/dev/null 1>&2; then
+            pass "$DESCR"
+            return 0
+        fi
+    done
+    fail "$DESCR" <<-END_MESSAGE
+	$(
+            indent "GOT   :" "$GOT"
+            indent "WANTED:" "$1"; shift
+            for WANTED; do
+                indent "    or:" "$WANTED"
+            done
+	)
+	END_MESSAGE
+}
+
 # Usage: function_exists FUNCTION [DESCRIPTION]
 function_exists() {
     [ $# = 1 -o $# = 2 ] || error "function_exists: Bad number of args"
@@ -888,6 +919,8 @@ is_unchanged() {
 # used in tests instead of refering to any literal executable).
 init_test() {
     NADA=""; strip_newline NADA                # NADA = '\No newline at end'
+    NL="
+"
     readonly TESTCMD="$PWD/fix.sh" NADA
     local TMPDIR="$(mktemp -dt "fix-test-${DASHTAP_DIR##*/}.XXXXXX")"
     cd "$TMPDIR"

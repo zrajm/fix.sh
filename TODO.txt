@@ -2,6 +2,8 @@
 
 * Program
 ** TODO Dependencies
+   If FIX_LEVEL > 0
+      error unless FIX_PARENT
 ** TODO Add man page
 ** TODO Automatic adding of buildscript as target dependency
 ** TODO Pass arguments to buildscripts
@@ -36,6 +38,16 @@
    check *all* parent/child variables, and return true/false if they're all set
    or unset and abort with an error message if there's something inconsistent
    about them.
+
+   If $FIX_LEVEL > 0 then error unless
+       FIX is set to executable file
+       PID is existing Fix process
+       FIX_LOCK exists and contains same PID as $FIX_PID
+       FIX_SCRIPT_DIR
+       FIX_SOURCE_DIR
+       FIX_TARGET_DIR
+       FIX_TARGET
+       FIX_PARENT
 ** TODO Automatic unlocking of stale lockfile
 ** TODO Don't build target (at all) if up-to-date target already exists
    Currently new target built into a tempfile, and existing target will never
@@ -73,8 +85,9 @@
    Child processes still need to listen to the environment variables, though.
 ** TODO Options for setting $FIX_SCRIPT_DIR, $FIX_SOURCE_DIR, $FIX_TARGET_DIR
 * Testing
-** TODO Add test for --version (and -V) option
-   This should enforce the copyright year and version number.
+** TODO Version test case should check copyright year as well
+   Test that checks output of `--version` should be expanded to enforce the
+   year part of the version message as well, not just the version number.
 ** TODO Test for reading of command line arguments
 ** TODO Add test for --debug (and -D) option
 ** TODO Add test for --force (and -f) option
@@ -135,7 +148,7 @@
 * DONE
 ** DONE Tests should be run in tempdir
    CLOSED: [2014-07-07 Mon 00:28]
-** DONE Eliminate name collision with lockfile                          :BUG:
+** DONE BUGFIX: Eliminate name collision with lockfile
    CLOSED: [2014-07-07 Mon 00:36]
    Moved build state metadata into dir '.fix/state', while the lockfile
    continues to be called 'lock.pid'.
@@ -256,3 +269,63 @@
    CLOSED: [2015-11-13 Fri 16:21]
 ** DONE Add --version option
    CLOSED: [2015-11-13 Fri 16:36]
+** DONE Add version number to --version output + test case for that
+   CLOSED: [2015-11-16 Mon 11:38]
+   Fix's --version output at the time of implementation.
+
+       fix.sh (Fix) 0.10.5
+       Copyright (C) 2015 zrajm <fix@zrajm.org>
+       License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+       This is free software: you are free to change and redistribute it.
+       There is NO WARRANTY, to the extent permitted by law.
+
+       For the latest version, see <https://github.com/zrajm/fix.sh>.
+
+   + Version number follow "Semantic Versioning 2.0.0", described in
+     http://semver.org/ (June 17, 2013 update).
+
+   + Wording of the `--version` text follow "GNU Coding Standards", described
+     in https://www.gnu.org/prep/standards/html_node/_002d_002dversion.html
+     (April 23, 2015 update).
+
+   Relevant parts of the description from "GNU Coding Standards":
+
+   > The program's name should be a constant string; _don't_ compute it from
+   > `argv[0]`. The idea is to state the standard or canonical name for the
+   > program, not its file name. There are other ways to find out the precise
+   > file name where a command is found in `PATH`.
+   >
+   > If the program is a subsidiary part of a larger package, mention the
+   > package name in parentheses, like this:
+   >
+   >     emacsserver (GNU Emacs) 19.30
+
+   and
+
+   > The following line, after the version number line or lines, should be a
+   > copyright notice. If more than one copyright notice is called for, put
+   > each on a separate line.
+   >
+   > Next should follow a line stating the license, preferably using one of
+   > abbreviations below, and a brief statement that the program is free
+   > software, and that users are free to copy and change it. Also mention that
+   > there is no warranty, to the extent permitted by law. See recommended
+   > wording below.
+   >
+   > It is ok to finish the output with a list of the major authors of the
+   > program, as a way of giving credit.
+
+   and
+
+   > This copyright notice only needs to mention the most recent year in which
+   > changes were made---there's no need to list the years for previous
+   > versions' changes. You don't have to mention the name of the program in
+   > these notices, if that is inconvenient, since it appeared in the first
+   > line.
+
+   and
+
+   > Write the word "Copyright" exactly like that, in English. Do not translate
+   > it into another language. International treaties recognize the English
+   > word "Copyright"; translations into other languages do not have legal
+   > significance.
