@@ -420,6 +420,13 @@
      + Target: modified
      + Metadata: modified
      + Tempfile: not existing
+** DONE e09. Rebuild, dep target modified
+   CLOSED: [2015-11-12 Mon 22:28]
+   Should fail to rebuild a target when one of its dependencies has a target
+   file that has been manually modified by the user.
+
+   * SUCCESS
+     + Exit status: 1
 * [0%] f. Target dependency
 ** TODO f01. Build, missing targetdep buildscript
    Attempt to build a target with a target dependency, where the target
