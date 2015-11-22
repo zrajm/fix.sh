@@ -323,6 +323,7 @@ title() {
         DASHTAP_TITLE="$1"
     fi
     note "$DASHTAP_TITLE"
+    DASHTAP_TITLE=".$DASHTAP_TITLE"
 }
 
 end_title() {
@@ -473,8 +474,8 @@ fail() {
     [ -z "$BAIL_ON_FAIL" -a "$DASHTAP_FAILS" = 0 -a ! -t 1 ] && echo >&2
     DASHTAP_FAILS="$(( DASHTAP_FAILS + 1 ))"
     if [ -n "$DASHTAP_TITLE" ]; then
-        diag "$DASHTAP_TITLE" <&-
-        DASHTAP_TITLE=""
+        diag "${DASHTAP_TITLE#.}" <&-
+        DASHTAP_TITLE="."
     fi
     if [ -z "$DESCR" ]; then
         diag <<-EOF
