@@ -156,7 +156,7 @@ dashtap_init() {
 }
 dashtap_init
 dashtap_exit() {
-    [ -z "$DASHTAP_COUNT" ] && error "result: 'dashtap_init' was never called"
+    [ -z "$DASHTAP_COUNT" ] && error "dashtop_exit: 'dashtap_init' was never called"
     if [ "$DASHTAP_COUNT" = 0 ]; then
         diag "No tests run!"
         error
