@@ -148,6 +148,7 @@ dashtap_init() {
     DASHTAP_FAILS=0                            # failed tests
     DASHTAP_PLANNED=-1                         # plan (set by done_testing)
     DASHTAP_TITLE=""                           # test title (if any)
+    DASHTAP_PREFIX=""                          # test descr. prefix (if any)
     DASHTAP_TODO=""                            # TODO reason (if any)
     DASHTAP_SKIP=""                            # SKIP reason (if any)
     DASHTAP_FILE="$PWD/$0"                     # name of script file
@@ -332,6 +333,28 @@ end_title() {
     DASHTAP_TITLE=""
 }
 
+# Usage: prefix PREFIX
+#    or: prefix - <<-"EOF"
+#            PREFIX
+#        EOF
+#
+# Set PREFIX for subsequent tests, to unset prefix use 'end_prefix'. If set,
+# '<PREFIX>: ' is prepended to all test case descriptions in the output.
+prefix() {
+    [ $# = 1 ] || error "prefix: Bad number of args"
+    if [ "$1" = "-" ]; then
+        setread DASHTAP_PREFIX
+    else
+        DASHTAP_PREFIX="$1"
+    fi
+}
+
+end_prefix() {
+    [ $# = 0               ] || error "end_prefix: No args allowed"
+    [ -z "$DASHTAP_PREFIX" ] && error "end_prefix: Prefix not set"
+    DASHTAP_PREFIX=""
+}
+
 # Usage: TODO [REASON]
 #        ...              # tests
 #        [END_TODO]
@@ -445,10 +468,11 @@ result() {
 # (just as if you would've called 'note' just after 'pass').
 pass() {
     local DESCR="$1" MSG="$2"
+    DESCR="${DASHTAP_PREFIX:+$DASHTAP_PREFIX: }$DESCR"
     match "# SKIP" "$DESCR" && result "ok" "$DESCR" && return 0
     DESCR="$(descr SKIP "$DESCR")"
     match "# SKIP" "$DESCR" && result "ok" "$DESCR" && return 0
-    DESCR="$(descr TODO "$1")"
+    DESCR="$(descr TODO "$DESCR")"
     result "ok" "$DESCR"
     note "$MSG"
     return 0
@@ -464,8 +488,9 @@ pass() {
 # 'verbose' mode or not).
 fail() {
     local DESCR="$(descr SKIP "$1")" MSG="$2"
+    DESCR="${DASHTAP_PREFIX:+$DASHTAP_PREFIX: }$DESCR"
     match "# SKIP" "$DESCR" && pass "$DESCR" && return 0
-    DESCR="$(descr TODO "$1")"
+    DESCR="$(descr TODO "$DESCR")"
     result "not ok" "$DESCR"
     match "# TODO" "$DESCR" && return 0        # no diagnostics for TODO tests
     # Insert one extra newline before the first error when piped (this makes
