@@ -84,6 +84,11 @@
    Reset $FIX_DEBUG and $FIX_FORCE (if set), and use only --debug and --force.
    Child processes still need to listen to the environment variables, though.
 ** TODO Options for setting $FIX_SCRIPT_DIR, $FIX_SOURCE_DIR, $FIX_TARGET_DIR
+** TODO Internal filenames look like 'TARGET:index.html' etc(?)
+   Currently we pass around $TYPE + $FILE in a bunch of places, but maybe these
+   should be collected (and stored in the state files) as one string.
+
+   Test to see if this refactoring would simplify the code.
 * Testing
 ** TODO Version test case should check copyright year as well
    Test that checks output of `--version` should be expanded to enforce the
@@ -126,6 +131,9 @@
    file called `list.txt`. If `list.txt` were to change, the number of files
    read by the buildscript would also change. Thus `list.txt` should be
    declared as a listdep.
+** TODO Add support for newlines in filenames(?)
+   Could maybe use trailing backslash in filename to indicate line continuation
+   and newline?
 ** [0%] Parallel builds
 *** TODO Make compatible job server?
 *** TODO Writing build metadata in parallel
