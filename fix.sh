@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -ue
-VERSION=0.10.7
+VERSION=0.10.8
 
 ##############################################################################
 ##                                                                          ##
@@ -18,6 +18,13 @@ cat() {                                        # 'cat' using shell builtins
     while IFS="" read -r TXT; do               # last line must end in <LF>
         echo "$TXT"
     done
+}
+reverse() {                                    # reverse lines of a file
+    local FILE="$1" TXT; shift
+    while IFS="" read -r TXT; do               # last line must end in <LF>
+        set -- "$TXT" "$@"
+    done <"$FILE"
+    echo "$@" >"$FILE"
 }
 
 usage() {
@@ -68,9 +75,14 @@ mkpath() {
 }
 
 meta_checksum() {
-    local FILE="$1" CHECKSUM=""
-    [ -e "$FILE" ] && read CHECKSUM <"$FILE"
-    echo "${CHECKSUM%% *}"                     # checksum without filename
+    local METAFILE="$1" TYPE="$2" FILE="$3" CHECKSUM2 TYPE2 FILE2
+    [ -e "$METAFILE" ] && while IFS=" " read -r CHECKSUM2 TYPE2 FILE2; do
+        if [ "$TYPE2" = "$TYPE" -a "$FILE2" = "$FILE" ]; then
+            echo "$CHECKSUM2"
+            return 0
+        fi
+    done <"$METAFILE"
+    return 1
 }
 
 file_checksum() {
@@ -137,25 +149,35 @@ build_finalize() {
     local TMP_CHECKSUM="$(file_checksum "$TARGET_TMP")"
     local FILE=""
 
+    case "$TYPE" in
+        SCRIPT) FILE="${SCRIPT#$FIX_SCRIPT_DIR/}" ;;
+        SOURCE) FILE="${SOURCE#$FIX_SOURCE_DIR/}" ;;
+        TARGET) FILE="${TARGET#$FIX_TARGET_DIR/}" ;;
+        *) die 30 "build_finalize: Failed to write metadata" \
+            "Internal error: unknown type '$TYPE' for file '$TARGET'" ;;
+    esac
+
     # update target
-    local OLD_CHECKSUM="$(meta_checksum "$DBFILE")"
+    local OLD_CHECKSUM="$(meta_checksum "$DBFILE" "$TYPE" "$FILE")"
     finalize_tmpfile "$TARGET_TMP" "$TARGET" \
         "$TMP_CHECKSUM" "$OLD_CHECKSUM"
 
     # update metadata
+    if [ "$FIX_PARENT" ]; then
+        DBPATH="${DBFILE%/*}"
+        DBFILE2="$DBPATH/$FIX_PARENT"
+        mkpath "$DBFILE2" \
+            || die 7 "Cannot create dir for metadata file '$DBFILE2'"
+        debug "$TARGET: Writing metadata for '$FIX_PARENT'"
+        echo "$TMP_CHECKSUM $TYPE $FILE" >>"$DBFILE2--fixing"
+    fi
     if [ "$TMP_CHECKSUM" != "$OLD_CHECKSUM" ]; then
         mkpath "$DBFILE" \
             || die 7 "Cannot create dir for metadata file '$DBFILE'"
         debug "$TARGET: Writing metadata"
-
-        case "$TYPE" in
-            SCRIPT) FILE="${SCRIPT#$FIX_SCRIPT_DIR/}" ;;
-            SOURCE) FILE="${SOURCE#$FIX_SOURCE_DIR/}" ;;
-            TARGET) FILE="${TARGET#$FIX_TARGET_DIR/}" ;;
-            *) die 30 "build_finalize: Failed to write metadata" \
-                "Internal error: unknown type '$TYPE' for file '$TARGET'" ;;
-        esac
-        echo "$TMP_CHECKSUM $TYPE $FILE" >"$DBFILE"
+        echo "$TMP_CHECKSUM $TYPE $FILE" >>"$DBFILE--fixing"
+        reverse "$DBFILE--fixing" \
+            && mv -f -- "$DBFILE--fixing" "$DBFILE" >&2
     else
         debug "$TARGET: Metadata is up-to-date"
     fi

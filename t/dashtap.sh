@@ -1011,6 +1011,30 @@ mkmetadata() {
     esac
 }
 
+# Usage: first_dep_is FILE TARGET [DESCRIPTION]
+#
+# Check that the first target in the metadata FILE matches TARGET.
+first_dep_is() {
+    [ $# = 2 -o $# = 3 ] || error "first_dep_is: Bad number of args"
+    local FILE="$1" TARGET="$2" DESCR="$(descr SKIP "$3")"
+    [ -r "$FILE" ] || {
+        fail "$DESCR" <<-EOF
+		File '$FILE' should exist and be readable, but it is not
+		EOF
+        return
+    }
+    IFS="" read -r FIRST <"$FILE" || {
+        fail "$DESCR" <<-EOF
+		First line should end in <LF> in file '$FILE', but it does not
+		EOF
+        return
+    }
+    case "$FIRST" in
+        *" $TARGET") pass "$DESCR" ;;
+        *)           fail "$DESCR" ;;
+    esac
+}
+
 mkpath() {
     local DIR="${1%/*}"                        # strip trailing filename
     [ -d "$DIR" ] || mkdir -p -- "$DIR"
