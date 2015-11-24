@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -ue
-VERSION=0.10.6
+VERSION=0.10.7
 
 ##############################################################################
 ##                                                                          ##
@@ -13,8 +13,11 @@ VERSION=0.10.6
 
 echo() { printf "%s\n" "$@"; }                 # safe 'echo'
 cat() {                                        # 'cat' using shell builtins
-    local TXT IFS=""
-    while read -r TXT; do echo "$TXT"; done    # last line must end in <LF>
+    [ -t 0 ] && die "cat: Missing input on stdin"
+    local TXT
+    while IFS="" read -r TXT; do               # last line must end in <LF>
+        echo "$TXT"
+    done
 }
 
 usage() {
@@ -106,34 +109,41 @@ build_run() {
         "Old target unchanged. New, failed target written to '$TMPFILE'."
 }
 
+# Overwrite FILE with TMPFILE, if TMPFILE is different. Return true if FILE was
+# overwritten, false otherwise.
+finalize_tmpfile() {
+    local TMPFILE="$1" FILE="$2" TMPFILE_CHECKSUM="$3" META_CHECKSUM="$4"
+    local FILE_CHECKSUM="$(file_checksum "$FILE")"
+    if [ ! -e "$FILE" ]; then
+        debug "$FILE: No previous target, write new target"
+    elif [ "$TMPFILE_CHECKSUM" = "$FILE_CHECKSUM" ]; then
+        debug "$FILE: Target unchanged, keep old target"
+        rm -f -- "$TMPFILE"
+        return
+    elif [ -e "$DBFILE" -a "$FILE_CHECKSUM" = "$META_CHECKSUM" ]; then
+        debug "$FILE: Target updated, write new target"
+    elif [ "$FIX_FORCE" ]; then
+        debug "$FILE: Target updated + external change, forced overwrite"
+    else
+        die 1 "Old target '$FILE' modified by user, won't overwrite" \
+            "Erase old target before rebuild. New target kept in '$TMPFILE'."
+    fi
+    mv -f -- "$TMPFILE" "$FILE"
+}
+
 # After build: Overwrite target with tempfile, and store result in metadata.
 build_finalize() {
     local DBFILE="$1" TYPE="$2" TARGET="$3" TARGET_TMP="$4"
-    local META_CHECKSUM="$(meta_checksum "$DBFILE")"
-    local OLD_CHECKSUM="$(file_checksum "$TARGET")"
-    local NEW_CHECKSUM="$(file_checksum "$TARGET_TMP")"
+    local TMP_CHECKSUM="$(file_checksum "$TARGET_TMP")"
     local FILE=""
 
     # update target
-    if [ ! -e "$TARGET" ]; then
-        debug "$TARGET: No previous target, write new target"
-        mv -f -- "$TARGET_TMP" "$TARGET"
-    elif [ "$NEW_CHECKSUM" = "$OLD_CHECKSUM" ]; then
-        debug "$TARGET: Target unchanged, keep old target"
-        rm -f -- "$TARGET_TMP"
-    elif [ -e "$DBFILE" -a "$OLD_CHECKSUM" = "$META_CHECKSUM" ]; then
-        debug "$TARGET: Target updated, write new target"
-        mv -f -- "$TARGET_TMP" "$TARGET"
-    elif [ "$FIX_FORCE" ]; then
-        debug "$TARGET: Target updated + external change, forced overwrite"
-        mv -f -- "$TARGET_TMP" "$TARGET"
-    else
-        die 1 "Old target '$TARGET' modified by user, won't overwrite" \
-            "Erase old target before rebuild. New target kept in '$TARGET_TMP'."
-    fi
+    local OLD_CHECKSUM="$(meta_checksum "$DBFILE")"
+    finalize_tmpfile "$TARGET_TMP" "$TARGET" \
+        "$TMP_CHECKSUM" "$OLD_CHECKSUM"
 
     # update metadata
-    if [ "$NEW_CHECKSUM" != "$META_CHECKSUM" ]; then
+    if [ "$TMP_CHECKSUM" != "$OLD_CHECKSUM" ]; then
         mkpath "$DBFILE" \
             || die 7 "Cannot create dir for metadata file '$DBFILE'"
         debug "$TARGET: Writing metadata"
@@ -145,7 +155,7 @@ build_finalize() {
             *) die 30 "build_finalize: Failed to write metadata" \
                 "Internal error: unknown type '$TYPE' for file '$TARGET'" ;;
         esac
-        echo "$NEW_CHECKSUM $TYPE $FILE" >"$DBFILE"
+        echo "$TMP_CHECKSUM $TYPE $FILE" >"$DBFILE"
     else
         debug "$TARGET: Metadata is up-to-date"
     fi
