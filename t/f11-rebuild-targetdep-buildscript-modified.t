@@ -24,10 +24,15 @@ NEW_DEP_OUTPUT="NEW DEPENDENCY"
 OLD_DEP_META="$(
     set -e
     echo "$OLD_DEP_OUTPUT" | mkmetadata TARGET DEPTARGET
+    <<-"END_SCRIPT"          mkmetadata SCRIPT DEPTARGET.fix # old buildscript
+	#!/bin/sh
+	echo "DEPENDENCY"
+	END_SCRIPT
 )" || fail "Failed to calculate metadata"
 NEW_DEP_META="$(
     set -e
     echo "$NEW_DEP_OUTPUT" | mkmetadata TARGET DEPTARGET
+    <fix/DEPTARGET.fix       mkmetadata SCRIPT DEPTARGET.fix
 )" || fail "Failed to calculate metadata"
 
 echo "$OLD_DEP_OUTPUT" | write_file build/DEPTARGET
@@ -53,11 +58,13 @@ POST"
 OLD_META="$(
     set -e
     echo "$OLD_OUTPUT"     | mkmetadata TARGET TARGET
+    <fix/TARGET.fix          mkmetadata SCRIPT TARGET.fix
     echo "$OLD_DEP_OUTPUT" | mkmetadata TARGET DEPTARGET
 )" || fail "Failed to calculate metadata"
 NEW_META="$(
     set -e
     echo "$NEW_OUTPUT"     | mkmetadata TARGET TARGET
+    <fix/TARGET.fix          mkmetadata SCRIPT TARGET.fix
     echo "$NEW_DEP_OUTPUT" | mkmetadata TARGET DEPTARGET
 )" || fail "Failed to calculate metadata"
 

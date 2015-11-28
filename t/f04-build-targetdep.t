@@ -23,6 +23,7 @@ DEP_OUTPUT="DEPENDENCY"
 DEP_META="$(
     set -e
     echo "$DEP_OUTPUT" | mkmetadata TARGET DEPTARGET
+    <fix/DEPTARGET.fix   mkmetadata SCRIPT DEPTARGET.fix
 )" || fail "Failed to calculate metadata"
 
 ############################################################################
@@ -42,6 +43,7 @@ POST"
 META="$(
     set -e
     echo "$OUTPUT"     | mkmetadata TARGET TARGET
+    <fix/TARGET.fix      mkmetadata SCRIPT TARGET.fix
     echo "$DEP_OUTPUT" | mkmetadata TARGET DEPTARGET
 )" || fail "Failed to calculate metadata"
 
@@ -64,7 +66,7 @@ file_is         stderr               "$NADA"       "Standard error"
 
 # Command line target.
 file_is         build/TARGET         "$OUTPUT"     "Target"
-file_is         .fix/state/TARGET    "$META"       "Metadata"
+file_is         .fix/state/TARGET    "$META"       "Target metadata"
 file_not_exists build/TARGET--fixing               "Target tempfile"
 
 # Dependency target.

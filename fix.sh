@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -ue
-VERSION=0.10.8
+VERSION=0.10.9
 
 ##############################################################################
 ##                                                                          ##
@@ -145,7 +145,7 @@ finalize_tmpfile() {
 
 # After build: Overwrite target with tempfile, and store result in metadata.
 build_finalize() {
-    local DBFILE="$1" TYPE="$2" TARGET="$3" TARGET_TMP="$4"
+    local DBFILE="$1" TYPE="$2" TARGET="$3" TARGET_TMP="$4" SCRIPT="$5"
     local TMP_CHECKSUM="$(file_checksum "$TARGET_TMP")"
     local FILE=""
 
@@ -175,7 +175,13 @@ build_finalize() {
         mkpath "$DBFILE" \
             || die 7 "Cannot create dir for metadata file '$DBFILE'"
         debug "$TARGET: Writing metadata"
-        echo "$TMP_CHECKSUM $TYPE $FILE" >>"$DBFILE--fixing"
+
+        local SCRIPT_CHECKSUM="$(file_checksum "$SCRIPT")"
+        printf "%s %s %s\n" \
+            "$SCRIPT_CHECKSUM" "SCRIPT" "${SCRIPT#$FIX_SCRIPT_DIR/}" \
+            "$TMP_CHECKSUM"    "$TYPE"  "$FILE" \
+            >>"$DBFILE--fixing"
+
         reverse "$DBFILE--fixing" \
             && mv -f -- "$DBFILE--fixing" "$DBFILE" >&2
     else
@@ -189,7 +195,7 @@ build() {
         TARGET="$FIX_TARGET_DIR/$1"
     mkpath "$TARGET" || die 6 "Cannot create dir for target '$TARGET'"
     build_run "$SCRIPT" "$TARGET" "$TARGET--fixing"
-    build_finalize "$DBFILE" TARGET "$TARGET" "$TARGET--fixing"
+    build_finalize "$DBFILE" TARGET "$TARGET" "$TARGET--fixing" "$SCRIPT"
 }
 
 ##############################################################################

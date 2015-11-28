@@ -39,7 +39,7 @@ file_exists     .fix/state/TARGET    "Before build: Metadata file should exist"
 DBDATA="$(
     set -e
     mkmetadata TARGET TARGET     <build/TARGET
-    # mkmetadata SCRIPT TARGET.fix <fix/TARGET.fix
+    mkmetadata SCRIPT TARGET.fix <fix/TARGET.fix
 )" || fail "Failed to calculate metadata"
 
 is              "$RC"                0             "Exit status"

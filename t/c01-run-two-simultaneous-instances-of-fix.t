@@ -62,8 +62,8 @@ wait "$PID"; RC="$?"
 
 DBDATA="$(
     set -e
-    echo "PIPED" | mkmetadata TARGET TARGET
-    # mkmetadata SCRIPT TARGET.fix <fix/TARGET.fix  # TODO script dep
+    echo "PIPED"     | mkmetadata TARGET TARGET
+     <fix/TARGET.fix   mkmetadata SCRIPT TARGET.fix
 )" || fail "Failed to calculate metadata"
 
 is              "$RC"                0             "2nd build exit status"

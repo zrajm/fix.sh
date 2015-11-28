@@ -1,11 +1,12 @@
 -*- org -*-
 
 * Program
+** TODO Dependencies: Save buildscript checksum even if producing same output
+   When buildscript has changed, but still produce the same output the checksum
+   of the buildscript is not currently save. Fix this, and make sure test case
+   't/b06-rebuild-buildscript-modified-same-output.t' passes.
 ** TODO Dependencies
-   If FIX_LEVEL > 0
-      error unless FIX_PARENT
 ** TODO Add man page
-** TODO Automatic adding of buildscript as target dependency
 ** TODO Pass arguments to buildscripts
 ** TODO Write dependencies to tempfile, finalize when build is done
 ** TODO Add source dependencies
@@ -97,6 +98,11 @@
 ** TODO Add test for --debug (and -D) option
 ** TODO Add test for --force (and -f) option
 ** TODO Add test for --help (and -h) option
+** TODO Remove test case dependency on pre-configured dir
+   Each test should instead write all the files they need explicitly (including
+   timestamps) in the test itself (making each test file self contained).
+** TODO Make tests uniform
+   Tests should be as uniform as possible to be easily diff:able.
 ** TODO Test cases should describe outcome of test explicitly
    The test case descriptions should be rephrased to use the word 'should'.
 
@@ -361,3 +367,5 @@
    standard repository layout:
 
    See: [[https://help.github.com/articles/open-source-licensing/#where-does-the-license-live-on-my-repository][GitHub Help: Where does the license live on my repository?]]
+** DONE Automatic adding of buildscript as target dependency
+   CLOSED: [2015-11-28 Sat 13:33]
