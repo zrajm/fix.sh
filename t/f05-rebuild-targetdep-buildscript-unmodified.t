@@ -23,6 +23,7 @@ DEP_OUTPUT="DEPENDENCY"
 DEP_META="$(
     set -e
     echo "$DEP_OUTPUT" | mkmetadata TARGET DEPTARGET
+    <fix/DEPTARGET.fix   mkmetadata SCRIPT DEPTARGET.fix
 )" || fail "Failed to calculate metadata"
 
 echo "$DEP_OUTPUT" | write_file build/DEPTARGET
@@ -45,6 +46,7 @@ POST"
 META="$(
     set -e
     echo "$OUTPUT"     | mkmetadata TARGET TARGET
+    <fix/TARGET.fix      mkmetadata SCRIPT TARGET.fix
     echo "$DEP_OUTPUT" | mkmetadata TARGET DEPTARGET
 )" || fail "Failed to calculate metadata"
 
@@ -53,7 +55,7 @@ echo "$META"   | write_file .fix/state/TARGET
 
 ############################################################################
 
-# Don't check timestamps for metadata (only content is relevant).
+# Don't check metadata timestamp (only content is relevant).
 timestamp TARGET      build/TARGET
 timestamp DEPTARGET   build/DEPTARGET
 

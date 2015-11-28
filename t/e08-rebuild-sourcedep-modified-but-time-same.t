@@ -32,8 +32,8 @@ OUTPUT="PRE
 XXXXXXXXXXXXXX
 POST"
 
+# Don't check metadata timestamp (only content is relevant).
 timestamp TARGET        build/TARGET
-timestamp METADATA .fix/state/TARGET
 
 file_exists     build/TARGET         "Before build: Target should exist"
 file_exists     .fix/state/TARGET    "Before build: Metadata file should exist"
@@ -53,7 +53,6 @@ file_is         stderr               "$NADA"       "Standard error"
 file_is         build/TARGET         "$OUTPUT"     "Target"
 is_changed      "$TARGET"                          "Target timestamp"
 file_is         .fix/state/TARGET    "$DBDATA"     "Metadata"
-is_changed      "$METADATA"                        "Metadata timestamp"
 file_not_exists build/TARGET--fixing               "Target tempfile shouldn't exist"
 
 done_testing

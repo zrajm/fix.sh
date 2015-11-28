@@ -23,6 +23,7 @@ END_TARGET
 ERRMSG="ERROR: Old target 'build/TARGET' modified by user, won't overwrite
     (Erase old target before rebuild. New target kept in 'build/TARGET--fixing'.)"
 
+# Don't check metadata timestamp (only content is relevant).
 timestamp TARGET        build/TARGET
 
 file_exists     build/TARGET         "Before build: Target should exist"

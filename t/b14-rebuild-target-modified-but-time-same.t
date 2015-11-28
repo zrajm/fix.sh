@@ -27,8 +27,8 @@ reset_timestamp "$TARGET"
 ERRMSG="ERROR: Old target 'build/TARGET' modified by user, won't overwrite
     (Erase old target before rebuild. New target kept in 'build/TARGET--fixing'.)"
 
+# Don't check metadata timestamp (only content is relevant).
 timestamp TARGET        build/TARGET
-timestamp METADATA .fix/state/TARGET
 
 file_exists     build/TARGET         "Before build: Target should exist"
 file_exists     .fix/state/TARGET    "Before build: Metadata file should exist"
@@ -50,7 +50,6 @@ file_is         stderr               "$ERRMSG"     "Standard error"
 file_is         build/TARGET         "6BYTES"      "Target"
 is_unchanged    "$TARGET"                          "Target timestamp"
 file_is         .fix/state/TARGET    "$DBDATA"     "Metadata"
-is_unchanged    "$METADATA"                        "Metadata timestamp"
 file_is         build/TARGET--fixing "OUTPUT"      "Target tempfile"
 
 done_testing

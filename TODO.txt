@@ -1,10 +1,6 @@
 -*- org -*-
 
 * Program
-** TODO Dependencies: Save buildscript checksum even if producing same output
-   When buildscript has changed, but still produce the same output the checksum
-   of the buildscript is not currently save. Fix this, and make sure test case
-   't/b06-rebuild-buildscript-modified-same-output.t' passes.
 ** TODO Dependencies
 ** TODO Add man page
 ** TODO Pass arguments to buildscripts
@@ -91,6 +87,19 @@
 
    Test to see if this refactoring would simplify the code.
 * Testing
+** TODO "Metadata" test description should be "Target metadata"
+** TODO Rename tests so that options related tests come first
+** TODO Create dep -> dep -> dep test with modified buildscript for leaf dep
+   When building a dep1 -> dep2 -> dep3 chain, see that if dep3 has a modified
+   buildscript that produces the same output, none of targets should be
+   overwritten, but remain exactly as they are.
+** TODO Check for non-existence of metadata tempfiles
+** TODO Test first line of metadata: It should be the target
+** TODO Test second line (if any) of metadata: It should be buildscript
+** TODO Test metadata file content everywhere
+** TODO Never test timestamp on metadata files
+   They are always overwritten, as it seems unnecessary (and unnecessarily
+   costly) to check whether newly written data is identical to previous data.
 ** TODO Version test case should check copyright year as well
    Test that checks output of `--version` should be expanded to enforce the
    year part of the version message as well, not just the version number.
@@ -369,3 +378,12 @@
    See: [[https://help.github.com/articles/open-source-licensing/#where-does-the-license-live-on-my-repository][GitHub Help: Where does the license live on my repository?]]
 ** DONE Automatic adding of buildscript as target dependency
    CLOSED: [2015-11-28 Sat 13:33]
+** DONE Dependency: Save buildscript checksum even if producing same TARGET
+   CLOSED: [2015-11-28 Sat 22:29]
+   When buildscript has changed, but in such a way as to still produce the same
+   output as before (e.g. someone added a comment, blank line or similar to the
+   buildscript), we still need to write the metadata file. (Since the checksum
+   of the buildscript will be different, and we need to capture that.)
+
+   Fix this, and make sure test case
+   't/b06-rebuild-buildscript-modified-same-output.t' passes.

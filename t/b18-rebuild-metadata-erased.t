@@ -19,6 +19,7 @@ write_file -1sec build/TARGET <<-"END_TARGET"
 	OUTPUT
 END_TARGET
 
+# Don't check metadata timestamp (only content is relevant).
 timestamp TARGET        build/TARGET
 
 file_exists     build/TARGET         "Before build: Target should exist"

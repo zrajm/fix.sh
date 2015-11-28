@@ -54,7 +54,7 @@ ERROR: Buildscript 'fix/TARGET.fix' returned exit status 143
 
 ############################################################################
 
-# Don't check timestamps for metadata (only content is relevant).
+# Don't check metadata timestamp (only content is relevant).
 timestamp TARGET      build/TARGET
 timestamp DEPTARGET   build/DEPTARGET
 

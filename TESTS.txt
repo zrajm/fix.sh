@@ -420,7 +420,7 @@
      + Target: modified
      + Metadata: modified
      + Tempfile: not existing
-* [86%] f. Target dependency
+* [93%] f. Target dependency
 ** DONE f01. Build, missing targetdep buildscript
    CLOSED: [2015-11-18 Wed 22:42]
    Attempt to build a target with a target dependency, where the target
@@ -585,7 +585,8 @@
    CLOSED: [2015-11-12 Mon 22:28]
    Should fail to rebuild a target when one of its dependencies has a target
    file that has been manually modified by the user.
-** TODO f15. Rebuild, targetdeps targetdep buildscript modified
+** DONE f15. Rebuild, targetdeps targetdep buildscript modified
+   CLOSED: [2015-11-28 Sat 18:25]
    Rebuild target with a target dependency when previous target exists, after
    the dependency target buildscript has been modified.
 

@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -ue
-VERSION=0.10.9
+VERSION=0.10.10
 
 ##############################################################################
 ##                                                                          ##
@@ -162,7 +162,7 @@ build_finalize() {
     finalize_tmpfile "$TARGET_TMP" "$TARGET" \
         "$TMP_CHECKSUM" "$OLD_CHECKSUM"
 
-    # update metadata
+    # finalize metadata
     if [ "$FIX_PARENT" ]; then
         DBPATH="${DBFILE%/*}"
         DBFILE2="$DBPATH/$FIX_PARENT"
@@ -171,22 +171,20 @@ build_finalize() {
         debug "$TARGET: Writing metadata for '$FIX_PARENT'"
         echo "$TMP_CHECKSUM $TYPE $FILE" >>"$DBFILE2--fixing"
     fi
-    if [ "$TMP_CHECKSUM" != "$OLD_CHECKSUM" ]; then
-        mkpath "$DBFILE" \
-            || die 7 "Cannot create dir for metadata file '$DBFILE'"
-        debug "$TARGET: Writing metadata"
 
-        local SCRIPT_CHECKSUM="$(file_checksum "$SCRIPT")"
-        printf "%s %s %s\n" \
-            "$SCRIPT_CHECKSUM" "SCRIPT" "${SCRIPT#$FIX_SCRIPT_DIR/}" \
-            "$TMP_CHECKSUM"    "$TYPE"  "$FILE" \
-            >>"$DBFILE--fixing"
+    # write to metadata tempfile
+    mkpath "$DBFILE" \
+        || die 7 "Cannot create dir for metadata file '$DBFILE'"
+    debug "$TARGET: Writing metadata"
 
-        reverse "$DBFILE--fixing" \
-            && mv -f -- "$DBFILE--fixing" "$DBFILE" >&2
-    else
-        debug "$TARGET: Metadata is up-to-date"
-    fi
+    local SCRIPT_CHECKSUM="$(file_checksum "$SCRIPT")"
+    printf "%s %s %s\n" \
+        "$SCRIPT_CHECKSUM" "SCRIPT" "${SCRIPT#$FIX_SCRIPT_DIR/}" \
+        "$TMP_CHECKSUM"    "$TYPE"  "$FILE" \
+        >>"$DBFILE--fixing"
+
+    reverse "$DBFILE--fixing" \
+        && mv -f -- "$DBFILE--fixing" "$DBFILE" >&2
 }
 
 build() {
