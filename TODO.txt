@@ -126,7 +126,6 @@
 ** TODO Mooooaaar test cases!
 ** TODO Profiling the code (using Devel::NYTProf)
 ** TODO Test code coverage (Devel::Cover)
-** TODO `prove xt/` should work with $BAIL_ON_FAIL set
 * FUTURE
 ** TODO Outputting dependency graph
    As a dotviz file?
@@ -396,3 +395,5 @@
    CLOSED: [2015-11-29 Sun 17:08]
 ** DONE Rename tests so that options related tests come first
    CLOSED: [2015-11-29 Sun 18:00]
+** DONE `prove xt/` should work with $BAIL_ON_FAIL set
+   CLOSED: [2015-11-29 Sun 19:55]

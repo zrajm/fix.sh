@@ -19,6 +19,7 @@ STDOUT=""
 STDERR="is: Bad number of args
 "
 (
+    unset BAIL_ON_FAIL DIE_ON_FAIL
     dashtap_init
     trap 'echo EXIT >trap' 0
     is 1
@@ -40,6 +41,7 @@ STDOUT=""
 STDERR="is: Bad number of args
 "
 (
+    unset BAIL_ON_FAIL DIE_ON_FAIL
     dashtap_init
     trap 'echo EXIT >trap' 0
     is FAR TOO MANY ARGS
@@ -72,6 +74,7 @@ STDERR="
 #     WANTED: 2
 "
 (
+    unset BAIL_ON_FAIL DIE_ON_FAIL
     dashtap_init
     trap 'echo EXIT >trap' 0
     is 1 2
@@ -98,6 +101,7 @@ STDERR="
 #     WANTED: 2
 "
 (
+    unset BAIL_ON_FAIL DIE_ON_FAIL
     dashtap_init
     trap 'echo EXIT >trap' 0
     is 1 2 Description
@@ -119,6 +123,7 @@ STDOUT="ok 1
 "
 STDERR=""
 (
+    unset BAIL_ON_FAIL DIE_ON_FAIL
     dashtap_init
     trap 'echo EXIT >trap' 0
     is 1 1
@@ -140,6 +145,7 @@ STDOUT="ok 1 - Description
 "
 STDERR=""
 (
+    unset BAIL_ON_FAIL DIE_ON_FAIL
     dashtap_init
     trap 'echo EXIT >trap' 0
     is 1 1 Description

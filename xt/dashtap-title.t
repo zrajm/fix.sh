@@ -19,6 +19,7 @@ STDOUT=""
 STDERR="title: Bad number of args
 "
 (
+    unset BAIL_ON_FAIL DIE_ON_FAIL
     dashtap_init
     trap 'echo EXIT >trap' 0
     title MANY ARGS
@@ -39,6 +40,7 @@ STDOUT=""
 STDERR="title: Bad number of args
 "
 (
+    unset BAIL_ON_FAIL DIE_ON_FAIL
     dashtap_init
     trap 'echo EXIT >trap' 0
     title
@@ -66,6 +68,7 @@ STDERR="
 #   in 'xt/dashtap-title.t'
 "
 (
+    unset BAIL_ON_FAIL DIE_ON_FAIL
     dashtap_init
     trap 'echo EXIT >trap' 0
     title "Test title"

@@ -19,6 +19,7 @@ STDOUT=""
 STDERR="END_TODO: No args allowed
 "
 (
+    unset BAIL_ON_FAIL DIE_ON_FAIL
     dashtap_init
     trap 'echo EXIT >trap' 0
     TODO "Reason"
@@ -39,6 +40,7 @@ STDOUT=""
 STDERR="END_TODO: TODO not set
 "
 (
+    unset BAIL_ON_FAIL DIE_ON_FAIL
     dashtap_init
     trap 'echo EXIT >trap' 0
     END_TODO
@@ -71,6 +73,7 @@ STDERR="
 #     WANTED: 2
 "
 (
+    unset BAIL_ON_FAIL DIE_ON_FAIL
     dashtap_init
     trap 'echo EXIT >trap' 0
     TODO "Reason"

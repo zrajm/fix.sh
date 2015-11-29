@@ -39,6 +39,7 @@ STDOUT=""
 STDERR="END_SKIP: SKIP not set
 "
 (
+    unset BAIL_ON_FAIL DIE_ON_FAIL
     dashtap_init
     trap 'echo EXIT >trap' 0
     END_SKIP
@@ -71,6 +72,7 @@ STDERR="
 #     WANTED: 2
 "
 (
+    unset BAIL_ON_FAIL DIE_ON_FAIL
     dashtap_init
     trap 'echo EXIT >trap' 0
     SKIP "Reason"

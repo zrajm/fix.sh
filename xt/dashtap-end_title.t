@@ -20,6 +20,7 @@ STDOUT="# Test title
 STDERR="end_title: No args allowed
 "
 (
+    unset BAIL_ON_FAIL DIE_ON_FAIL
     dashtap_init
     trap 'echo EXIT >trap' 0
     title "Test title"
@@ -40,6 +41,7 @@ STDOUT=""
 STDERR="end_title: Title not set
 "
 (
+    unset BAIL_ON_FAIL DIE_ON_FAIL
     dashtap_init
     trap 'echo EXIT >trap' 0
     end_title
@@ -64,6 +66,7 @@ STDERR="
 #   in 'xt/dashtap-end_title.t'
 "
 (
+    unset BAIL_ON_FAIL DIE_ON_FAIL
     dashtap_init
     trap 'echo EXIT >trap' 0
     title "Test title"
