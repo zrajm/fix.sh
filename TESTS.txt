@@ -3,9 +3,17 @@
 * VAGUE FUTURE IDEAS
 ** TODO Garbage collecting of metadata files?
 ** TODO Handling of circular dependencies
-* [100%] a. Early error messages
+* [100%] a. Options
+** DONE a01. -V and --version options
+   CLOSED: [2015-11-16 Mon 11:38]
+* [100%] b. Environment variables
+** DONE b01. $FIX_LEVEL value in dep
+   CLOSED: [2015-11-13 Fri 01:52]
+** DONE b02. $FIX_PARENT value in dep
+   CLOSED: [2015-11-13 Fri 01:52]
+* [100%] c. Early error messages
   Check early error messages (missing files, bad options) are emitted properly.
-** DONE a01. Build, missing sourcedir
+** DONE c01. Build, missing sourcedir
    Attempt to build target when there is no source dir.
 
    * FAILURE
@@ -13,7 +21,7 @@
      + Target: not existing
      + Metadata: not existing
      + Tempfile: not existing
-** DONE a02. Build, missing scriptdir
+** DONE c02. Build, missing scriptdir
    Attempt to build target when there is no script dir.
 
    * FAILURE
@@ -21,7 +29,7 @@
      + Target: not existing
      + Metadata: not existing
      + Tempfile: not existing
-** DONE a03. Build, missing buildscript
+** DONE c03. Build, missing buildscript
    Attempt to build target when there is no buildscript for it.
 
    * FAILURE
@@ -29,7 +37,7 @@
      + Target: not existing
      + Metadata: not existing
      + Tempfile: not existing
-** DONE a04. Build, buildscript missing read bits
+** DONE c04. Build, buildscript missing read bits
    Attempt to build target with buildscript with read bits unset.
 
    * FAILURE
@@ -37,7 +45,7 @@
      + Target: not existing
      + Metadata: not existing
      + Tempfile: not existing
-** DONE a05. Build, buildscript missing execute bits
+** DONE c05. Build, buildscript missing execute bits
    Attempt to build target with buildscript with execute bits unset.
 
    * FAILURE
@@ -45,7 +53,7 @@
      + Target: not existing
      + Metadata: not existing
      + Tempfile: not existing
-** DONE a06. Using '--source' option outside buildscript
+** DONE c06. Using '--source' option outside buildscript
    CLOSED: [2014-09-11 Thu 08:57]
    Attempt to declare source dependency outside of a buildscript (i.e. using
    '--source' option from the command line).
@@ -55,10 +63,10 @@
      + Target: not existing
      + Metadata: not existing
      + Tempfile: not existing
-* [100%] b. One target with no dependencies
+* [100%] d. One target with no dependencies
   Check buildscript return values, that target and metadata files are only
   updated when they should, and that file timestamps does not affect this.
-** DONE b01. Build, buildscript failing
+** DONE d01. Build, buildscript failing
    Attempt to build target with buildscript that returns non-zero exit status.
 
    * FAILURE
@@ -66,7 +74,7 @@
      + Target: not existing
      + Metadata: not existing
      + Tempfile: existing
-** DONE b02. Build, buildscript successful
+** DONE d02. Build, buildscript successful
    Build target with buildscript that returns zero exit status.
 
    This result in a base setup, with one successfully built target.
@@ -76,7 +84,7 @@
      + Target: existing
      + Metadata: existing
      + Tempfile: not existing
-** DONE b03. Rebuild
+** DONE d03. Rebuild
    CLOSED: [2014-07-07 Mon 09:04]
    Rebuild target that has already been built. (Based on b02.)
 
@@ -85,7 +93,7 @@
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: not existing
-** DONE b04. Rebuild, buildscript time in past
+** DONE d04. Rebuild, buildscript time in past
    CLOSED: [2014-07-08 Tue 14:13]
    Rebuild target that has already been built after target's buildscript's
    timestamp have been moved into the past. (Based on b02.)
@@ -97,7 +105,7 @@
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: not existing
-** DONE b05. Rebuild, buildscript time in future
+** DONE d05. Rebuild, buildscript time in future
    CLOSED: [2014-07-08 Tue 14:29]
    Rebuild target that has already been built after target's buildscript's
    timestamp have been moved into the future. (Based on b02.)
@@ -109,7 +117,7 @@
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: not existing
-** DONE b06. Rebuild, buildscript modified same output
+** DONE d06. Rebuild, buildscript modified same output
    CLOSED: [2014-07-11 Fri 17:15]
    Rebuild target after buildscript modified (by a comment or similar) in such
    a way that it still produces the same output it previously did. (Based on
@@ -122,7 +130,7 @@
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: not existing
-** DONE b07. Rebuild, buildscript modified failing
+** DONE d07. Rebuild, buildscript modified failing
    CLOSED: [2014-07-11 Fri 17:32]
    Attempt to rebuild target after buildscript have been changed so that it now
    fails. (Based on b02.)
@@ -132,7 +140,7 @@
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: existing
-** DONE b08. Rebuild, buildscript modified
+** DONE d08. Rebuild, buildscript modified
    CLOSED: [2014-07-11 Fri 17:23]
    Rebuild target when previous target exists, but the buildscript has been
    modified so that it outputs something new. (Based on b02.)
@@ -142,7 +150,7 @@
      + Target: modified
      + Metadata: modified
      + Tempfile: not existing
-** DONE b09. Rebuild, buildscript modified but time same
+** DONE d09. Rebuild, buildscript modified but time same
    CLOSED: [2014-07-27 Sun 13:07]
    Rebuild target when previous target exists, and the buildscript has been
    modified, but the buildscript timestamp and size is the same as last time.
@@ -157,7 +165,7 @@
      + Target: modified
      + Metadata: modified
      + Tempfile: not existing
-** DONE b10. Rebuild, buildscript modified, metadata erased
+** DONE d10. Rebuild, buildscript modified, metadata erased
    CLOSED: [2014-08-18 Mon 09:42]
    Attempt to rebuild target after buildscript have been changed so that it
    outputs something new and target's metadata file has been erased. (Based
@@ -168,7 +176,7 @@
      + Target: unmodified
      + Metadata: not existing
      + Tempfile: existing
-** DONE b11. Rebuild, target time in past
+** DONE d11. Rebuild, target time in past
    CLOSED: [2014-07-08 Tue 08:44]
    Rebuild target that has already been built after target file's timestamp
    have been moved into the past. (Based on b02.)
@@ -180,7 +188,7 @@
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: not existing
-** DONE b12. Rebuild, target time in future
+** DONE d12. Rebuild, target time in future
    CLOSED: [2014-07-08 Tue 08:44]
    Rebuild target that has already been built after target file's timestamp
    have been moved into the future. (Based on b02.)
@@ -192,7 +200,7 @@
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: not existing
-** DONE b13. Rebuild, target modified
+** DONE d13. Rebuild, target modified
    CLOSED: [2014-07-11 Fri 17:46]
    Attempt to rebuild target when previous target exist and is modified. (Based
    on b02.)
@@ -202,7 +210,7 @@
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: existing
-** DONE b14. Rebuild, target modified but time same
+** DONE d14. Rebuild, target modified but time same
    CLOSED: [2014-07-26 Sat 21:43]
    Attempt to rebuild target when previous target exist and is modified, but
    its timestamp and size is the same as last time. (Based on b02.)
@@ -216,7 +224,7 @@
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: existing
-** DONE b15. Rebuild, target modified, metadata erased
+** DONE d15. Rebuild, target modified, metadata erased
    CLOSED: [2014-08-18 Mon 09:52]
    Attempt to rebuild target when previous target exist and is modified, and
    target's metadata file has been erased. (Based on b02.)
@@ -226,7 +234,7 @@
      + Target: unmodified
      + Metadata: not existing
      + Tempfile: existing
-** DONE b16. Rebuild, metadata time in past
+** DONE d16. Rebuild, metadata time in past
    CLOSED: [2014-07-09 Wed 09:12]
    Rebuild target that has already been built after target's metadata file's
    timestamp have been moved into the past. (Based on b02.)
@@ -238,7 +246,7 @@
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: not existing
-** DONE b17. Rebuild, metadata time in future
+** DONE d17. Rebuild, metadata time in future
    CLOSED: [2014-07-09 Wed 09:11]
    Rebuild target that has already been built after target's metadata file's
    timestamp have been moved into the future. (Based on b02.)
@@ -250,7 +258,7 @@
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: not existing
-** DONE b18. Rebuild, metadata erased
+** DONE d18. Rebuild, metadata erased
    CLOSED: [2014-08-18 Mon 09:58]
    Rebuild target that has already been built after target's metadata file has
    been erased. (Based on b02.)
@@ -260,7 +268,7 @@
      + Target: unmodified
      + Metadata: existing
      + Tempfile: not existing
-** DONE b19. Rebuild, buildscript+target modified but same
+** DONE d19. Rebuild, buildscript+target modified but same
    CLOSED: [2014-07-11 Fri 19:40]
    Rebuild target when previous target exist and is modified, but buildscript
    is also modified and builds a target identical to modified the modified one.
@@ -270,7 +278,7 @@
      + Target: unmodified
      + Metadata: modified
      + Tempfile: not existing
-** DONE b20. Rebuild, buildscript+target modified but same, metadata erased
+** DONE d20. Rebuild, buildscript+target modified but same, metadata erased
    CLOSED: [2014-08-18 Mon 10:05]
    Rebuild target when previous target exist and is modified, but buildscript
    is also modified and builds a target identical to modified the modified one,
@@ -281,10 +289,10 @@
      + Target: unmodified
      + Metadata: created
      + Tempfile: not existing
-* [25%] c. Lockfile-related stuff
+* [25%] e. Lockfile-related stuff
   Check that lockfile is cleared on non-normal termination. And that it works
   to avert parallel execution of fix.
-** DONE c01. Run two simultaneous instances of fix
+** DONE e01. Run two simultaneous instances of fix
    Attempt to run two copies of fix at once. First instance should build,
    second instance should detect lockfile and refuse to start.
 
@@ -298,7 +306,7 @@
      + Exit status: 8
      + Target: not existing
      + Tempfile: not existing
-** TODO c02. Receiving Ctrl-C (SIGTERM)
+** TODO e02. Receiving Ctrl-C (SIGTERM)
    Send ctrl-c (SIGINT) to fix as its building and see that it returns correct
    exit code and clears its lockfile.
 
@@ -308,7 +316,7 @@
    * FAILURE
      + Exit status: 130 (128 + 2 = INT)
      + No lockfile exists.
-** TODO c03. Normal kill (SIGINT)
+** TODO e03. Normal kill (SIGINT)
    Send SIGTERM to fix as its building and see that it returns correct exit
    code and clears its lockfile.
 
@@ -318,7 +326,7 @@
    * FAILURE
      + Exit status: 143 (128 + 15 = TERM)
      + No lockfile exists.
-** TODO c04. Terminal hangup (SIGHUP)
+** TODO e04. Terminal hangup (SIGHUP)
    Send SIGHUP to fix as its building and see that it returns correct exit code
    and clears its lockfile.
 
@@ -328,11 +336,8 @@
    * FAILURE
      + Exit status: 129 (128 + 1 = HUP)
      + No lockfile exists.
-* [0%] d. Automatic buildscript dependency
-  Checks to see that the automatically added dependency on the buildscript
-  works as it should.
-* [100%] e. Source dependency
-** DONE e01. Build, missing sourcedep
+* [100%] f. Source dependency
+** DONE f01. Build, missing sourcedep
    CLOSED: [2014-07-27 Sun 16:00]
    Attempt to build a target for which there is a missing source dependency.
 
@@ -341,7 +346,7 @@
      + Target: not existing
      + Metadata: not existing
      + Tempfile: existing
-** DONE e02. Build, sourcedep missing read bits
+** DONE f02. Build, sourcedep missing read bits
    CLOSED: [2014-07-27 Sun 16:09]
    Attempt to build target with a source dependency that have its read bits
    unset.
@@ -351,7 +356,7 @@
      + Target: not existing
      + Metadata: not existing
      + Tempfile: existing
-** DONE e03. Build, sourcedep
+** DONE f03. Build, sourcedep
    CLOSED: [2014-07-27 Sun 17:58]
    Build target with source dependency.
 
@@ -363,7 +368,7 @@
      + Target: existing
      + Metadata: existing
      + Tempfile: not existing
-** DONE e04. Rebuild, sourcedep unmodified
+** DONE f04. Rebuild, sourcedep unmodified
    CLOSED: [2014-07-27 Sun 19:18]
    Rebuild target with source dependency that has already been built. (Based on
    e03.)
@@ -373,7 +378,7 @@
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: not existing
-** DONE e05. Rebuild, sourcedep time in past
+** DONE f05. Rebuild, sourcedep time in past
    CLOSED: [2014-07-27 Sun 19:23]
    Rebuild target with source dependency that has already been built after the
    source dependency file's timestamp have been moved into the past. (Based on
@@ -386,7 +391,7 @@
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: not existing
-** DONE e06. Rebuild, sourcedep time in future
+** DONE f06. Rebuild, sourcedep time in future
    CLOSED: [2014-07-27 Sun 19:25]
    Rebuild target with source dependency that has already been built after
    source dependency file's timestamp have been moved into the future. (Based
@@ -399,7 +404,7 @@
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: not existing
-** DONE e07. Rebuild, sourcedep modified
+** DONE f07. Rebuild, sourcedep modified
    CLOSED: [2014-07-27 Sun 20:21]
    Rebuild target with source dependency when previous target exists, after the
    source dependency has been modified. (Based on e03.)
@@ -409,7 +414,7 @@
      + Target: modified
      + Metadata: modified
      + Tempfile: not existing
-** DONE e08. Rebuild, sourcedep modified but time same
+** DONE f08. Rebuild, sourcedep modified but time same
    CLOSED: [2014-07-27 Sun 20:47]
    Rebuild target with source dependency when previous target exists, after the
    source dependency has been modified, but the source dependency timestamp and
@@ -420,8 +425,8 @@
      + Target: modified
      + Metadata: modified
      + Tempfile: not existing
-* [93%] f. Target dependency
-** DONE f01. Build, missing targetdep buildscript
+* [93%] g. Target dependency
+** DONE g01. Build, missing targetdep buildscript
    CLOSED: [2015-11-18 Wed 22:42]
    Attempt to build a target with a target dependency, where the target
    dependency buildscript is missing.
@@ -434,7 +439,7 @@
      + Target: not existing
      + Metadata: not existing
      + Tempfile: existing
-** DONE f02. Build, targetdep buildscript missing read bits
+** DONE g02. Build, targetdep buildscript missing read bits
    CLOSED: [2015-11-18 Wed 22:57]
    Attempt to build a target with a target dependency, where the target
    dependency buildscript does not have read bits.
@@ -447,7 +452,7 @@
      + Target: not existing
      + Metadata: not existing
      + Tempfile: existing
-** DONE f03. Build, targetdep buildscript missing execute bits
+** DONE g03. Build, targetdep buildscript missing execute bits
    CLOSED: [2015-11-18 Wed 23:00]
    Attempt to build a target with a target dependency, where the target
    dependency buildscript does not have execute bits.
@@ -460,7 +465,7 @@
      + Target: not existing
      + Metadata: not existing
      + Tempfile: existing
-** DONE f04. Build, targetdep
+** DONE g04. Build, targetdep
    CLOSED: [2015-11-18 ons 22:35]
    Build a target with a target dependency.
 
@@ -472,7 +477,7 @@
      + Target: existing
      + Metadata: existing
      + Tempfile: not existing
-** DONE f05. Rebuild, targetdep buildscript unmodified
+** DONE g05. Rebuild, targetdep buildscript unmodified
    CLOSED: [2015-11-17 Tue 20:16]
    Should successfully build target with target dependency, when built after
    having been previously built, and with no modifications done.
@@ -485,7 +490,7 @@
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: not existing
-** DONE f06. Rebuild, targetdep buildscript time in past
+** DONE g06. Rebuild, targetdep buildscript time in past
    CLOSED: [2015-11-18 Wed 23:05]
    Rebuild target with a target dependency, that has already been built after
    target file's timestamp have been moved into the past.
@@ -500,7 +505,7 @@
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: not existing
-** DONE f07. Rebuild, targetdep buildscript time in future
+** DONE g07. Rebuild, targetdep buildscript time in future
    CLOSED: [2015-11-18 Wed 23:08]
    Rebuild target with a target dependency, that has already been built after
    target file's timestamp have been moved into the future.
@@ -515,7 +520,7 @@
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: not existing
-** DONE f08. Rebuild, targetdep buildscript, erased target metadata
+** DONE g08. Rebuild, targetdep buildscript, erased target metadata
    CLOSED: [2015-11-18 Wed 23:14]
    Rebuild target with a target dependency, when previous target and dependency
    target exists, mut the metadata for the target has been erased.
@@ -528,7 +533,7 @@
      + Target: unmodified
      + Metadata: existing (created)
      + Tempfile: not existing
-** DONE f09. Rebuild, targetdep buildscript, erased targetdep metadata
+** DONE g09. Rebuild, targetdep buildscript, erased targetdep metadata
    CLOSED: [2015-11-18 Wed 23:16]
    Rebuild target with a target dependency, when previous target and dependency
    target exists, but the metadata for the dependency target has been erased.
@@ -541,7 +546,7 @@
      + Target: unmodified
      + Metadata: unmodified
      + Tempfile: not existing
-** DONE f10. Rebuild, targetdep buildscript, erased target+targetdep metadata
+** DONE g10. Rebuild, targetdep buildscript, erased target+targetdep metadata
    CLOSED: [2015-11-18 Wed 23:18]
    Rebuild target with a target dependency, when previous target and dependency
    target exists, but the metadata for them both have been erased.
@@ -554,7 +559,7 @@
      + Target: unmodified
      + Metadata:  existing (created)
      + Tempfile: not existing
-** DONE f11. Rebuild, targetdep buildscript modified
+** DONE g11. Rebuild, targetdep buildscript modified
    CLOSED: [2015-11-19 Thu 09:24]
    Rebuild target with a target dependency when previous target exists, after
    the dependency target buildscript has been modified.
@@ -567,8 +572,8 @@
      + Target: modified
      + Metadata: modified
      + Tempfile: not existing
-** TODO f12. Rebuild, targetdep buildscript modified but time same
-** DONE f13. Rebuild, targetdep buildscript modified metadata erased
+** TODO g12. Rebuild, targetdep buildscript modified but time same
+** DONE g13. Rebuild, targetdep buildscript modified metadata erased
    CLOSED: [2015-11-19 Thu 09:30]
    Attempt to rebuild target when previous target exist but have no metadata
    stored, and the newly built target differs from the old target.
@@ -581,11 +586,11 @@
      + Target: unmodified
      + Metadata: modified
      + Tempfile: existing
-** DONE f14. Rebuild, targetdep modified
+** DONE g14. Rebuild, targetdep modified
    CLOSED: [2015-11-12 Mon 22:28]
    Should fail to rebuild a target when one of its dependencies has a target
    file that has been manually modified by the user.
-** DONE f15. Rebuild, targetdeps targetdep buildscript modified
+** DONE g15. Rebuild, targetdeps targetdep buildscript modified
    CLOSED: [2015-11-28 Sat 18:25]
    Rebuild target with a target dependency when previous target exists, after
    the dependency target buildscript has been modified.
@@ -601,7 +606,7 @@
      + Target: modified
      + Metadata: modified
      + Tempfile: not existing
-* [0%] g. 'default.fix' target dependency
+* [0%] h. 'default.fix' target dependency
 ** TODO Build using default buildscript ('default.fix')
    Build target using default.fix.
 ** TODO Build using default buildscript in parent dir
@@ -609,12 +614,4 @@
 ** TODO Rebuild target built by default buildscript, now by target
    Rebuild target that was previously build by default.fix, with a new
    TARGET.fix.
-* [100%] h. Environment variables
-** DONE h01. $FIX_LEVEL value in dep
-   CLOSED: [2015-11-13 Fri 01:52]
-** DONE h02. $FIX_PARENT value in dep
-   CLOSED: [2015-11-13 Fri 01:52]
-* [100%] i. Options
-** DONE i01. -V and --version options
-   CLOSED: [2015-11-16 Mon 11:38]
 * [eof]
