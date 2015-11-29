@@ -46,7 +46,7 @@ file_is         stdout               "$NADA"       "Standard output"
 file_is         stderr               "$ERRMSG"     "Standard error"
 file_is         build/TARGET         "OUTPUT"      "Target"
 is_unchanged    "$TARGET"                          "Target timestamp"
-file_is         .fix/state/TARGET    "$DBDATA"     "Metadata"
+file_is         .fix/state/TARGET    "$DBDATA"     "Target metadata"
 file_is         build/TARGET--fixing "OUTPUT2"     "Target tempfile"
 
 done_testing

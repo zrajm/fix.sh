@@ -82,7 +82,7 @@ file_is         stderr               "$ERRMSG"     "Standard error"
 # Command line target.
 file_is         build/TARGET         "$OLD_OUTPUT" "Target"
 is_unchanged    "$TARGET"                          "Target timestamp"
-file_is         .fix/state/TARGET    "$OLD_META"   "Metadata"
+file_is         .fix/state/TARGET    "$OLD_META"   "Target metadata"
 file_is         build/TARGET--fixing "PRE"         "Target tempfile"
 
 # Dependency target.

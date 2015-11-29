@@ -53,7 +53,7 @@ file_is         stderr               "$ERRMSG"     "Standard error"
 
 # Command line target.
 file_not_exists build/TARGET                       "Target"
-file_not_exists .fix/state/TARGET                  "Metadata"
+file_not_exists .fix/state/TARGET                  "Target metadata"
 file_is         build/TARGET--fixing    "PRE"      "Target tempfile"
 
 # Dependency target.

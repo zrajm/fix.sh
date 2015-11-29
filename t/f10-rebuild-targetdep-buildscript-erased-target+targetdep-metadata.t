@@ -75,7 +75,7 @@ file_is         stderr               "$NADA"       "Standard error"
 # Command line target.
 file_is         build/TARGET         "$OUTPUT"     "Target"
 is_unchanged    "$TARGET"                          "Target timestamp"
-file_is         .fix/state/TARGET    "$META"       "Metadata"
+file_is         .fix/state/TARGET    "$META"       "Target metadata"
 file_not_exists build/TARGET--fixing               "Target tempfile"
 
 # Dependency target.

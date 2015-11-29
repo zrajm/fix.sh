@@ -87,7 +87,6 @@
 
    Test to see if this refactoring would simplify the code.
 * Testing
-** TODO "Metadata" test description should be "Target metadata"
 ** TODO Rename tests so that options related tests come first
 ** TODO Create dep -> dep -> dep test with modified buildscript for leaf dep
    When building a dep1 -> dep2 -> dep3 chain, see that if dep3 has a modified
@@ -387,3 +386,5 @@
 
    Fix this, and make sure test case
    't/b06-rebuild-buildscript-modified-same-output.t' passes.
+** DONE "Metadata" test description should be "Target metadata"
+   CLOSED: [2015-11-29 Sun 17:08]
