@@ -95,7 +95,6 @@
 ** TODO Test that buildscript checksums are written in all metadata
 ** TODO Test first line of metadata: It should be the target
 ** TODO Test second line (if any) of metadata: It should be buildscript
-** TODO Test metadata file content everywhere
 ** TODO Version test case should check copyright year as well
    Test that checks output of `--version` should be expanded to enforce the
    year part of the version message as well, not just the version number.
@@ -397,3 +396,6 @@
    CLOSED: [2015-11-29 Sun 18:00]
 ** DONE `prove xt/` should work with $BAIL_ON_FAIL set
    CLOSED: [2015-11-29 Sun 19:55]
+** DONE Test metadata file content everywhere
+   CLOSED: [2015-11-30 Mon 09:06]
+   Verified that this is already done in all tests.
