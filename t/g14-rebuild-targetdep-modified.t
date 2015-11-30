@@ -83,12 +83,14 @@ file_is         stderr               "$ERRMSG"     "Standard error"
 file_is         build/TARGET         "$OLD_OUTPUT" "Target"
 is_unchanged    "$TARGET"                          "Target timestamp"
 file_is         .fix/state/TARGET    "$OLD_META"   "Target metadata"
+file_not_exists .fix/state/TARGET--fixing          "Target metadata tempfile shouldn't exist"
 file_is         build/TARGET--fixing "PRE"         "Target tempfile"
 
 # Dependency target.
 file_is         build/DEPTARGET         "$NEW_DEP_OUTPUT" "Dependency target"
 is_unchanged    "$DEPTARGET"                              "Dependency target timestamp"
 file_is         .fix/state/DEPTARGET    "$OLD_DEP_META"   "Dependency metadata"
+file_not_exists .fix/state/DEPTARGET--fixing              "Dependency metadata tempfile shouldn't exist"
 file_is         build/DEPTARGET--fixing "DEPENDENCY"      "Dependency target tempfile"
 
 done_testing

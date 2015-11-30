@@ -91,13 +91,11 @@
    When building a dep1 -> dep2 -> dep3 chain, see that if dep3 has a modified
    buildscript that produces the same output, none of targets should be
    overwritten, but remain exactly as they are.
-** TODO Check for non-existence of metadata tempfiles
 ** TODO Test that buildscript checksums are written in all metadata
-** TODO Test second line (if any) of metadata: It should be buildscript
 ** TODO Version test case should check copyright year as well
    Test that checks output of `--version` should be expanded to enforce the
    year part of the version message as well, not just the version number.
-** TODO Test for reading of command line arguments
+** TODO Tests for reading of command line arguments
 ** TODO Add test for --debug (and -D) option
 ** TODO Add test for --force (and -f) option
 ** TODO Add test for --help (and -h) option
@@ -400,3 +398,9 @@
    Verified that this is already done in all tests.
 ** DONE Test first line of metadata: It should be the target
    CLOSED: [2015-11-30 Mon 09:23]
+** SKIP Test second line (if any) of metadata: It should be buildscript
+   CLOSED: [2015-11-30 Mon 13:34]
+   No need to test this. This is already specified in the metadata specs in the
+   tests.
+** DONE Check for non-existence of metadata tempfiles
+   CLOSED: [2015-11-30 Mon 13:53]

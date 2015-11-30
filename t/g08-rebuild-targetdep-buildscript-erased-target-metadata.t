@@ -78,13 +78,15 @@ file_is         build/TARGET         "$OUTPUT"     "Target"
 is_unchanged    "$TARGET"                          "Target timestamp"
 file_is         .fix/state/TARGET    "$META"       "Target metadata"
 first_dep_is    .fix/state/TARGET    "TARGET"      "Target metadata target first"
+file_not_exists .fix/state/TARGET--fixing          "Target metadata tempfile shouldn't exist"
 file_not_exists build/TARGET--fixing               "Target tempfile"
 
 # Dependency target.
 file_is         build/DEPTARGET         "$DEP_OUTPUT" "Dependency target"
 is_unchanged    "$DEPTARGET"                          "Dependency target timestamp"
 file_is         .fix/state/DEPTARGET    "$DEP_META"   "Dependency metadata"
-first_dep_is    .fix/state/DEPTARGET    "DEPTARGET"   "Target metadata target first"
+first_dep_is    .fix/state/DEPTARGET    "DEPTARGET"   "Dependency metadata target first"
+file_not_exists .fix/state/DEPTARGET--fixing          "Dependency metadata tempfile shouldn't exist"
 file_not_exists build/DEPTARGET--fixing               "Dependency target tempfile"
 
 done_testing

@@ -46,6 +46,7 @@ file_is         build/TARGET         "6BYTES"      "Target"
 is_changed      "$TARGET"                          "Target timestamp"
 file_is         .fix/state/TARGET    "$DBDATA"     "Target metadata"
 first_dep_is    .fix/state/TARGET    "TARGET"      "Target metadata target first"
+file_not_exists .fix/state/TARGET--fixing          "Target metadata tempfile shouldn't exist"
 file_not_exists build/TARGET--fixing               "Target tempfile shouldn't exist"
 
 done_testing

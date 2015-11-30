@@ -49,6 +49,7 @@ file_is         stdout2              "$NADA"       "2nd build's standard output"
 file_is         stderr2              "$ERRMSG"     "2nd build's standard error"
 file_not_exists build/TARGET         "2nd build shouldn't create build target"
 file_not_exists .fix/state/TARGET    "2nd build shouldn't create metadata file"
+file_not_exists .fix/state/TARGET--fixing          "Target metadata tempfile shouldn't exist"
 is_unchanged    "$TEMPFILE"          "1st build's tempfile should be unchanged"
 
 ## This fifo is read by the buildscript (which is currently just hanging,
@@ -72,6 +73,7 @@ file_is         stderr1              "$NADA"       "2nd build standard error"
 file_is         build/TARGET         "PIPED"       "2nd build target"
 file_is         .fix/state/TARGET    "$DBDATA"     "2nd build metadata"
 first_dep_is    .fix/state/TARGET    "TARGET"      "Target metadata target first"
+file_not_exists .fix/state/TARGET--fixing          "Target metadata tempfile shouldn't exist"
 file_not_exists build/TARGET--fixing "2nd build shouldn't create tempfile"
 
 done_testing

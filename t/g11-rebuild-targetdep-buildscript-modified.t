@@ -97,12 +97,14 @@ file_is         stderr               "$NADA"       "Standard error"
 file_is         build/TARGET         "$NEW_OUTPUT"     "Target"
 is_changed      "$TARGET"                              "Target timestamp"
 file_is         .fix/state/TARGET    "$NEW_META"       "Target metadata"
+file_not_exists .fix/state/TARGET--fixing              "Target metadata tempfile shouldn't exist"
 file_not_exists build/TARGET--fixing                   "Target tempfile"
 
 # Dependency target.
 file_is         build/DEPTARGET      "$NEW_DEP_OUTPUT" "Dependency target"
 is_changed      "$DEPTARGET"                           "Dependency target timestamp"
 file_is         .fix/state/DEPTARGET "$NEW_DEP_META"   "Dependency metadata"
+file_not_exists .fix/state/DEPTARGET--fixing           "Dependency metadata tempfile shouldn't exist"
 file_not_exists build/DEPTARGET--fixing                "Dependency target tempfile"
 
 done_testing
