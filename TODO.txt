@@ -93,7 +93,6 @@
    overwritten, but remain exactly as they are.
 ** TODO Check for non-existence of metadata tempfiles
 ** TODO Test that buildscript checksums are written in all metadata
-** TODO Test first line of metadata: It should be the target
 ** TODO Test second line (if any) of metadata: It should be buildscript
 ** TODO Version test case should check copyright year as well
    Test that checks output of `--version` should be expanded to enforce the
@@ -399,3 +398,5 @@
 ** DONE Test metadata file content everywhere
    CLOSED: [2015-11-30 Mon 09:06]
    Verified that this is already done in all tests.
+** DONE Test first line of metadata: It should be the target
+   CLOSED: [2015-11-30 Mon 09:23]

@@ -71,6 +71,7 @@ file_is         stdout1              "$NADA"       "2nd build standard output"
 file_is         stderr1              "$NADA"       "2nd build standard error"
 file_is         build/TARGET         "PIPED"       "2nd build target"
 file_is         .fix/state/TARGET    "$DBDATA"     "2nd build metadata"
+first_dep_is    .fix/state/TARGET    "TARGET"      "Target metadata target first"
 file_not_exists build/TARGET--fixing "2nd build shouldn't create tempfile"
 
 done_testing
