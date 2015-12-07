@@ -1,11 +1,36 @@
 -*- org -*-
 
 * Program
+** TODO Pass name of tempfile as argument to buildscript              :v0_11:
+** TODO Add source dependencies                                       :v0_11:
+** TODO Milestone: Version 0.11 - Build simple project
+** TODO Pass more arguments to buildscripts(?)
+   Fix passes:
+
+     + `$1` - tempfile to output to
+
+   While the djb's original Redo pass the following:
+
+     + `$1` - foo.o (target name)
+     + `$2` - foo (target name without suffix)
+     + `$3` - whatever.tmp (tempfile name)
+
+   Maybe `$FIX_SCRIPT_DIR`, `$FIX_SOURCE_DIR` and/or `$FIX_TARGET_DIR` should
+   be passed as arguments to the buildscript?
+** TODO Buildscript should not run at all if target is unchanged
+   When building a target for the second time, the buildscript should not be
+   executed at all if neither the target, nor any of the dependencies has
+   changed.
+
+   + Add a test case for this. (E.g. by using a buildscript that writes to
+     standard error, and having a test case that detect that nothing is
+     outputted when the script isn't run.)
 ** TODO Dependencies
+** TODO Add `fix` executable to $PATH
+   Create `.fix/bin` directory, put that first in $PATH and add symlink to the
+   current executable? This should make it possible to invoke `fix.sh` as just
+   `fix` from inside the buildscripts.
 ** TODO Add man page
-** TODO Pass arguments to buildscripts
-** TODO Write dependencies to tempfile, finalize when build is done
-** TODO Add source dependencies
 ** TODO Allow target to be specified relative to current dir
    Currently, if you're rebuilding a target called `build/TARGET`, and
    $FIX_TARGET_DIR is set to `build`, you'll need to be in the root of the
@@ -86,12 +111,33 @@
    should be collected (and stored in the state files) as one string.
 
    Test to see if this refactoring would simplify the code.
-* Testing
+** TODO Unit testing
+   Currently there are full-fledged integration tests, but no unit tests.
+   Rewrite the code to allow for unit tests, then start adding some unit tests.
+** TODO Fix command to output source file(?)
+   With this the buildscript itself wouldn't have to consider
+   `$FIX_SOURCE_DIR`, but could simply pipe the output of a `fix --cat FILE`
+   (or similar command) into the build process.
+
+   Have a `fix --cat FILE` command which registers FILE as a dependency, and
+   outputs the content of FILE on standard out?
+
+   A drawback might be that this could obscure where the dependency
+   declaration.
+
+       fix --cat index.txt | markdown2html
+
+   or
+
+       TEXT="$(fix --cat index.txt)"
+       echo "$TEXT" | markdown2html
+** TODO Add config file for default targets
+   Config file should be relative to `$FIX_WORK_TREE`.
+* System tests
 ** TODO Create dep -> dep -> dep test with modified buildscript for leaf dep
    When building a dep1 -> dep2 -> dep3 chain, see that if dep3 has a modified
    buildscript that produces the same output, none of targets should be
    overwritten, but remain exactly as they are.
-** TODO Test that buildscript checksums are written in all metadata
 ** TODO Version test case should check copyright year as well
    Test that checks output of `--version` should be expanded to enforce the
    year part of the version message as well, not just the version number.
@@ -120,9 +166,24 @@
    variable from test_init so we won't have to change it in a hundred different
    test files if it ever changes.
 ** TODO Mooooaaar test cases!
+** TODO Restructure tests
+   Want separate directories for the various tests:
+   + Dashtap tests
+   + Fix integration tests
+   + Fix unit tests
 ** TODO Profiling the code (using Devel::NYTProf)
 ** TODO Test code coverage (Devel::Cover)
 * FUTURE
+** TODO Child/mother process communication through tempfiles(?)
+   Mother process could save its environment variables/settings in a file in
+   e.g. `.fix/tmp/<PID>.conf`, which would then be read by all the child
+   processes (rather that being read from the environment). This would protect
+   the variables from tampering by the buildscripts. (Good thing?)
+
+   The child processes could, in the same fashion, write their TARGET
+   dependency data into a tempfile (`.fix/tmp<PID>.meta` or somesuch) which
+   would be gathered into the final build metadata for that target by the
+   mother process.
 ** TODO Outputting dependency graph
    As a dotviz file?
 ** TODO Support for listdeps
@@ -372,6 +433,9 @@
    standard repository layout:
 
    See: [[https://help.github.com/articles/open-source-licensing/#where-does-the-license-live-on-my-repository][GitHub Help: Where does the license live on my repository?]]
+** DONE Write dependencies to tempfile, finalize when build is done
+   CLOSED: [2015-11-24 Tue 15:17]
+   Fixed in commit db8fe3b9aebffbe01e21a47541c9aa21b9dde600.
 ** DONE Automatic adding of buildscript as target dependency
    CLOSED: [2015-11-28 Sat 13:33]
 ** DONE Never test timestamp on metadata files
