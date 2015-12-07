@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -ue
-VERSION=0.10.10
+VERSION=0.10.11
 
 ##############################################################################
 ##                                                                          ##
@@ -116,7 +116,7 @@ build_run() {
     [ -x "$CMD" ] || die 1 "No execute permission for buildscript '$CMD'"
 
     # FIXME: Catch a failure to write to $TMPFILE
-    "$CMD" >"$TMPFILE" <&- &                   # run buildscript
+    "$CMD" >"$TMPFILE" "$TMPFILE" <&- &        # run buildscript
     wait "$!" || die 1 "Buildscript '$CMD' returned exit status $?" \
         "Old target unchanged. New, failed target written to '$TMPFILE'."
 }

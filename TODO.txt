@@ -1,13 +1,12 @@
 -*- org -*-
 
 * Program
-** TODO Pass name of tempfile as argument to buildscript              :v0_11:
 ** TODO Add source dependencies                                       :v0_11:
-** TODO Milestone: Version 0.11 - Build simple project
+** TODO Milestone: Version 0.11 - Build simple project                :v0_11:
 ** TODO Pass more arguments to buildscripts(?)
    Fix passes:
 
-     + `$1` - tempfile to output to
+     + `$1` - name of tempfile that stdout is connected to
 
    While the djb's original Redo pass the following:
 
@@ -468,3 +467,8 @@
    tests.
 ** DONE Check for non-existence of metadata tempfiles
    CLOSED: [2015-11-30 Mon 13:53]
+** DONE Pass name of tempfile as argument to buildscript              :v0_11:
+   CLOSED: [2015-12-07 Mon 08:06]
+   Fix now passes:
+
+     + `$1` - name of tempfile that stdout is connected to
