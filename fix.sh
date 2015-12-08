@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -ue
-VERSION=0.10.11
+VERSION=0.10.12
 
 ##############################################################################
 ##                                                                          ##
@@ -234,7 +234,7 @@ unset COUNT ARG
 
 [ "$#" = 0 ] && die 15 "No target(s) specified"
 if is_mother; then                             # mother process
-    export FIX_LEVEL FIX_PARENT FIX_TARGET
+    export FIX_DEBUG FIX_FORCE FIX_LEVEL FIX_PARENT FIX_TARGET
     export FIX="$(readlink -f "$0")"
     export FIX_PID="$$"
     export FIX_DIR=".fix"

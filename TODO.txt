@@ -24,6 +24,17 @@
    + Add a test case for this. (E.g. by using a buildscript that writes to
      standard error, and having a test case that detect that nothing is
      outputted when the script isn't run.)
+** TODO Build output (without colors)
+   Some sorta status output for each built target, with indentation so that one
+   can see what's going on as the build progresses. `--quiet` option to silence
+   this output.
+
+   Apenwarr's redo has a nice output where each level is indented one step, but
+   each start with the word `redo`, so that one may simply copy/paste a line in
+   order to rebuild from there (neat when a problem has occurred). Do that?
+
+   This build output should without colors, or other fancy terminal stuff.
+   (That may be added later.)
 ** TODO Dependencies
 ** TODO Add `fix` executable to $PATH
    Create `.fix/bin` directory, put that first in $PATH and add symlink to the
@@ -172,6 +183,15 @@
    + Fix unit tests
 ** TODO Profiling the code (using Devel::NYTProf)
 ** TODO Test code coverage (Devel::Cover)
+** TODO BUGFIX: Deptarget saves metadata twice
+   Example `t/g04-build-targetdep.t`
+
+       # fix.sh TARGET --debug
+       build/DEPTARGET: Target unchanged, keep old target
+       build/DEPTARGET: Writing metadata for 'TARGET'
+       build/DEPTARGET: Writing metadata for 'TARGET'
+       build/TARGET: Target unchanged, keep old target
+       build/TARGET: Writing metadata
 * FUTURE
 ** TODO Child/mother process communication through tempfiles(?)
    Mother process could save its environment variables/settings in a file in
@@ -472,3 +492,7 @@
    Fix now passes:
 
      + `$1` - name of tempfile that stdout is connected to
+** DONE BUGFIX: $FIX_FORCE/$FIX_DEBUG weren't exported
+   CLOSED: [2015-12-08 Tue 09:03]
+   Causing the --force and --debug options to not propagate into child
+   processes.
