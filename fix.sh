@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -ue
-VERSION=0.10.12
+VERSION=0.10.13
 
 ##############################################################################
 ##                                                                          ##
@@ -143,6 +143,14 @@ finalize_tmpfile() {
     mv -f -- "$TMPFILE" "$FILE"
 }
 
+write_metadata() {
+    local FILE="$1"; shift
+    mkpath "$FILE" \
+        || die 7 "Cannot create dir for metadata file '$FILE'"
+    debug "$TARGET: Writing metadata${FIX_PARENT:+ for '$FIX_PARENT'}"
+    printf "%s %s %s\n" "$@" >>"$FILE"
+}
+
 # After build: Overwrite target with tempfile, and store result in metadata.
 build_finalize() {
     local DBFILE="$1" TYPE="$2" TARGET="$3" TARGET_TMP="$4" SCRIPT="$5"
@@ -164,25 +172,16 @@ build_finalize() {
 
     # finalize metadata
     if [ "$FIX_PARENT" ]; then
-        DBPATH="${DBFILE%/*}"
-        DBFILE2="$DBPATH/$FIX_PARENT"
-        mkpath "$DBFILE2" \
-            || die 7 "Cannot create dir for metadata file '$DBFILE2'"
-        debug "$TARGET: Writing metadata for '$FIX_PARENT'"
-        echo "$TMP_CHECKSUM $TYPE $FILE" >>"$DBFILE2--fixing"
+        local DBPATH="${DBFILE%/*}"
+        local DBFILE2="$DBPATH/$FIX_PARENT"
+        write_metadata "$DBFILE2--fixing" "$TMP_CHECKSUM" "$TYPE" "$FILE"
     fi
 
     # write to metadata tempfile
-    mkpath "$DBFILE" \
-        || die 7 "Cannot create dir for metadata file '$DBFILE'"
-    debug "$TARGET: Writing metadata"
-
     local SCRIPT_CHECKSUM="$(file_checksum "$SCRIPT")"
-    printf "%s %s %s\n" \
+    write_metadata "$DBFILE--fixing" \
         "$SCRIPT_CHECKSUM" "SCRIPT" "${SCRIPT#$FIX_SCRIPT_DIR/}" \
-        "$TMP_CHECKSUM"    "$TYPE"  "$FILE" \
-        >>"$DBFILE--fixing"
-
+        "$TMP_CHECKSUM"    "$TYPE"  "$FILE"
     reverse "$DBFILE--fixing" \
         && mv -f -- "$DBFILE--fixing" "$DBFILE" >&2
 }

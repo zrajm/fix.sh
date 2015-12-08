@@ -143,6 +143,8 @@
        echo "$TEXT" | markdown2html
 ** TODO Add config file for default targets
    Config file should be relative to `$FIX_WORK_TREE`.
+** TODO Does $FIX_PARENT really need to be exported(?)
+   It is set from $FIX_TARGET early on, so does it need to be exported at all?
 * System tests
 ** TODO Create dep -> dep -> dep test with modified buildscript for leaf dep
    When building a dep1 -> dep2 -> dep3 chain, see that if dep3 has a modified
