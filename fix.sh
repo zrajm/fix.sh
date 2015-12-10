@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -ue
-VERSION=0.11.0
+VERSION=0.11.1
 
 ##############################################################################
 ##                                                                          ##
@@ -74,7 +74,21 @@ mkpath() {
     [ -d "$DIR" ] || mkdir -p -- "$DIR"
 }
 
-meta_checksum() {
+# Usage: save_metadata STATEFILE ( CHECKSUM TYPE FILE )...
+#
+# Saves build metadata to STATEFILE. The three last arguments may be repeated
+# to save multiple lines to STATEFILE.
+save_metadata() {
+    local FILE="$1"; shift
+    mkpath "$FILE" \
+        || die 7 "Cannot create dir for metadata file '$FILE'"
+    printf "%s %s %s\n" "$@" >>"$FILE"
+}
+
+# Usage: load_metadata STATEFILE TYPE FILE
+#
+# Outputs checksum of specified FILE as read from STATEFILE.
+load_metadata() {
     local METAFILE="$1" TYPE="$2" FILE="$3" CHECKSUM2 TYPE2 FILE2
     [ -e "$METAFILE" ] && while IFS=" " read -r CHECKSUM2 TYPE2 FILE2; do
         if [ "$TYPE2" = "$TYPE" -a "$FILE2" = "$FILE" ]; then
@@ -143,13 +157,6 @@ finalize_tmpfile() {
     mv -f -- "$TMPFILE" "$FILE"
 }
 
-write_metadata() {
-    local FILE="$1"; shift
-    mkpath "$FILE" \
-        || die 7 "Cannot create dir for metadata file '$FILE'"
-    printf "%s %s %s\n" "$@" >>"$FILE"
-}
-
 # Usage: strip_path VAR TYPE FILE
 #
 # Where TYPE is 'SCRIPT', 'SOURCE' or 'TARGET'. Strip $FIX_[TYPE]_DIR off of
@@ -172,7 +179,7 @@ build_finalize() {
     strip_path FILE "$TYPE" "$TARGET"
 
     # update target
-    local OLD_CHECKSUM="$(meta_checksum "$DBFILE" "$TYPE" "$FILE")"
+    local OLD_CHECKSUM="$(load_metadata "$DBFILE" "$TYPE" "$FILE")"
     finalize_tmpfile "$TARGET_TMP" "$TARGET" \
         "$TMP_CHECKSUM" "$OLD_CHECKSUM"
 
@@ -180,12 +187,12 @@ build_finalize() {
     if [ "$FIX_PARENT" ]; then
         local DBPATH="${DBFILE%/*}"
         local DBFILE2="$DBPATH/$FIX_PARENT"
-        write_metadata "$DBFILE2--fixing" "$TMP_CHECKSUM" "$TYPE" "$FILE"
+        save_metadata "$DBFILE2--fixing" "$TMP_CHECKSUM" "$TYPE" "$FILE"
     fi
 
     # write to metadata tempfile
     local SCRIPT_CHECKSUM="$(file_checksum "$SCRIPT")"
-    write_metadata "$DBFILE--fixing" \
+    save_metadata "$DBFILE--fixing" \
         "$SCRIPT_CHECKSUM" "SCRIPT" "${SCRIPT#$FIX_SCRIPT_DIR/}" \
         "$TMP_CHECKSUM"    "$TYPE"  "$FILE"
     reverse "$DBFILE--fixing" \
@@ -271,7 +278,7 @@ if [ "$OPT_SOURCE" ]; then
         [ -r "$FULL" ] || die 1 "No read permission for source file '$FULL'"
         DBFILE="$FIX_DIR/state/$FIX_PARENT"
         CHECKSUM="$(file_checksum "$FULL")"
-        write_metadata "$DBFILE--fixing" "$CHECKSUM" "SOURCE" "$SOURCE"
+        save_metadata "$DBFILE--fixing" "$CHECKSUM" "SOURCE" "$SOURCE"
     done
 else
     for TARGET; do
