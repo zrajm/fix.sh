@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -ue
-VERSION=0.10.14
+VERSION=0.11.0
 
 ##############################################################################
 ##                                                                          ##
@@ -147,7 +147,6 @@ write_metadata() {
     local FILE="$1"; shift
     mkpath "$FILE" \
         || die 7 "Cannot create dir for metadata file '$FILE'"
-    debug "$TARGET: Writing metadata${FIX_PARENT:+ for '$FIX_PARENT'}"
     printf "%s %s %s\n" "$@" >>"$FILE"
 }
 
@@ -265,14 +264,20 @@ fi
 ##                                                                          ##
 ##############################################################################
 
-for TARGET; do
-    if [ "$OPT_SOURCE" ]; then
-        # register $TARGET as dependency to parent
-        :
-    else
+if [ "$OPT_SOURCE" ]; then
+    for SOURCE; do
+        FULL="$FIX_SOURCE_DIR/$SOURCE"
+        [ -e "$FULL" ] || die 1 "Source file '$FULL' does not exist"
+        [ -r "$FULL" ] || die 1 "No read permission for source file '$FULL'"
+        DBFILE="$FIX_DIR/state/$FIX_PARENT"
+        CHECKSUM="$(file_checksum "$FULL")"
+        write_metadata "$DBFILE--fixing" "$CHECKSUM" "SOURCE" "$SOURCE"
+    done
+else
+    for TARGET; do
         FIX_TARGET="$TARGET"
         build "$TARGET"
-    fi
-done
+    done
+fi
 
 #[eof]

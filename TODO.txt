@@ -1,8 +1,16 @@
 -*- org -*-
 
 * Program
-** TODO Add source dependencies                                       :v0_11:
-** TODO Milestone: Version 0.11 - Build simple project                :v0_11:
+** TODO Add `fix` executable to $PATH                                 :v0_12:
+   Create `.fix/bin` directory, put that first in $PATH and add symlink to the
+   current executable? This should make it possible to invoke `fix.sh` as just
+   `fix` from inside the buildscripts.
+** TODO Options --script-dir, --source-dir, --target-dir              :v0_12:
+   For setting $FIX_SCRIPT_DIR, $FIX_SOURCE_DIR, $FIX_TARGET_DIR.
+** TODO Run in any dir in worktree                                    :v0_12:
+   When running from worktree root, require $FIX_TARGET_DIR as prefix of target
+   prefix. Should also be able to run from inside any subdir of worktree.
+** TODO Milestone: Version 0.12 - Easier use of paths --------------- :v0_12:
 ** TODO Pass more arguments to buildscripts(?)
    Fix passes:
 
@@ -36,10 +44,6 @@
    This build output should without colors, or other fancy terminal stuff.
    (That may be added later.)
 ** TODO Dependencies
-** TODO Add `fix` executable to $PATH
-   Create `.fix/bin` directory, put that first in $PATH and add symlink to the
-   current executable? This should make it possible to invoke `fix.sh` as just
-   `fix` from inside the buildscripts.
 ** TODO Add man page
 ** TODO Allow target to be specified relative to current dir
    Currently, if you're rebuilding a target called `build/TARGET`, and
@@ -115,7 +119,6 @@
 ** TODO Mother process should ignore $FIX_FORCE/$FIX_DEBUG, only use options
    Reset $FIX_DEBUG and $FIX_FORCE (if set), and use only --debug and --force.
    Child processes still need to listen to the environment variables, though.
-** TODO Options for setting $FIX_SCRIPT_DIR, $FIX_SOURCE_DIR, $FIX_TARGET_DIR
 ** TODO Internal filenames look like 'TARGET:index.html' etc(?)
    Currently we pass around $TYPE + $FILE in a bunch of places, but maybe these
    should be collected (and stored in the state files) as one string.
@@ -498,3 +501,7 @@
    CLOSED: [2015-12-08 Tue 09:03]
    Causing the --force and --debug options to not propagate into child
    processes.
+** DONE Add source dependencies                                       :v0_11:
+   CLOSED: [2015-12-10 Thu 09:16]
+** DONE Milestone: Version 0.11 - Build simple project -------------- :v0_11:
+   CLOSED: [2015-12-10 Thu 09:17]

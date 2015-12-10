@@ -40,7 +40,7 @@ DBDATA="$(
     set -e
     mkmetadata TARGET TARGET     <build/TARGET
     mkmetadata SCRIPT TARGET.fix <fix/TARGET.fix
-    # mkmetadata SOURCE SOURCE.txt <src/SOURCE.txt  # TODO source dep
+    mkmetadata SOURCE SOURCE.txt <src/SOURCE.txt
 )" || fail "Failed to calculate metadata"
 
 is              "$RC"                0             "Exit status"
