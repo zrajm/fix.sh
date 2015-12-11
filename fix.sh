@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -ue
-VERSION=0.11.3
+VERSION=0.11.4
 
 ##############################################################################
 ##                                                                          ##
@@ -74,15 +74,19 @@ mkpath() {
     [ -d "$DIR" ] || mkdir -p -- "$DIR"
 }
 
-# Usage: save_metadata STATEFILE ( CHECKSUM TYPE:FILE )...
+# Usage: save_metadata STATEFILE ( TYPE:FILE CHECKSUM )...
 #
 # Saves build metadata to STATEFILE. The two last arguments may be repeated to
 # save multiple lines to STATEFILE.
 save_metadata() {
-    local STATEFILE="$1"; shift
+    local STATEFILE="$1" DEPFILE CHECKSUM; shift
     mkpath "$STATEFILE" \
         || die 7 "Cannot create dir for metadata file '$STATEFILE'"
-    printf "%s %s\n" "$@" >>"$STATEFILE"
+    while [ "$#" -ge 2 ]; do
+        DEPFILE="$1"; CHECKSUM="$2"; shift 2
+        printf "%s %s\n" "$CHECKSUM" "$DEPFILE"
+    done >>"$STATEFILE"
+    [ "$#" -eq 0 ] || die 7 "save_metadata: Bad number of args"
 }
 
 # Usage: load_metadata STATEFILE TYPE:FILE
@@ -188,14 +192,14 @@ build_finalize() {
     if [ "$FIX_PARENT" ]; then
         local DBPATH="${DBFILE%/*}"
         local DBFILE2="$DBPATH/$FIX_PARENT"
-        save_metadata "$DBFILE2--fixing" "$TMP_CHECKSUM" "$FILE"
+        save_metadata "$DBFILE2--fixing" "$FILE" "$TMP_CHECKSUM"
     fi
 
     # write to metadata tempfile
     local SCRIPT_CHECKSUM="$(file_checksum "$SCRIPT")"
     save_metadata "$DBFILE--fixing" \
-        "$SCRIPT_CHECKSUM" "SCRIPT:${SCRIPT#$FIX_SCRIPT_DIR/}" \
-        "$TMP_CHECKSUM"    "$FILE"
+        "SCRIPT:${SCRIPT#$FIX_SCRIPT_DIR/}" "$SCRIPT_CHECKSUM" \
+        "$FILE"                             "$TMP_CHECKSUM"
     reverse "$DBFILE--fixing" \
         && mv -f -- "$DBFILE--fixing" "$DBFILE" >&2
 }
@@ -279,7 +283,7 @@ if [ "$OPT_SOURCE" ]; then
         [ -r "$FULL" ] || die 1 "No read permission for source file '$FULL'"
         DBFILE="$FIX_DIR/state/$FIX_PARENT"
         CHECKSUM="$(file_checksum "$FULL")"
-        save_metadata "$DBFILE--fixing" "$CHECKSUM" "SOURCE:$SOURCE"
+        save_metadata "$DBFILE--fixing" "SOURCE:$SOURCE" "$CHECKSUM"
     done
 else
     for TARGET; do
