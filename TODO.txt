@@ -1,6 +1,7 @@
 -*- org -*-
 
 * Program
+** TODO strip_path() should be called from write_metadata() (?)
 ** TODO Add `fix` executable to $PATH                                 :v0_12:
    Create `.fix/bin` directory, put that first in $PATH and add symlink to the
    current executable? This should make it possible to invoke `fix.sh` as just
@@ -119,11 +120,6 @@
 ** TODO Mother process should ignore $FIX_FORCE/$FIX_DEBUG, only use options
    Reset $FIX_DEBUG and $FIX_FORCE (if set), and use only --debug and --force.
    Child processes still need to listen to the environment variables, though.
-** TODO Internal filenames look like 'TARGET:index.html' etc(?)
-   Currently we pass around $TYPE + $FILE in a bunch of places, but maybe these
-   should be collected (and stored in the state files) as one string.
-
-   Test to see if this refactoring would simplify the code.
 ** TODO Unit testing
    Currently there are full-fledged integration tests, but no unit tests.
    Rewrite the code to allow for unit tests, then start adding some unit tests.
@@ -149,6 +145,8 @@
 ** TODO Does $FIX_PARENT really need to be exported(?)
    It is set from $FIX_TARGET early on, so does it need to be exported at all?
 * System tests
+** TODO Rewrite mkmetadata to accept one argument + rewrite tests
+   TYPE:FILE, instead of those as two separate arguments.
 ** TODO Create dep -> dep -> dep test with modified buildscript for leaf dep
    When building a dep1 -> dep2 -> dep3 chain, see that if dep3 has a modified
    buildscript that produces the same output, none of targets should be
@@ -248,7 +246,7 @@
         cat above.txt--fixing.1 \
             above.txt--fixing.2 \
             above.txt--fixing.3 >above.txt--fixing
-        mv above.txt--fixing above.txt
+        mv above.txt--fixing above.text
 * DONE
 ** DONE Tests should be run in tempdir
    CLOSED: [2014-07-07 Mon 00:28]
@@ -505,3 +503,9 @@
    CLOSED: [2015-12-10 Thu 09:16]
 ** DONE Milestone: Version 0.11 - Build simple project -------------- :v0_11:
    CLOSED: [2015-12-10 Thu 09:17]
+** DONE Internal filenames look like 'TARGET:index.html' etc(?)
+   CLOSED: [2015-12-11 Fre 10:52]
+   Currently we pass around $TYPE + $FILE in a bunch of places, but maybe these
+   should be collected (and stored in the state files) as one string.
+
+   Test to see if this refactoring would simplify the code.

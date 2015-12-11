@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -ue
-VERSION=0.11.1
+VERSION=0.11.2
 
 ##############################################################################
 ##                                                                          ##
@@ -74,24 +74,25 @@ mkpath() {
     [ -d "$DIR" ] || mkdir -p -- "$DIR"
 }
 
-# Usage: save_metadata STATEFILE ( CHECKSUM TYPE FILE )...
+# Usage: save_metadata STATEFILE ( CHECKSUM TYPE:FILE )...
 #
-# Saves build metadata to STATEFILE. The three last arguments may be repeated
-# to save multiple lines to STATEFILE.
+# Saves build metadata to STATEFILE. The two last arguments may be repeated to
+# save multiple lines to STATEFILE.
 save_metadata() {
     local FILE="$1"; shift
     mkpath "$FILE" \
         || die 7 "Cannot create dir for metadata file '$FILE'"
-    printf "%s %s %s\n" "$@" >>"$FILE"
+    printf "%s %s\n" "$@" >>"$FILE"
 }
 
-# Usage: load_metadata STATEFILE TYPE FILE
+# Usage: load_metadata STATEFILE TYPE:FILE
 #
-# Outputs checksum of specified FILE as read from STATEFILE.
+# Outputs checksum of specified TYPE:FILE as read from STATEFILE. TYPE is a
+# filename prefix, either 'SCRIPT', 'SOURCE' or 'TARGET'.
 load_metadata() {
-    local METAFILE="$1" TYPE="$2" FILE="$3" CHECKSUM2 TYPE2 FILE2
-    [ -e "$METAFILE" ] && while IFS=" " read -r CHECKSUM2 TYPE2 FILE2; do
-        if [ "$TYPE2" = "$TYPE" -a "$FILE2" = "$FILE" ]; then
+    local METAFILE="$1" FILE="$2" CHECKSUM2 FILE2
+    [ -e "$METAFILE" ] && while IFS=" " read -r CHECKSUM2 FILE2; do
+        if [ "$FILE2" = "$FILE" ]; then
             echo "$CHECKSUM2"
             return 0
         fi
@@ -167,7 +168,7 @@ strip_path() {
         *) die 30 "strip_path: Unknown type '$2' for file '$3'"
             "Type must be 'SCRIPT', 'SOURCE' or 'TARGET'." ;;
     esac
-    eval "$1=\${3#\$FIX_${2}_DIR/}"
+    eval "$1=\"\$2:\${3#\$FIX_${2}_DIR/}\""
 }
 
 # After build: Overwrite target with tempfile, and store result in metadata.
@@ -179,7 +180,7 @@ build_finalize() {
     strip_path FILE "$TYPE" "$TARGET"
 
     # update target
-    local OLD_CHECKSUM="$(load_metadata "$DBFILE" "$TYPE" "$FILE")"
+    local OLD_CHECKSUM="$(load_metadata "$DBFILE" "$FILE")"
     finalize_tmpfile "$TARGET_TMP" "$TARGET" \
         "$TMP_CHECKSUM" "$OLD_CHECKSUM"
 
@@ -187,14 +188,14 @@ build_finalize() {
     if [ "$FIX_PARENT" ]; then
         local DBPATH="${DBFILE%/*}"
         local DBFILE2="$DBPATH/$FIX_PARENT"
-        save_metadata "$DBFILE2--fixing" "$TMP_CHECKSUM" "$TYPE" "$FILE"
+        save_metadata "$DBFILE2--fixing" "$TMP_CHECKSUM" "$FILE"
     fi
 
     # write to metadata tempfile
     local SCRIPT_CHECKSUM="$(file_checksum "$SCRIPT")"
     save_metadata "$DBFILE--fixing" \
-        "$SCRIPT_CHECKSUM" "SCRIPT" "${SCRIPT#$FIX_SCRIPT_DIR/}" \
-        "$TMP_CHECKSUM"    "$TYPE"  "$FILE"
+        "$SCRIPT_CHECKSUM" "SCRIPT:${SCRIPT#$FIX_SCRIPT_DIR/}" \
+        "$TMP_CHECKSUM"    "$FILE"
     reverse "$DBFILE--fixing" \
         && mv -f -- "$DBFILE--fixing" "$DBFILE" >&2
 }
@@ -278,7 +279,7 @@ if [ "$OPT_SOURCE" ]; then
         [ -r "$FULL" ] || die 1 "No read permission for source file '$FULL'"
         DBFILE="$FIX_DIR/state/$FIX_PARENT"
         CHECKSUM="$(file_checksum "$FULL")"
-        save_metadata "$DBFILE--fixing" "$CHECKSUM" "SOURCE" "$SOURCE"
+        save_metadata "$DBFILE--fixing" "$CHECKSUM" "SOURCE:$SOURCE"
     done
 else
     for TARGET; do

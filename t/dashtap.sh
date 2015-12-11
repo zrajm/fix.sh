@@ -1004,7 +1004,7 @@ mkmetadata() {
     CHECKSUM="${CHECKSUM%% *}"
     case "$TYPE" in
         SCRIPT|SOURCE|TARGET)
-            echo "$CHECKSUM $TYPE $FILE" ;;
+            echo "$CHECKSUM $TYPE:$FILE" ;;
         *)  echo "mkmetadata: ERROR: Bad type '$TYPE'" \
                 "(allowed are SCRIPT|SOURCE|TARGET)"
             error 127 ;;
@@ -1030,7 +1030,7 @@ first_dep_is() {
         return
     }
     case "$FIRST" in
-        *" $TARGET") pass "$DESCR" ;;
+        *":$TARGET") pass "$DESCR" ;;
         *)           fail "$DESCR" ;;
     esac
 }
