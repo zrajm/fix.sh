@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -ue
-VERSION=0.11.2
+VERSION=0.11.3
 
 ##############################################################################
 ##                                                                          ##
@@ -79,10 +79,10 @@ mkpath() {
 # Saves build metadata to STATEFILE. The two last arguments may be repeated to
 # save multiple lines to STATEFILE.
 save_metadata() {
-    local FILE="$1"; shift
-    mkpath "$FILE" \
-        || die 7 "Cannot create dir for metadata file '$FILE'"
-    printf "%s %s\n" "$@" >>"$FILE"
+    local STATEFILE="$1"; shift
+    mkpath "$STATEFILE" \
+        || die 7 "Cannot create dir for metadata file '$STATEFILE'"
+    printf "%s %s\n" "$@" >>"$STATEFILE"
 }
 
 # Usage: load_metadata STATEFILE TYPE:FILE
@@ -90,13 +90,13 @@ save_metadata() {
 # Outputs checksum of specified TYPE:FILE as read from STATEFILE. TYPE is a
 # filename prefix, either 'SCRIPT', 'SOURCE' or 'TARGET'.
 load_metadata() {
-    local METAFILE="$1" FILE="$2" CHECKSUM2 FILE2
-    [ -e "$METAFILE" ] && while IFS=" " read -r CHECKSUM2 FILE2; do
-        if [ "$FILE2" = "$FILE" ]; then
+    local STATEFILE="$1" DEPFILE="$2" CHECKSUM2 DEPFILE2
+    [ -e "$STATEFILE" ] && while IFS=" " read -r CHECKSUM2 DEPFILE2; do
+        if [ "$DEPFILE2" = "$DEPFILE" ]; then
             echo "$CHECKSUM2"
             return 0
         fi
-    done <"$METAFILE"
+    done <"$STATEFILE"
     return 1
 }
 
