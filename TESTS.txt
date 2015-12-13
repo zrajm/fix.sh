@@ -9,9 +9,11 @@
 * [100%] b. Environment variables
 ** DONE b01. Arguments passed to buildscript
    CLOSED: [2015-12-07 Mon 08:19]
-** DONE b02. $FIX_LEVEL value in dep
+** DONE b02. $PATH value in target and targetdep
+   CLOSED: [2015-12-12 Sat 14:31]
+** DONE b03. $FIX_LEVEL value in dep
    CLOSED: [2015-11-13 Fri 01:52]
-** DONE b03. $FIX_PARENT value in dep
+** DONE b04. $FIX_PARENT value in dep
    CLOSED: [2015-11-13 Fri 01:52]
 * [100%] c. Early error messages
   Check early error messages (missing files, bad options) are emitted properly.

@@ -25,7 +25,7 @@ END_SCRIPT
 write_file a+x fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
 	echo "PRE"
-	$FIX DEPTARGET
+	fix DEPTARGET
 	cat "$FIX_TARGET_DIR/DEPTARGET"
 	echo "POST"
 END_SCRIPT

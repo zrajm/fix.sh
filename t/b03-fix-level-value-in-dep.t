@@ -14,14 +14,14 @@ mkdir fix src
 write_file a+x fix/ZERO.fix <<-"END_SCRIPT"
 	#!/bin/sh
 	echo "ZERO: $FIX_LEVEL"
-	$FIX ONE
+	fix ONE
 	cat "$FIX_TARGET_DIR/ONE"
 END_SCRIPT
 
 write_file a+x fix/ONE.fix <<-"END_SCRIPT"
 	#!/bin/sh
 	echo "ONE: $FIX_LEVEL"
-	$FIX TWO
+	fix TWO
 	cat "$FIX_TARGET_DIR/TWO"
 END_SCRIPT
 

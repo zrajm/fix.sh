@@ -44,7 +44,7 @@ echo "$OLD_LEAF_META"   | write_file .fix/state/LEAFTARGET
 
 write_file a+x fix/DEPTARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
-	$FIX LEAFTARGET
+	fix LEAFTARGET
 	cat "$FIX_TARGET_DIR/LEAFTARGET"
 	echo "DEP"
 END_SCRIPT
@@ -74,7 +74,7 @@ echo "$OLD_DEP_META"   | write_file .fix/state/DEPTARGET
 
 write_file a+x fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
-	$FIX DEPTARGET
+	fix DEPTARGET
 	cat "$FIX_TARGET_DIR/DEPTARGET"
 	echo "TARGET"
 END_SCRIPT

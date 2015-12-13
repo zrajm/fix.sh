@@ -2,10 +2,6 @@
 
 * Program
 ** TODO strip_path() should be called from write_metadata() (?)
-** TODO Add `fix` executable to $PATH                                 :v0_12:
-   Create `.fix/bin` directory, put that first in $PATH and add symlink to the
-   current executable? This should make it possible to invoke `fix.sh` as just
-   `fix` from inside the buildscripts.
 ** TODO Options --script-dir, --source-dir, --target-dir              :v0_12:
    For setting $FIX_SCRIPT_DIR, $FIX_SOURCE_DIR, $FIX_TARGET_DIR.
 ** TODO Run in any dir in worktree                                    :v0_12:
@@ -145,6 +141,9 @@
 ** TODO Does $FIX_PARENT really need to be exported(?)
    It is set from $FIX_TARGET early on, so does it need to be exported at all?
 * System tests
+** TODO Test setting of $PATH
+   Also make sure that subdependencies do not get the leading `$PATH` directory
+   added multiple times.
 ** TODO Rewrite mkmetadata to accept one argument + rewrite tests
    TYPE:FILE, instead of those as two separate arguments.
 ** TODO Create dep -> dep -> dep test with modified buildscript for leaf dep
@@ -509,3 +508,14 @@
    should be collected (and stored in the state files) as one string.
 
    Test to see if this refactoring would simplify the code.
+** DONE Add `fix` executable to $PATH                                 :v0_12:
+   CLOSED: [2015-12-11 Fri 18:02]
+   Create `.fix/bin` directory, put that first in $PATH and add symlink to the
+   current executable? This should make it possible to invoke `fix.sh` as just
+   `fix` from inside the buildscripts.
+
+   * Removed `$FIX` variable.
+
+   * Prepend a directory to $PATH with a link to Fix (it is always called `fix`
+     (even for `fix.sh`) so that buildscripts always can invoke fix with the
+     same command.

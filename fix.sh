@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -ue
-VERSION=0.11.4
+VERSION=0.11.5
 
 ##############################################################################
 ##                                                                          ##
@@ -114,6 +114,17 @@ file_checksum() {
 # was invoked from a buildscript.
 is_mother() {
     [ "$FIX_LEVEL" -eq 0 ]
+}
+
+# Usage: add_fix_to_path DIR
+#
+# Creates DIR (which must be an absolute path), and puts a hardlink in DIR
+# (called `fix`) linking to the currently running executable.
+add_fix_to_path() {
+    local DIR="$1" LINK="$1/fix" FIX="$(readlink -f "$0")"
+    mkpath "$LINK" || die 7 "Cannot create dir for executable '$LINK'"
+    [ -e "$LINK" ] || ln "$FIX" "$LINK"
+    PATH="$DIR:$PATH"
 }
 
 establish_lock() {
@@ -252,13 +263,13 @@ unset COUNT ARG
 [ "$#" = 0 ] && die 15 "No target(s) specified"
 if is_mother; then                             # mother process
     export FIX_DEBUG FIX_FORCE FIX_LEVEL FIX_PARENT FIX_TARGET
-    export FIX="$(readlink -f "$0")"
     export FIX_PID="$$"
     export FIX_DIR=".fix"
     export FIX_LOCK="$FIX_DIR/lock.pid"
     export FIX_SCRIPT_DIR="fix"
     export FIX_SOURCE_DIR="src"
     export FIX_TARGET_DIR="build"
+    add_fix_to_path "$(readlink -f "$FIX_DIR")/bin"
     [ -n "$OPT_SOURCE" ] \
         && die 15 "Option '--source' can only be used inside buildscript"
     [ -d "$FIX_SOURCE_DIR" ] \
@@ -267,7 +278,7 @@ if is_mother; then                             # mother process
         || die 10 "Script dir '$FIX_SCRIPT_DIR' does not exist"
     establish_lock "$FIX_LOCK" \
         || die 8 "Cannot create lockfile '$FIX_LOCK'" \
-        "Is ${FIX##*/} is already running? Is lockfile dir writeable?"
+        "Is ${0##*/} is already running? Is lockfile dir writeable?"
 fi
 
 ##############################################################################
