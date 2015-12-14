@@ -10,7 +10,7 @@ EOF
 init_test
 mkdir src
 
-ERRMSG="ERROR: Script dir 'fix' does not exist"
+ERRMSG="ERROR: Script dir '$PWD/fix' does not exist"
 
 file_not_exists build/TARGET         "Before build: Target shouldn't exist"
 file_not_exists .fix/state/TARGET    "Before build: Metadata file shouldn't exist"

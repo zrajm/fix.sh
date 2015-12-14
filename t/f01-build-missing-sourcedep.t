@@ -18,9 +18,9 @@ write_file a+x fix/TARGET.fix <<-"END_SCRIPT"
 	echo "POST"
 END_SCRIPT
 
-ERRMSG="ERROR: Source file 'src/SOURCE.txt' does not exist
-ERROR: Buildscript 'fix/TARGET.fix' returned exit status 143
-    (Old target unchanged. New, failed target written to 'build/TARGET--fixing'.)"
+ERRMSG="ERROR: Source file '$PWD/src/SOURCE.txt' does not exist
+ERROR: Buildscript '$PWD/fix/TARGET.fix' returned exit status 143
+    (Old target unchanged. New, failed target written to '$PWD/build/TARGET--fixing'.)"
 
 file_not_exists build/TARGET         "Before build: Target shouldn't exist"
 file_not_exists .fix/state/TARGET    "Before build: Metadata file shouldn't exist"

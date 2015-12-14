@@ -22,9 +22,9 @@ write_file a+x fix/TARGET.fix <<-"END_SCRIPT"
 	echo "POST"
 END_SCRIPT
 
-ERRMSG="ERROR: Buildscript 'fix/DEPTARGET.fix' does not exist
-ERROR: Buildscript 'fix/TARGET.fix' returned exit status 143
-    (Old target unchanged. New, failed target written to 'build/TARGET--fixing'.)"
+ERRMSG="ERROR: Buildscript '$PWD/fix/DEPTARGET.fix' does not exist
+ERROR: Buildscript '$PWD/fix/TARGET.fix' returned exit status 143
+    (Old target unchanged. New, failed target written to '$PWD/build/TARGET--fixing'.)"
 
 ############################################################################
 

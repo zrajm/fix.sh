@@ -11,7 +11,7 @@ init_test
 mkdir fix src
 
 write_file fix/TARGET.fix
-ERRMSG="ERROR: No execute permission for buildscript 'fix/TARGET.fix'"
+ERRMSG="ERROR: No execute permission for buildscript '$PWD/fix/TARGET.fix'"
 
 file_not_exists build/TARGET         "Before build: Target shouldn't exist"
 file_not_exists .fix/state/TARGET    "Before build: Metadata file shouldn't exist"

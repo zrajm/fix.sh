@@ -20,8 +20,8 @@ write_file -1sec build/TARGET <<-"END_TARGET"
 	OUTPUT2
 END_TARGET
 
-ERRMSG="ERROR: Old target 'build/TARGET' modified by user, won't overwrite
-    (Erase old target before rebuild. New target kept in 'build/TARGET--fixing'.)"
+ERRMSG="ERROR: Old target '$PWD/build/TARGET' modified by user, won't overwrite
+    (Erase old target before rebuild. New target kept in '$PWD/build/TARGET--fixing'.)"
 
 # Don't check metadata timestamp (only content is relevant).
 timestamp TARGET        build/TARGET

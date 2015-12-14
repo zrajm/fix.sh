@@ -3,18 +3,29 @@
 * VAGUE FUTURE IDEAS
 ** TODO Garbage collecting of metadata files?
 ** TODO Handling of circular dependencies
-* [100%] a. Options
+* [16%] a. Options
 ** DONE a01. -V and --version options
    CLOSED: [2015-11-16 Mon 11:38]
+** TODO a02. -h and --help options
+** TODO a03. -D and --debug options
+** TODO a04. -f and --force options
 * [100%] b. Environment variables
 ** DONE b01. Arguments passed to buildscript
    CLOSED: [2015-12-07 Mon 08:19]
 ** DONE b02. $PATH value in target and targetdep
    CLOSED: [2015-12-12 Sat 14:31]
-** DONE b03. $FIX_LEVEL value in dep
+** DONE b03. $FIX_LEVEL values
    CLOSED: [2015-11-13 Fri 01:52]
-** DONE b04. $FIX_PARENT value in dep
+** DONE b04. $FIX_PARENT values
    CLOSED: [2015-11-13 Fri 01:52]
+** DONE b05. $FIX_DIR default value
+   CLOSED: [2015-12-13 Sun 21:39]
+** DONE b06. $FIX_SCRIPT_DIR default value
+   CLOSED: [2015-12-14 Mon 18:26]
+** DONE b07. $FIX_SOURCE_DIR default value
+   CLOSED: [2015-12-14 Mon 18:30]
+** DONE b08. $FIX_TARGET_DIR default value
+   CLOSED: [2015-12-14 Mon 18:32]
 * [100%] c. Early error messages
   Check early error messages (missing files, bad options) are emitted properly.
 ** DONE c01. Build, missing sourcedir

@@ -4,28 +4,33 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 . "t/dashtap.sh"
 title - <<"EOF"
-Should output the name of the tempfile connected to standard output, when
-printing the arguments received by the buildscript.
+Should test that $FIX_DIR has the correct value set in builds.
 EOF
 
 init_test
-mkdir fix src
+mkdir src
 
-write_file a+x fix/TARGET.fix <<-"END_SCRIPT"
+write_file a+x fix/ZERO.fix <<-"END_SCRIPT"
 	#!/bin/sh
-	for ARG; do
-	    echo ">$ARG<"
-	done
+	echo "ZERO: $FIX_DIR"
+	fix ONE
+	cat "$FIX_TARGET_DIR/ONE"
 END_SCRIPT
 
-OUTPUT=">$PWD/build/TARGET--fixing<"
+write_file a+x fix/ONE.fix <<-"END_SCRIPT"
+	#!/bin/sh
+	echo "ONE: $FIX_DIR"
+END_SCRIPT
 
-"$TESTCMD" TARGET >stdout 2>stderr; RC="$?"
+OUTPUT="ZERO: $PWD/.fix
+ONE: $PWD/.fix"
+
+"$TESTCMD" ZERO >stdout 2>stderr; RC="$?"
 
 is              "$RC"              0             "Exit status"
 file_is         stdout             "$NADA"       "Standard output"
 file_is         stderr             "$NADA"       "Standard error"
-file_is         build/TARGET       "$OUTPUT"     "Target"
+file_is         build/ZERO         "$OUTPUT"      "Target"
 
 done_testing
 

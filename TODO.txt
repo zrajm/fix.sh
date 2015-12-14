@@ -4,10 +4,15 @@
 ** TODO strip_path() should be called from write_metadata() (?)
 ** TODO Options --script-dir, --source-dir, --target-dir              :v0_12:
    For setting $FIX_SCRIPT_DIR, $FIX_SOURCE_DIR, $FIX_TARGET_DIR.
+
+   Expand paths given by user to full absolute paths internally.
 ** TODO Run in any dir in worktree                                    :v0_12:
    When running from worktree root, require $FIX_TARGET_DIR as prefix of target
    prefix. Should also be able to run from inside any subdir of worktree.
 ** TODO Milestone: Version 0.12 - Easier use of paths --------------- :v0_12:
+** TODO Use relative paths in error messages
+   Error messages should output paths relative to the user's current working
+   directory, for clarity, and to cut down on error message length.
 ** TODO Pass more arguments to buildscripts(?)
    Fix passes:
 
@@ -519,3 +524,13 @@
    * Prepend a directory to $PATH with a link to Fix (it is always called `fix`
      (even for `fix.sh`) so that buildscripts always can invoke fix with the
      same command.
+** DONE Directories should be absolute paths                          :v0_12:
+   CLOSED: [2015-12-14 Mon 19:19]
+   The following directory variables should all be re-written into absolute
+   paths by Fix early on, and these absolute paths is what then should be
+   passed down the dependency chain.
+
+     + $FIX_DIR
+     + $FIX_SCRIPT_DIR
+     + $FIX_SOURCE_DIR
+     + $FIX_TARGET_DIR

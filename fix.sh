@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -ue
-VERSION=0.11.5
+VERSION=0.11.6
 
 ##############################################################################
 ##                                                                          ##
@@ -264,11 +264,11 @@ unset COUNT ARG
 if is_mother; then                             # mother process
     export FIX_DEBUG FIX_FORCE FIX_LEVEL FIX_PARENT FIX_TARGET
     export FIX_PID="$$"
-    export FIX_DIR=".fix"
+    export FIX_DIR="$PWD/.fix"
     export FIX_LOCK="$FIX_DIR/lock.pid"
-    export FIX_SCRIPT_DIR="fix"
-    export FIX_SOURCE_DIR="src"
-    export FIX_TARGET_DIR="build"
+    export FIX_SCRIPT_DIR="$PWD/fix"
+    export FIX_SOURCE_DIR="$PWD/src"
+    export FIX_TARGET_DIR="$PWD/build"
     add_fix_to_path "$(readlink -f "$FIX_DIR")/bin"
     [ -n "$OPT_SOURCE" ] \
         && die 15 "Option '--source' can only be used inside buildscript"
