@@ -9,7 +9,7 @@
 ** TODO a02. -h and --help options
 ** TODO a03. -D and --debug options
 ** TODO a04. -f and --force options
-* [100%] b. Environment variables
+* [88%] b. Environment variables
 ** DONE b01. Arguments passed to buildscript
    CLOSED: [2015-12-07 Mon 08:19]
 ** DONE b02. $PATH value in target and targetdep
@@ -26,6 +26,14 @@
    CLOSED: [2015-12-14 Mon 18:30]
 ** DONE b08. $FIX_TARGET_DIR default value
    CLOSED: [2015-12-14 Mon 18:32]
+** TODO `.fix/bin/fix` link
+   This hardlink should, when created by Fix, always point to the current
+   version of Fix. Previously it wasn't always recreated when needed, meaning
+   that it sometimes pointed to a previous version. Test should write some
+   (comment) to Fix executable, and see that this also appears in the hardlink.
+
+   Don't test what kind of link it is (we don't care about that) only make sure
+   that it points to the correct script.
 * [100%] c. Early error messages
   Check early error messages (missing files, bad options) are emitted properly.
 ** DONE c01. Build, missing sourcedir

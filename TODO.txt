@@ -534,3 +534,10 @@
      + $FIX_SCRIPT_DIR
      + $FIX_SOURCE_DIR
      + $FIX_TARGET_DIR
+** DONE BUGFIX: Always overwrite link to Fix in binpath
+   CLOSED: [2015-12-14 Mon 19:39]
+   The hardlink created in the `.fix/bin` directory (which is added to `$PATH`)
+   must be recreated every time, since Emacs (and probably other editors as
+   well) break the link, making the link point to an older version of Fix
+   instead of the current one.
+
