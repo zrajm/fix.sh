@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -ue
-VERSION=0.11.7
+VERSION=0.11.8
 
 ##############################################################################
 ##                                                                          ##
@@ -234,11 +234,11 @@ build() {
 # FIX_* variables are exported and inherited by child processes.
 : ${FIX_DEBUG:=""}                             # --debug  (default off)
 : ${FIX_FORCE:=""}                             # --force  (default off)
-: ${OPT_SOURCE:=""}                            # --source (default off)
 : ${FIX_TARGET:=""}
 : ${FIX_LEVEL:=-1}                             # 0 = ran from command line
 FIX_LEVEL="$(( FIX_LEVEL + 1 ))"               #   +1 for each invokation
 FIX_PARENT="$FIX_TARGET"
+OPT_SOURCE=""                                  # --source
 
 COUNT="$#"
 while [ "$COUNT" != 0 ]; do                    # read command line options

@@ -146,6 +146,8 @@
 ** TODO Does $FIX_PARENT really need to be exported(?)
    It is set from $FIX_TARGET early on, so does it need to be exported at all?
 * System tests
+** TODO Passing of options as environment variables
+   $OPT_INIT, $OPT_SOURCE should not work. $FIX_FORCE, $FIX_DEBUG should work.
 ** TODO Test setting of $PATH
    Also make sure that subdependencies do not get the leading `$PATH` directory
    added multiple times.
