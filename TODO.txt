@@ -543,3 +543,5 @@
    well) break the link, making the link point to an older version of Fix
    instead of the current one.
 
+** DONE Added `--init` option
+   CLOSED: [2015-12-15 Tue 09:04]

@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -ue
-VERSION=0.11.8
+VERSION=0.11.9
 
 ##############################################################################
 ##                                                                          ##
@@ -36,6 +36,7 @@ Options:
   -D, --debug    enable debug mode (extra output on standard error)
   -f, --force    overwrite target files modified by user
   -h, --help     display this information and exit
+      --init     initialize work directory
       --source   declare source dependency (only allowed in buildscripts)
   -V, --version  output version information and exit
 
@@ -53,6 +54,13 @@ There is NO WARRANTY, to the extent permitted by law.
 
 For the latest version of Fix, see <https://github.com/zrajm/fix.sh>.
 END_VERSION
+    exit
+}
+
+init() {
+    local FIX_DIR="$1"
+    [ -e "$FIX_DIR" ] && die 1 "Fix dir '$FIX_DIR' already exists"
+    mkpath "$FIX_DIR/" || die 1 "Cannot create fix dir '$FIX_DIR'"
     exit
 }
 
@@ -238,6 +246,7 @@ build() {
 : ${FIX_LEVEL:=-1}                             # 0 = ran from command line
 FIX_LEVEL="$(( FIX_LEVEL + 1 ))"               #   +1 for each invokation
 FIX_PARENT="$FIX_TARGET"
+OPT_INIT=""                                    # --init
 OPT_SOURCE=""                                  # --source
 
 COUNT="$#"
@@ -247,6 +256,7 @@ while [ "$COUNT" != 0 ]; do                    # read command line options
         -D|--debug) FIX_DEBUG=1  ;;
         -f|--force) FIX_FORCE=1  ;;
         -h|--help)  usage        ;;
+        --init)     OPT_INIT=1   ;;
         --source)   OPT_SOURCE=1 ;;
         -V|--version) version    ;;
         --) while [ "$COUNT" != 0 ]; do        #   put remaining args
@@ -259,6 +269,8 @@ while [ "$COUNT" != 0 ]; do                    # read command line options
     esac
 done
 unset COUNT ARG
+
+[ "$OPT_INIT" ] && init "$PWD/.fix"
 
 [ "$#" = 0 ] && die 15 "No target(s) specified"
 if is_mother; then                             # mother process
