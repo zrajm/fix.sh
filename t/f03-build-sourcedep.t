@@ -16,8 +16,8 @@ END_SOURCE
 
 write_file a+x fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
-	echo "PRE"
 	fix --source SOURCE.txt
+	echo "PRE"
 	cat "$FIX_SOURCE_DIR/SOURCE.txt"
 	echo "POST"
 END_SCRIPT

@@ -1,6 +1,5 @@
 #!/bin/sh
-echo "PRE"
-echo "SOCUHOSCUHOSUCRHSRC<OHU"
 fix --source SOURCE.txt
+echo "PRE"
 cat "$FIX_SOURCE_DIR/SOURCE.txt"
 echo "POST"
