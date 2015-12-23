@@ -4,14 +4,14 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 . "t/dashtap.sh"
 title - <<"EOF"
-Attempt to build target with buildscript with read bits unset.
+Attempt to build target with buildscript with execute bits unset.
 EOF
 
 init_test
-mkdir fix src
+mkdir .fix fix src
 
-write_file a-r fix/TARGET.fix
-ERRMSG="ERROR: No read permission for buildscript '$PWD/fix/TARGET.fix'"
+write_file fix/TARGET.fix
+ERRMSG="ERROR: No execute permission for buildscript '$PWD/fix/TARGET.fix'"
 
 file_not_exists build/TARGET         "Before build: Target shouldn't exist"
 file_not_exists .fix/state/TARGET    "Before build: Metadata file shouldn't exist"

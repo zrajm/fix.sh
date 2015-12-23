@@ -10,7 +10,7 @@ b02.)
 EOF
 
 init_test
-mkdir fix src
+mkdir .fix fix src
 
 write_file a+x -1sec fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh

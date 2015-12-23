@@ -9,7 +9,7 @@ target exists, but the metadata for them both have been erased.
 EOF
 
 init_test
-mkdir fix src
+mkdir .fix fix src
 
 ############################################################################
 ## Dependency Target

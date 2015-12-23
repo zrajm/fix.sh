@@ -6,9 +6,8 @@
    For setting $FIX_SCRIPT_DIR, $FIX_SOURCE_DIR, $FIX_TARGET_DIR.
 
    Expand paths given by user to full absolute paths internally.
-** TODO Run in any dir in worktree                                    :v0_12:
-   When running from worktree root, require $FIX_TARGET_DIR as prefix of target
-   prefix. Should also be able to run from inside any subdir of worktree.
+** TODO Specify target relative to current dir, not work tree root    :v0_12:
+   Allow absolute paths as long as they're in the current work tree root.
 ** TODO Milestone: Version 0.12 - Easier use of paths --------------- :v0_12:
 ** TODO Use relative paths in error messages
    Error messages should output paths relative to the user's current working
@@ -49,15 +48,15 @@
 ** TODO Add man page
 ** TODO Allow target to be specified relative to current dir
    Currently, if you're rebuilding a target called `build/TARGET`, and
-   $FIX_TARGET_DIR is set to `build`, you'll need to be in the root of the
-   worktree and invoke Fix as:
+   $FIX_TARGET_DIR is set to `build`, you'll need to be in the root of the work
+   tree and invoke Fix as:
 
        fix TARGET
 
    This should not be the case. Targets should always be specified relative to
    the users current directory, so that if you were *inside* $FIX_TARGET_DIR,
-   you should use the above command, but at the root of the worktree you should
-   instead name the target dir explicitly and use:
+   you should use the above command, but at the root of the work tree you
+   should instead name the target dir explicitly and use:
 
        fix build/TARGET
 
@@ -542,6 +541,14 @@
    must be recreated every time, since Emacs (and probably other editors as
    well) break the link, making the link point to an older version of Fix
    instead of the current one.
-
 ** DONE Added `--init` option
    CLOSED: [2015-12-15 Tue 09:04]
+** DONE Allow running of Fix from any subdir in work tree
+   CLOSED: [2015-12-23 Wed 16:18]
+   Fix now finds the work tree root by looking for the closest `.fix`
+   directory, and builds relative to that, rather than trying to build relative
+   to the current directory. (Buildscripts will always run with the
+   `$FIX_SOURCE_DIR` as the current directory.)
+
+   This means that filename of targets on the command line must be written
+   relative to the work tree root (for now).

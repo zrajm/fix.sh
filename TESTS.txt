@@ -9,22 +9,26 @@
 ** TODO a02. -h and --help options
 ** TODO a03. -D and --debug options
 ** TODO a04. -f and --force options
-* [88%] b. Environment variables
+* [90%] b. Environment variables
 ** DONE b01. Arguments passed to buildscript
    CLOSED: [2015-12-07 Mon 08:19]
 ** DONE b02. $PATH value in target and targetdep
    CLOSED: [2015-12-12 Sat 14:31]
-** DONE b03. $FIX_LEVEL values
+** DONE b03. $FIX_WORK_TREE value
+   CLOSED: [2015-12-20 Sun 15:20]
+** DONE b04. $FIX_WORK_TREE value in subdir
+   CLOSED: [2015-12-21 Mon 09:14]
+** DONE b05. $FIX_LEVEL values
    CLOSED: [2015-11-13 Fri 01:52]
-** DONE b04. $FIX_PARENT values
+** DONE b06. $FIX_PARENT values
    CLOSED: [2015-11-13 Fri 01:52]
-** DONE b05. $FIX_DIR default value
+** DONE b07. $FIX_DIR default value
    CLOSED: [2015-12-13 Sun 21:39]
-** DONE b06. $FIX_SCRIPT_DIR default value
+** DONE b08. $FIX_SCRIPT_DIR default value
    CLOSED: [2015-12-14 Mon 18:26]
-** DONE b07. $FIX_SOURCE_DIR default value
+** DONE b09. $FIX_SOURCE_DIR default value
    CLOSED: [2015-12-14 Mon 18:30]
-** DONE b08. $FIX_TARGET_DIR default value
+** DONE b10. $FIX_TARGET_DIR default value
    CLOSED: [2015-12-14 Mon 18:32]
 ** TODO `.fix/bin/fix` link
    This hardlink should, when created by Fix, always point to the current
@@ -36,7 +40,17 @@
    that it points to the correct script.
 * [100%] c. Early error messages
   Check early error messages (missing files, bad options) are emitted properly.
-** DONE c01. Build, missing sourcedir
+** DONE c01. Build, missing fixdir
+   CLOSED: [2015-12-17 tor 08:33]
+   Should fail to build target if work tree cannot be found (i.e. when there is
+   no '.fix' dir in current dir or any of its parents).
+
+   * FAILURE
+     + Exit status: 14
+     + Target: not existing
+     + Metadata: not existing
+     + Tempfile: not existing
+** DONE c02. Build, missing sourcedir
    Attempt to build target when there is no source dir.
 
    * FAILURE
@@ -44,7 +58,7 @@
      + Target: not existing
      + Metadata: not existing
      + Tempfile: not existing
-** DONE c02. Build, missing scriptdir
+** DONE c03. Build, missing scriptdir
    Attempt to build target when there is no script dir.
 
    * FAILURE
@@ -52,7 +66,7 @@
      + Target: not existing
      + Metadata: not existing
      + Tempfile: not existing
-** DONE c03. Build, missing buildscript
+** DONE c04. Build, missing buildscript
    Attempt to build target when there is no buildscript for it.
 
    * FAILURE
@@ -60,7 +74,7 @@
      + Target: not existing
      + Metadata: not existing
      + Tempfile: not existing
-** DONE c04. Build, buildscript missing read bits
+** DONE c05. Build, buildscript missing read bits
    Attempt to build target with buildscript with read bits unset.
 
    * FAILURE
@@ -68,7 +82,7 @@
      + Target: not existing
      + Metadata: not existing
      + Tempfile: not existing
-** DONE c05. Build, buildscript missing execute bits
+** DONE c06. Build, buildscript missing execute bits
    Attempt to build target with buildscript with execute bits unset.
 
    * FAILURE
@@ -76,7 +90,7 @@
      + Target: not existing
      + Metadata: not existing
      + Tempfile: not existing
-** DONE c06. Using '--source' option outside buildscript
+** DONE c07. Using '--source' option outside buildscript
    CLOSED: [2014-09-11 Thu 08:57]
    Attempt to declare source dependency outside of a buildscript (i.e. using
    '--source' option from the command line).

@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -ue
-VERSION=0.11.9
+VERSION=0.11.10
 
 ##############################################################################
 ##                                                                          ##
@@ -36,7 +36,7 @@ Options:
   -D, --debug    enable debug mode (extra output on standard error)
   -f, --force    overwrite target files modified by user
   -h, --help     display this information and exit
-      --init     initialize work directory
+      --init     init metadata and set current dir as work tree root
       --source   declare source dependency (only allowed in buildscripts)
   -V, --version  output version information and exit
 
@@ -80,6 +80,22 @@ die() {
 mkpath() {
     local DIR="${1%/*}"                        # strip trailing filename
     [ -d "$DIR" ] || mkdir -p -- "$DIR"
+}
+
+# Usage: find_work_tree VAR
+#
+# Locate work tree root directory. This searches for the `.fix` dir in the
+# current directory, then upwards towards root. If found, return true and set
+# VAR will be set to the path of the found directory. Otherwise return false
+# (without setting VAR).
+find_work_tree() {
+    set -- "$1" "$PWD"
+    while :; do
+        [ -d "$2/.fix" ] && break
+        [ -z "$2"      ] && return 1
+        set -- "$1" "${2%/*}"
+    done
+    eval "$1="'${2:-/}'
 }
 
 # Usage: save_metadata STATEFILE ( TYPE:FILE CHECKSUM )...
@@ -274,18 +290,22 @@ unset COUNT ARG
 
 [ "$#" = 0 ] && die 15 "No target(s) specified"
 if is_mother; then                             # mother process
-    export FIX_DEBUG FIX_FORCE FIX_LEVEL FIX_PARENT FIX_TARGET
+    export FIX_DEBUG FIX_FORCE FIX_LEVEL FIX_PARENT FIX_TARGET FIX_WORK_TREE
+    find_work_tree FIX_WORK_TREE \
+        || die 14 "Not inside a Fix work tree (Have you run 'fix --init'?)"
     export FIX_PID="$$"
-    export FIX_DIR="$PWD/.fix"
+    export FIX_DIR="$FIX_WORK_TREE/.fix"
     export FIX_LOCK="$FIX_DIR/lock.pid"
-    export FIX_SCRIPT_DIR="$PWD/fix"
-    export FIX_SOURCE_DIR="$PWD/src"
-    export FIX_TARGET_DIR="$PWD/build"
+    export FIX_SCRIPT_DIR="$FIX_WORK_TREE/fix"
+    export FIX_SOURCE_DIR="$FIX_WORK_TREE/src"
+    export FIX_TARGET_DIR="$FIX_WORK_TREE/build"
     add_fix_to_path "$(readlink -f "$FIX_DIR")/bin"
     [ -n "$OPT_SOURCE" ] \
         && die 15 "Option '--source' can only be used inside buildscript"
     [ -d "$FIX_SOURCE_DIR" ] \
         || die 10 "Source dir '$FIX_SOURCE_DIR' does not exist"
+    cd "$FIX_SOURCE_DIR" 2>/dev/null \
+        || die 10 "Cannot change current dir to '$FIX_SOURCE_DIR'"
     [ -d "$FIX_SCRIPT_DIR" ] \
         || die 10 "Script dir '$FIX_SCRIPT_DIR' does not exist"
     establish_lock "$FIX_LOCK" \

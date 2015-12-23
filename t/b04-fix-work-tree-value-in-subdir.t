@@ -4,37 +4,31 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 . "t/dashtap.sh"
 title - <<"EOF"
-Should build target with two levels of dependecies which each output
-$FIX_PARENT.
+Should test that $FIX_WORK_TREE is correctly set everywhere, when running Fix
+from inside a subdir in the work tree.
 EOF
 
 init_test
-mkdir fix src
+mkdir .fix fix src SUBDIR
 
 write_file a+x fix/ZERO.fix <<-"END_SCRIPT"
 	#!/bin/sh
-	echo "ZERO: >$FIX_PARENT<"
+	echo "ZERO: $FIX_WORK_TREE"
 	fix ONE
 	cat "$FIX_TARGET_DIR/ONE"
 END_SCRIPT
 
 write_file a+x fix/ONE.fix <<-"END_SCRIPT"
 	#!/bin/sh
-	echo "ONE: >$FIX_PARENT<"
-	fix TWO
-	cat "$FIX_TARGET_DIR/TWO"
+	echo "ONE: $FIX_WORK_TREE"
 END_SCRIPT
 
-write_file a+x fix/TWO.fix <<-"END_SCRIPT"
-	#!/bin/sh
-	echo "TWO: >$FIX_PARENT<"
-END_SCRIPT
+OUTPUT="ZERO: $PWD
+ONE: $PWD"
 
-OUTPUT="ZERO: ><
-ONE: >ZERO<
-TWO: >ONE<"
-
-"$TESTCMD" ZERO >stdout 2>stderr; RC="$?"
+cd SUBDIR || fail "Cannot change current dir to 'SUBDIR'"
+"$TESTCMD" ZERO >"../stdout" 2>"../stderr"; RC="$?"
+cd ..     || fail "Cannot change current dir back to work tree root"
 
 is              "$RC"              0             "Exit status"
 file_is         stdout             "$NADA"       "Standard output"

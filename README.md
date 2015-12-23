@@ -94,6 +94,12 @@ The following exit status values are used:
 
       10 = Source buildscript or directory is missing.
 
+      14 = Couldn't find the root of the Fix work tree. Fix searched for
+           searched for the '.fix' dir in current dir and then upwards towards
+           '/', but nothing was found. (This usually means that you either
+           invoked Fix from the wrong directory, or that you've forgotten to
+           run `fix --init`.)
+
       15 = Bad options provided (e.g. using `--source` from the command line
            rather than from inside a buildscript.)
 
@@ -150,7 +156,6 @@ a large project these can be quite a few!)
 
 | Variable          | Explanation                       | Default        |
 |-------------------|-----------------------------------|----------------|
-| `$FIX`            | Path to Fix executable            | `/PATH/fix.sh` |
 | `$FIX_DEBUG`      | Set if `--debug` option was used  | empty          |
 | `$FIX_DIR`        | Dir for build state               | `.fix/`        |
 | `$FIX_FORCE`      | Set if `--force` option was used  | empty          |
@@ -162,6 +167,7 @@ a large project these can be quite a few!)
 | `$FIX_SOURCE_DIR` | Source file dir                   | `src/`         |
 | `$FIX_TARGET`     | Current target name               | filename       |
 | `$FIX_TARGET_DIR` | Target file dir                   | `build/`       |
+| `$FIX_WORK_TREE`  | Dir in which '.fix' dir resides   |                |
 
 
 Additional Notes

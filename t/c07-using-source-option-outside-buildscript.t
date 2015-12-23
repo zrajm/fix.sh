@@ -4,35 +4,27 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 . "t/dashtap.sh"
 title - <<"EOF"
-Attempt to build a target for which there is a missing source dependency.
+Attempt to declare source dependency outside of a buildscript (i.e. using
+'--source' option from the command line).
 EOF
 
 init_test
 mkdir .fix fix src
 
-write_file a+x fix/TARGET.fix <<-"END_SCRIPT"
-	#!/bin/sh
-	echo "PRE"
-	fix --source SOURCE.txt
-	cat "$FIX_SOURCE_DIR/SOURCE.txt"
-	echo "POST"
-END_SCRIPT
-
-ERRMSG="ERROR: Source file '$PWD/src/SOURCE.txt' does not exist
-ERROR: Buildscript '$PWD/fix/TARGET.fix' returned exit status 143
-    (Old target unchanged. New, failed target written to '$PWD/build/TARGET--fixing'.)"
+write_file fix/TARGET.fix
+ERRMSG="ERROR: Option '--source' can only be used inside buildscript"
 
 file_not_exists build/TARGET         "Before build: Target shouldn't exist"
 file_not_exists .fix/state/TARGET    "Before build: Metadata file shouldn't exist"
 
-"$TESTCMD" TARGET >stdout 2>stderr; RC="$?"
+"$TESTCMD" --source TARGET >stdout 2>stderr; RC="$?"
 
-is              "$RC"                1             "Exit status"
+is              "$RC"                15            "Exit status"
 file_is         stdout               "$NADA"       "Standard output"
 file_is         stderr               "$ERRMSG"     "Standard error"
 file_not_exists build/TARGET                       "Target shouldn't exist"
 file_not_exists .fix/state/TARGET                  "Metadata file shouldn't exist"
-file_is         build/TARGET--fixing "PRE"         "Target tempfile"
+file_not_exists build/TARGET--fixing               "Target tempfile shouldn't exist"
 
 done_testing
 

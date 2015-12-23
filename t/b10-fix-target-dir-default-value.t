@@ -4,28 +4,27 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 . "t/dashtap.sh"
 title - <<"EOF"
-Should check that $PATH has been prepended with a directory which contains a
-hardlink to the Fix script itself. In dependency targets this directory should
-not have been added twice.
+Test that default value of $FIX_TARGET_DIR is correctly set inside
+buildscripts.
 EOF
 
 init_test
-mkdir .fix fix src
+mkdir .fix src
 
 write_file a+x fix/ZERO.fix <<-"END_SCRIPT"
 	#!/bin/sh
-	echo "ZERO: $PATH"
+	echo "ZERO: $FIX_TARGET_DIR"
 	fix ONE
 	cat "$FIX_TARGET_DIR/ONE"
 END_SCRIPT
 
 write_file a+x fix/ONE.fix <<-"END_SCRIPT"
 	#!/bin/sh
-	echo "ONE: $PATH"
+	echo "ONE: $FIX_TARGET_DIR"
 END_SCRIPT
 
-OUTPUT="ZERO: $PWD/.fix/bin:$PATH
-ONE: $PWD/.fix/bin:$PATH"
+OUTPUT="ZERO: $PWD/build
+ONE: $PWD/build"
 
 "$TESTCMD" ZERO >stdout 2>stderr; RC="$?"
 

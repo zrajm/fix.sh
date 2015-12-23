@@ -8,7 +8,7 @@ Attempt to build target when there is no build script for it.
 EOF
 
 init_test
-mkdir fix src
+mkdir .fix fix src
 
 ERRMSG="ERROR: Buildscript '$PWD/fix/TARGET.fix' does not exist"
 

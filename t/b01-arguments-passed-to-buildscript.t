@@ -9,7 +9,7 @@ printing the arguments received by the buildscript.
 EOF
 
 init_test
-mkdir fix src
+mkdir .fix fix src
 
 write_file a+x fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh

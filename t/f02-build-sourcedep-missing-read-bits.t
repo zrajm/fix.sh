@@ -8,7 +8,7 @@ Attempt to build target with a source dependency that have its read bits unset.
 EOF
 
 init_test
-mkdir fix src
+mkdir .fix fix src
 
 write_file a-r src/SOURCE.txt <<-"END_SOURCE"
 	SOURCE

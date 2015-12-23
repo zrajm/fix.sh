@@ -4,21 +4,20 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 . "t/dashtap.sh"
 title - <<"EOF"
-Attempt to build target with buildscript with execute bits unset.
+Attempt to build target when there is no source dir.
 EOF
 
 init_test
-mkdir fix src
+mkdir .fix
 
-write_file fix/TARGET.fix
-ERRMSG="ERROR: No execute permission for buildscript '$PWD/fix/TARGET.fix'"
+ERRMSG="ERROR: Source dir '$PWD/src' does not exist"
 
 file_not_exists build/TARGET         "Before build: Target shouldn't exist"
 file_not_exists .fix/state/TARGET    "Before build: Metadata file shouldn't exist"
 
 "$TESTCMD" TARGET >stdout 2>stderr; RC="$?"
 
-is              "$RC"                1             "Exit status"
+is              "$RC"                10            "Exit status"
 file_is         stdout               "$NADA"       "Standard output"
 file_is         stderr               "$ERRMSG"     "Standard error"
 file_not_exists build/TARGET                       "Target shouldn't exist"

@@ -14,7 +14,7 @@ mkfifo fifo                                        # buildscript reads fifo
 
 write_file a+x fix/TARGET.fix <<"END_SCRIPT"
 	#!/bin/sh
-	read LINE <fifo
+	read LINE <"$FIX_WORK_TREE/fifo"
 	echo "$LINE"
 END_SCRIPT
 

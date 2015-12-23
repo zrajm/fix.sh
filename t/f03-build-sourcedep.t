@@ -8,7 +8,7 @@ Build target with source dependency.
 EOF
 
 init_test
-mkdir fix src
+mkdir .fix fix src
 
 write_file src/SOURCE.txt <<-"END_SOURCE"
 	SOURCE CONTENT

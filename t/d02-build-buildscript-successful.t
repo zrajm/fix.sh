@@ -8,7 +8,7 @@ Build target with buildscript that returns zero exit status.
 EOF
 
 init_test
-mkdir fix src
+mkdir .fix fix src
 
 write_file a+x fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh

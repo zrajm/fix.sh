@@ -5,11 +5,11 @@
 . "t/dashtap.sh"
 title - <<"EOF"
 Should successfully build target with target dependency, when built in a clean
-worktree.
+work tree.
 EOF
 
 init_test
-mkdir fix src
+mkdir .fix fix src
 
 ############################################################################
 ## Dependency Target

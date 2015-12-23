@@ -9,7 +9,7 @@ buildscript does not have execute bits.
 EOF
 
 init_test
-mkdir fix src
+mkdir .fix fix src
 
 ############################################################################
 ## Dependency Target

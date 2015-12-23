@@ -9,7 +9,7 @@ buildscript is missing.
 EOF
 
 init_test
-mkdir fix src
+mkdir .fix fix src
 
 ############################################################################
 ## Target

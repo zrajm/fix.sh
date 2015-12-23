@@ -9,7 +9,7 @@ buildscripts.
 EOF
 
 init_test
-mkdir src
+mkdir .fix src
 
 write_file a+x fix/ZERO.fix <<-"END_SCRIPT"
 	#!/bin/sh

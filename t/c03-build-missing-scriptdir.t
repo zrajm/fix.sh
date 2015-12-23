@@ -4,12 +4,13 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 . "t/dashtap.sh"
 title - <<"EOF"
-Attempt to build target when there is no source dir.
+Attempt to build target when there is no script dir.
 EOF
 
 init_test
+mkdir .fix src
 
-ERRMSG="ERROR: Source dir '$PWD/src' does not exist"
+ERRMSG="ERROR: Script dir '$PWD/fix' does not exist"
 
 file_not_exists build/TARGET         "Before build: Target shouldn't exist"
 file_not_exists .fix/state/TARGET    "Before build: Metadata file shouldn't exist"
