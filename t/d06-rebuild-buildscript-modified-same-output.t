@@ -14,6 +14,7 @@ cpdir .fix
 
 write_file a+x -1sec fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
+	set -eu
 	# added comment
 	echo "OUTPUT"
 END_SCRIPT

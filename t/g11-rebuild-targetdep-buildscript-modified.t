@@ -16,6 +16,7 @@ mkdir fix src
 
 write_file a+x fix/DEPTARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
+	set -eu
 	echo "NEW DEPENDENCY"
 END_SCRIPT
 
@@ -26,6 +27,7 @@ OLD_DEP_META="$(
     echo "$OLD_DEP_OUTPUT" | mkmetadata TARGET DEPTARGET
     <<-"END_SCRIPT"          mkmetadata SCRIPT DEPTARGET.fix # old buildscript
 	#!/bin/sh
+	set -eu
 	echo "DEPENDENCY"
 	END_SCRIPT
 )" || fail "Failed to calculate metadata"
@@ -43,6 +45,7 @@ echo "$OLD_DEP_META"   | write_file .fix/state/DEPTARGET
 
 write_file a+x fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
+	set -eu
 	echo "PRE"
 	fix DEPTARGET
 	cat "$FIX_TARGET_DIR/DEPTARGET"

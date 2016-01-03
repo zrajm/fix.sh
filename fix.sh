@@ -2,8 +2,8 @@
 # Copyright (C) 2015 zrajm <fix@zrajm.org>
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
-set -ue
-VERSION=0.11.11
+set -eu
+VERSION=0.11.12
 
 ##############################################################################
 ##                                                                          ##

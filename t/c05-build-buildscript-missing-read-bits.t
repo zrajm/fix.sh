@@ -10,7 +10,12 @@ EOF
 init_test
 mkdir .fix fix src
 
-write_file a-r fix/TARGET.fix
+write_file a-r fix/TARGET.fix <<-"END_SCRIPT"
+	#!/bin/sh
+	set -eu
+	echo "NEVER RUN"
+END_SCRIPT
+
 ERRMSG="ERROR: No read permission for buildscript '$PWD/fix/TARGET.fix'"
 
 file_not_exists build/TARGET         "Before build: Target shouldn't exist"

@@ -13,6 +13,7 @@ mkdir .fix fix src
 
 write_file a+x fix/ZERO.fix <<-"END_SCRIPT"
 	#!/bin/sh
+	set -eu
 	echo "ZERO: $FIX_LEVEL"
 	fix ONE
 	cat "$FIX_TARGET_DIR/ONE"
@@ -20,6 +21,7 @@ END_SCRIPT
 
 write_file a+x fix/ONE.fix <<-"END_SCRIPT"
 	#!/bin/sh
+	set -eu
 	echo "ONE: $FIX_LEVEL"
 	fix TWO
 	cat "$FIX_TARGET_DIR/TWO"
@@ -27,6 +29,7 @@ END_SCRIPT
 
 write_file a+x fix/TWO.fix <<-"END_SCRIPT"
 	#!/bin/sh
+	set -eu
 	echo "TWO: $FIX_LEVEL"
 END_SCRIPT
 

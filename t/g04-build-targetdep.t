@@ -16,6 +16,7 @@ mkdir .fix fix src
 
 write_file a+x fix/DEPTARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
+	set -eu
 	echo "DEPENDENCY"
 END_SCRIPT
 
@@ -31,6 +32,7 @@ DEP_META="$(
 
 write_file a+x fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
+	set -eu
 	echo "PRE"
 	fix DEPTARGET
 	cat "$FIX_TARGET_DIR/DEPTARGET"

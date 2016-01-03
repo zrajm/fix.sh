@@ -12,6 +12,7 @@ mkdir .fix fix src
 
 write_file a+x fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
+	set -eu
 	echo "OUTPUT"
 	exit 1
 END_SCRIPT

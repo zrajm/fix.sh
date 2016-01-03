@@ -1,4 +1,5 @@
 #!/bin/sh
+set -eu
 fix --source SOURCE.txt
 echo "PRE"
 cat "$FIX_SOURCE_DIR/SOURCE.txt"

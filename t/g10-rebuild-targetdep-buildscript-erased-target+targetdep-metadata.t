@@ -16,6 +16,7 @@ mkdir .fix fix src
 
 write_file a+x 2030-01-01 fix/DEPTARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
+	set -eu
 	echo "DEPENDENCY"
 END_SCRIPT
 
@@ -33,6 +34,7 @@ echo "$DEP_OUTPUT" | write_file build/DEPTARGET
 
 write_file a+x fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
+	set -eu
 	echo "PRE"
 	fix DEPTARGET
 	cat "$FIX_TARGET_DIR/DEPTARGET"

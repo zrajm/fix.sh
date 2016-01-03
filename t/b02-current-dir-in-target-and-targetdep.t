@@ -14,6 +14,7 @@ mkdir .fix fix src src/SUBDIR
 
 write_file a+x fix/ZERO.fix <<-"END_SCRIPT"
 	#!/bin/sh
+	set -eu
 	echo "ZERO: $PWD"
 	cd SUBDIR
 	fix ONE
@@ -22,6 +23,7 @@ END_SCRIPT
 
 write_file a+x fix/ONE.fix <<-"END_SCRIPT"
 	#!/bin/sh
+	set -eu
 	echo "ONE: $PWD"
 END_SCRIPT
 

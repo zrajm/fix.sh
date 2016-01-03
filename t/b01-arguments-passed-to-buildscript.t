@@ -13,6 +13,7 @@ mkdir .fix fix src
 
 write_file a+x fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
+	set -eu
 	for ARG; do
 	    echo ">$ARG<"
 	done

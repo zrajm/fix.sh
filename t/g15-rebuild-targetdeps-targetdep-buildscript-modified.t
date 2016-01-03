@@ -17,6 +17,7 @@ mkdir fix src
 
 write_file a+x fix/LEAFTARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
+	set -eu
 	echo "NEW LEAF"
 END_SCRIPT
 
@@ -27,6 +28,7 @@ OLD_LEAF_META="$(
     echo "$OLD_LEAF_OUTPUT" | mkmetadata TARGET LEAFTARGET
     <<-"END_SCRIPT"           mkmetadata SCRIPT LEAFTARGET.fix # old buildscript
 	#!/bin/sh
+	set -eu
 	echo "LEAF"
 	END_SCRIPT
 )" || fail "Failed to calculate metadata"
@@ -44,6 +46,7 @@ echo "$OLD_LEAF_META"   | write_file .fix/state/LEAFTARGET
 
 write_file a+x fix/DEPTARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
+	set -eu
 	fix LEAFTARGET
 	cat "$FIX_TARGET_DIR/LEAFTARGET"
 	echo "DEP"
@@ -74,6 +77,7 @@ echo "$OLD_DEP_META"   | write_file .fix/state/DEPTARGET
 
 write_file a+x fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
+	set -eu
 	fix DEPTARGET
 	cat "$FIX_TARGET_DIR/DEPTARGET"
 	echo "TARGET"

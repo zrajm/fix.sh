@@ -17,6 +17,7 @@ cpdir .fix fix
 timestamp BUILDSCRIPT fix/TARGET.fix
 write_file a+x fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
+	set -eu
 	echo "6BYTES"   # same length as 'OUTPUT'
 END_SCRIPT
 reset_timestamp "$BUILDSCRIPT"

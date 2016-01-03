@@ -14,6 +14,7 @@ cpdir .fix
 
 write_file a+x -1sec fix/TARGET.fix <<-"END_SCRIPT"
 	#!/bin/sh
+	set -eu
 	echo "OUTPUT2"
 	exit 1
 END_SCRIPT
@@ -37,6 +38,7 @@ DBDATA="$(
     mkmetadata TARGET TARGET     <build/TARGET
     mkmetadata SCRIPT TARGET.fix <<-"END_SCRIPT"   # old buildscript
 	#!/bin/sh
+	set -eu
 	echo "OUTPUT"
 	END_SCRIPT
 )" || fail "Failed to calculate metadata"
