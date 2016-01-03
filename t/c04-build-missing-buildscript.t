@@ -4,7 +4,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 . "t/dashtap.sh"
 title - <<"EOF"
-Attempt to build target when there is no build script for it.
+Attempt to build target when there is no buildscript for it.
 EOF
 
 init_test
