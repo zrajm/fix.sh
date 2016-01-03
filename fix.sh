@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.11.12
+VERSION=0.11.13
 
 ##############################################################################
 ##                                                                          ##
@@ -258,10 +258,8 @@ build() {
 # FIX_* variables are exported and inherited by child processes.
 : ${FIX_DEBUG:=""}                             # --debug  (default off)
 : ${FIX_FORCE:=""}                             # --force  (default off)
-: ${FIX_TARGET:=""}
 : ${FIX_LEVEL:=-1}                             # 0 = ran from command line
 FIX_LEVEL="$(( FIX_LEVEL + 1 ))"               #   +1 for each invokation
-FIX_PARENT="$FIX_TARGET"
 OPT_INIT=""                                    # --init
 OPT_SOURCE=""                                  # --source
 
@@ -290,12 +288,13 @@ unset COUNT ARG
 
 [ "$#" = 0 ] && die 15 "No target(s) specified"
 if is_mother; then                             # mother process
-    export FIX_DEBUG FIX_FORCE FIX_LEVEL FIX_PARENT FIX_TARGET FIX_WORK_TREE
+    export FIX_DEBUG FIX_FORCE FIX_LEVEL FIX_WORK_TREE
     find_work_tree FIX_WORK_TREE \
         || die 14 "Not inside a Fix work tree (Have you run 'fix --init'?)"
     export FIX_PID="$$"
     export FIX_DIR="$FIX_WORK_TREE/.fix"
     export FIX_LOCK="$FIX_DIR/lock.pid"
+    export FIX_PARENT=""
     export FIX_SCRIPT_DIR="$FIX_WORK_TREE/fix"
     export FIX_SOURCE_DIR="$FIX_WORK_TREE/src"
     export FIX_TARGET_DIR="$FIX_WORK_TREE/build"
@@ -309,6 +308,8 @@ if is_mother; then                             # mother process
     establish_lock "$FIX_LOCK" \
         || die 8 "Cannot create lockfile '$FIX_LOCK'" \
         "Is ${0##*/} is already running? Is lockfile dir writeable?"
+else
+    FIX_PARENT="$FIX_TARGET"                   # exported by mother
 fi
 
 ##############################################################################
@@ -334,7 +335,7 @@ if [ "$OPT_SOURCE" ]; then
     done
 else
     for TARGET; do
-        FIX_TARGET="$TARGET"
+        export FIX_TARGET="$TARGET"
         build "$TARGET"
     done
 fi
