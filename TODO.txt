@@ -552,3 +552,7 @@
 
    This means that filename of targets on the command line must be written
    relative to the work tree root (for now).
+** DONE Set current dir for dependencies
+   CLOSED: [2016-01-03 Sun 18:13]
+   The current dir is now set to `$FIX_SOURCE_DIR` before invoking dependency
+   buildscripts too. Also added test case to verify this.

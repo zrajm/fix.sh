@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -ue
-VERSION=0.11.10
+VERSION=0.11.11
 
 ##############################################################################
 ##                                                                          ##
@@ -304,8 +304,6 @@ if is_mother; then                             # mother process
         && die 15 "Option '--source' can only be used inside buildscript"
     [ -d "$FIX_SOURCE_DIR" ] \
         || die 10 "Source dir '$FIX_SOURCE_DIR' does not exist"
-    cd "$FIX_SOURCE_DIR" 2>/dev/null \
-        || die 10 "Cannot change current dir to '$FIX_SOURCE_DIR'"
     [ -d "$FIX_SCRIPT_DIR" ] \
         || die 10 "Script dir '$FIX_SCRIPT_DIR' does not exist"
     establish_lock "$FIX_LOCK" \
@@ -318,6 +316,12 @@ fi
 ##  Main                                                                    ##
 ##                                                                          ##
 ##############################################################################
+
+# Make sure $FIX_SOURCE_DIR is the current dir.
+if [ "$PWD" != "$FIX_SOURCE_DIR" ]; then
+    cd "$FIX_SOURCE_DIR" 2>/dev/null \
+        || die 10 "Cannot change current dir to '$FIX_SOURCE_DIR'"
+fi
 
 if [ "$OPT_SOURCE" ]; then
     for SOURCE; do

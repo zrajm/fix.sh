@@ -9,26 +9,28 @@
 ** TODO a02. -h and --help options
 ** TODO a03. -D and --debug options
 ** TODO a04. -f and --force options
-* [90%] b. Environment variables
+* [91%] b. Environment variables
 ** DONE b01. Arguments passed to buildscript
    CLOSED: [2015-12-07 Mon 08:19]
-** DONE b02. $PATH value in target and targetdep
-   CLOSED: [2015-12-12 Sat 14:31]
-** DONE b03. $FIX_WORK_TREE value
+** DONE b02. Current dir in target and targetdep
+   CLOSED: [2016-01-03 Sun 18:11]
+** DONE b03. $PATH value in target and targetdep
+   CLOSED:  [2015-12-12 Sat 14:31]
+** DONE b04. $FIX_WORK_TREE value
    CLOSED: [2015-12-20 Sun 15:20]
-** DONE b04. $FIX_WORK_TREE value in subdir
+** DONE b05. $FIX_WORK_TREE value in subdir
    CLOSED: [2015-12-21 Mon 09:14]
-** DONE b05. $FIX_LEVEL values
+** DONE b06. $FIX_LEVEL values
    CLOSED: [2015-11-13 Fri 01:52]
-** DONE b06. $FIX_PARENT values
+** DONE b07. $FIX_PARENT values
    CLOSED: [2015-11-13 Fri 01:52]
-** DONE b07. $FIX_DIR default value
+** DONE b08. $FIX_DIR default value
    CLOSED: [2015-12-13 Sun 21:39]
-** DONE b08. $FIX_SCRIPT_DIR default value
+** DONE b09. $FIX_SCRIPT_DIR default value
    CLOSED: [2015-12-14 Mon 18:26]
-** DONE b09. $FIX_SOURCE_DIR default value
-   CLOSED: [2015-12-14 Mon 18:30]
-** DONE b10. $FIX_TARGET_DIR default value
+** DONE b10. $FIX_SOURCE_DIR default value
+   CLOSED:[2015-12-14 Mon 18:30]
+** DONE b11. $FIX_TARGET_DIR default value
    CLOSED: [2015-12-14 Mon 18:32]
 ** TODO `.fix/bin/fix` link
    This hardlink should, when created by Fix, always point to the current
