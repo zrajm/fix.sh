@@ -1,6 +1,7 @@
 -*- org -*-
 
 * Program
+** TODO Minimize `eval` use -- rewrite `strip_path`
 ** TODO strip_path() should be called from write_metadata() (?)
 ** TODO Options --script-dir, --source-dir, --target-dir              :v0_12:
    For setting $FIX_SCRIPT_DIR, $FIX_SOURCE_DIR, $FIX_TARGET_DIR.
@@ -556,3 +557,8 @@
    CLOSED: [2016-01-03 Sun 18:13]
    The current dir is now set to `$FIX_SOURCE_DIR` before invoking dependency
    buildscripts too. Also added test case to verify this.
+** DONE Minimize `eval` use -- rewrite `find_work_tree`
+   CLOSED: [2016-01-07 Thu 00:51]
+   Added `seteval` function and rewrote `find_work_tree` to make use of it
+   (making `find_work_tree` significantly easier to read, and localizing the
+   hard-to-read magic to `seteval`).

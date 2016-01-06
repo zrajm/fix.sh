@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.11.13
+VERSION=0.11.14
 
 ##############################################################################
 ##                                                                          ##
@@ -77,25 +77,46 @@ die() {
     exit "$STATUS"
 }
 
+# Usage: seteval VARIABLE COMMAND [ARG]...
+#
+# Execute COMMAND (with the ARG(s) provided), capture its standard output into
+# VARIABLE and return with exit status of COMMAND. (Standard error is neither
+# captured nor interferred with.)
+seteval() {
+    # NOTA BENE: Only positional parameters ($1, $2, etc) are used here. This
+    # to avoid name collision with VARIABLE. (If named local vars were used
+    # here, and user specified one of the same names as VARIABLE, that
+    # variable's new content would not be visible outside this function.)
+    case "$1" in ""|[0-9]*|*[!a-zA-Z0-9_]*)
+        die 31 "seteval: Bad variable name '$1'"
+    esac
+    # $1=VARIABLE / $2=COMMAND output + ':' + exit code
+    set -- "$1" "$(shift; set +e; "$@"; echo ":$?")" # run command
+    # $1=VARIABLE / $2=COMMAND exit code / $3=COMMAND output / $4=<newline>
+    set -- "$1" "${2##*:}" "${2%:*}" "
+"
+    eval "$1=\${3%\$4}"                        # strip one trailing newline
+    return "$2"
+}
+
 mkpath() {
     local DIR="${1%/*}"                        # strip trailing filename
     [ -d "$DIR" ] || mkdir -p -- "$DIR"
 }
 
-# Usage: find_work_tree VAR
+# Usage: find_work_tree
 #
-# Locate work tree root directory. This searches for the `.fix` dir in the
-# current directory, then upwards towards root. If found, return true and set
-# VAR will be set to the path of the found directory. Otherwise return false
-# (without setting VAR).
+# Locate work tree root dir. Does a search for a `.fix` dir in the current
+# directory, then upwards towards root dir (`/`). If found, return true and
+# output name of the dir on standard output, otherwise return false.
 find_work_tree() {
-    set -- "$1" "$PWD"
+    local DIR="$PWD"
     while :; do
-        [ -d "$2/.fix" ] && break
-        [ -z "$2"      ] && return 1
-        set -- "$1" "${2%/*}"
+        [ -d "$DIR/.fix" ] && break
+        [ -z "$DIR"      ] && return 1
+        DIR="${DIR%/*}"
     done
-    eval "$1="'${2:-/}'
+    echo "${DIR:-/}"
 }
 
 # Usage: save_metadata STATEFILE ( TYPE:FILE CHECKSUM )...
@@ -289,7 +310,7 @@ unset COUNT ARG
 [ "$#" = 0 ] && die 15 "No target(s) specified"
 if is_mother; then                             # mother process
     export FIX_DEBUG FIX_FORCE FIX_LEVEL FIX_WORK_TREE
-    find_work_tree FIX_WORK_TREE \
+    seteval FIX_WORK_TREE find_work_tree \
         || die 14 "Not inside a Fix work tree (Have you run 'fix --init'?)"
     export FIX_PID="$$"
     export FIX_DIR="$FIX_WORK_TREE/.fix"
