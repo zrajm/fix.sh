@@ -478,7 +478,10 @@ pass() {
     return 0
 }
 
-# Usage: pass [DESCR] [MSG]
+# Usage: fail [DESCR] [MSG]
+#    or: fail [DESCR] [<<-"EOF"
+#            MSG
+#        EOF]
 #
 # Call this for each failing test. Ouptuts the TAP protocol 'not ok' line for
 # the test together with the test description DESCR (if any). If message MSG is
@@ -680,9 +683,9 @@ seteval() {
 is() {
     [ $# = 2 -o $# = 3 ] || error "is: Bad number of args"
     local GOT="$1" WANTED="$2" DESCR="$(descr SKIP "$3")"
-    match "# SKIP" "$DESCR" && pass "$DESCR" && return 0
+    match "# SKIP" "$DESCR" && pass "$DESCR" <&- && return 0
     if [ "$GOT" = "$WANTED" ]; then
-        pass "$DESCR"
+        pass "$DESCR" <&-
     else
         seteval GOT    'indent "GOT   :" "$GOT"'
         seteval WANTED 'indent "WANTED:" "$WANTED"'
