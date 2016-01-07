@@ -22,8 +22,8 @@ write_file build/TARGET <<-"END_TARGET"
 	OUTPUT
 END_TARGET
 
-ERRMSG="ERROR: Buildscript '$PWD/fix/TARGET.fix' returned exit status 1
-    (Old target unchanged. New, failed target written to '$PWD/build/TARGET--fixing'.)"
+ERRMSG="ERROR: Buildscript 'fix/TARGET.fix' returned exit status 1
+    (Old target unchanged. New, failed target written to 'build/TARGET--fixing'.)"
 
 # Don't check metadata timestamp (only content is relevant).
 timestamp TARGET        build/TARGET

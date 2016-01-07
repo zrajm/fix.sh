@@ -32,9 +32,9 @@ write_file a+x fix/TARGET.fix <<-"END_SCRIPT"
 	echo "POST"
 END_SCRIPT
 
-ERRMSG="ERROR: No read permission for buildscript '$PWD/fix/DEPTARGET.fix'
-ERROR: Buildscript '$PWD/fix/TARGET.fix' returned exit status 143
-    (Old target unchanged. New, failed target written to '$PWD/build/TARGET--fixing'.)"
+ERRMSG="ERROR: No read permission for buildscript 'fix/DEPTARGET.fix'
+ERROR: Buildscript 'fix/TARGET.fix' returned exit status 143
+    (Old target unchanged. New, failed target written to 'build/TARGET--fixing'.)"
 
 ############################################################################
 

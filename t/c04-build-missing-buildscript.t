@@ -10,7 +10,7 @@ EOF
 init_test
 mkdir .fix fix src
 
-ERRMSG="ERROR: Buildscript '$PWD/fix/TARGET.fix' does not exist"
+ERRMSG="ERROR: Buildscript 'fix/TARGET.fix' does not exist"
 
 file_not_exists build/TARGET         "Before build: Target shouldn't exist"
 file_not_exists .fix/state/TARGET    "Before build: Metadata file shouldn't exist"

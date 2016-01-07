@@ -49,10 +49,10 @@ OLD_META="$(
 echo "$OLD_OUTPUT" | write_file build/TARGET
 echo "$OLD_META"   | write_file .fix/state/TARGET
 
-ERRMSG="ERROR: Old target '$PWD/build/DEPTARGET' modified by user, won't overwrite
-    (Erase old target before rebuild. New target kept in '$PWD/build/DEPTARGET--fixing'.)
-ERROR: Buildscript '$PWD/fix/TARGET.fix' returned exit status 143
-    (Old target unchanged. New, failed target written to '$PWD/build/TARGET--fixing'.)"
+ERRMSG="ERROR: Old target 'build/DEPTARGET' modified by user, won't overwrite
+    (Erase old target before rebuild. New target kept in 'build/DEPTARGET--fixing'.)
+ERROR: Buildscript 'fix/TARGET.fix' returned exit status 143
+    (Old target unchanged. New, failed target written to 'build/TARGET--fixing'.)"
 
 ############################################################################
 

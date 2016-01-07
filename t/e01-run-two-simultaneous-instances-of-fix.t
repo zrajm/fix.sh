@@ -19,8 +19,8 @@ write_file a+x fix/TARGET.fix <<-"END_SCRIPT"
 	echo "$LINE"
 END_SCRIPT
 
-ERRMSG="ERROR: Cannot create lockfile '$PWD/.fix/lock.pid'
-    (Is fix.sh is already running? Is lockfile dir writeable?)"
+ERRMSG="ERROR: Cannot create lockfile '.fix/lock.pid'
+    (Is Fix is already running? Is lockfile dir writeable?)"
 
 file_not_exists build/TARGET         "Before build: Target shouldn't exist"
 file_not_exists .fix/state/TARGET    "Before build: Metadata file shouldn't exist"

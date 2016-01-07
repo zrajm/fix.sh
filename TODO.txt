@@ -1,6 +1,7 @@
 -*- org -*-
 
 * Program
+** TODO Rename `echo` -> `say`
 ** TODO strip_path() should be called from write_metadata() (?)
 ** TODO Options --script-dir, --source-dir, --target-dir              :v0_12:
    For setting $FIX_SCRIPT_DIR, $FIX_SOURCE_DIR, $FIX_TARGET_DIR.
@@ -9,9 +10,6 @@
 ** TODO Specify target relative to current dir, not work tree root    :v0_12:
    Allow absolute paths as long as they're in the current work tree root.
 ** TODO Milestone: Version 0.12 - Easier use of paths --------------- :v0_12:
-** TODO Use relative paths in error messages
-   Error messages should output paths relative to the user's current working
-   directory, for clarity, and to cut down on error message length.
 ** TODO Pass more arguments to buildscripts(?)
    Fix passes:
 
@@ -145,6 +143,10 @@
 ** TODO Does $FIX_PARENT really need to be exported(?)
    It is set from $FIX_TARGET early on, so does it need to be exported at all?
 * System tests
+** TODO Test `--init` option
+   Including error message when attempting to reinitialize already initialized
+   work tree.
+** TODO Error message paths when invoked from subdir
 ** TODO Passing of options as environment variables
    $OPT_INIT, $OPT_SOURCE should not work. $FIX_FORCE, $FIX_DEBUG should work.
 ** TODO Test setting of $PATH
@@ -564,3 +566,11 @@
 ** DONE Minimize `eval` use -- rewrite `strip_path`
    CLOSED: [2016-01-07 Thu 01:20]
    Refactored/simplified `strip_path` function using `seteval`.
+** DONE Use relative paths in error messages
+   CLOSED: [2016-01-07 Thu 01:32]
+   Error messages should output paths relative to the user's current working
+   directory, for clarity, and to cut down on error message length.
+
+   Rewrote die() so that it now accept printf style %s sequences, and
+   additional filename arguments. Each filename so specified is recalculated by
+   die() to that it is relative to $FIX_PWD.

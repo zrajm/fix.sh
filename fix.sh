@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.11.15
+VERSION=0.11.16
 
 ##############################################################################
 ##                                                                          ##
@@ -59,8 +59,8 @@ END_VERSION
 
 init() {
     local FIX_DIR="$1"
-    [ -e "$FIX_DIR" ] && die 1 "Fix dir '$FIX_DIR' already exists"
-    mkpath "$FIX_DIR/" || die 1 "Cannot create fix dir '$FIX_DIR'"
+    [ -e "$FIX_DIR" ]  && die 1 "Fix dir '%s' already exists" - "$FIX_DIR"
+    mkpath "$FIX_DIR/" || die 1 "Cannot create fix dir '%s'"  - "$FIX_DIR"
     exit
 }
 
@@ -69,10 +69,31 @@ debug() {
     return 0
 }
 
+# Usage: die EXITCODE ERRMSG [ HELPMSG|- [FILE...] ]
+#
+# Display ERRMSG and exit Fix. If HELPMSG is provided it will displayed after
+# ERRMSG indented and within parentheses (to give user suggestions about how to
+# Fix the problem).
+#
+# You may put one or more printf sequences ('%s') into ERRMSG and HELPMSG to
+# insert FILE name(s). The number of '%s' should be the same as the number of
+# FILE arguments provided. FILE names included in this manner will (for brevity
+# and clarity) be rewritten so that they are relative to user's current dir
+# ($FIX_PWD) when being output.
+#
+# To provide one or more FILE(s), without specifying HELPMSG use '-' in place
+# of HELPMSG.
 die() {
-    local STATUS="$1" MSG="$2" EXTRA="${3:-}"
-    echo "ERROR: $MSG" >&2
-    [ "$EXTRA" ] && echo "    ($EXTRA)" >&2
+    local STATUS="$1" MSG="$2" EXTRA="${3:-}" # FILE...
+    shift "$(( $# < 3 ? $# : 3))"              # remove 1st three args from $@
+    local COUNT="$#" FILE
+    while [ "$COUNT" != 0 ]; do                # for each FILE arg
+        seteval FILE relpath "$1" "$FIX_PWD"   #   make relative to $FIX_CWD
+        shift; COUNT="$(( COUNT - 1 ))"
+        set -- "$@" "${FILE#./}"
+    done
+    [ "$EXTRA" = "-" ] && EXTRA=""
+    printf "ERROR: $MSG\n${EXTRA:+    ($EXTRA)\n}" "$@" >&2
     is_mother || kill "$PPID"                  # kill parent buildscript
     exit "$STATUS"
 }
@@ -97,6 +118,55 @@ seteval() {
 "
     eval "$1=\${3%\$4}"                        # strip one trailing newline
     return "$2"
+}
+
+# Usage: abspath [PATH [CWD]]
+#
+# Output the absolute name of PATH. If given, CWD (current working dir) is used
+# instead of the current dir when calculating output. PATH defaults to current
+# dir (`.`) if not specified. Always succeed and return zero exit status.
+#
+# Works by cleaning up all occurances of '..' / '.', multiple (and trailing)
+# slashes in PATH. Does not access the file system. Get current dir from the
+# $PWD environment variable.
+abspath() {
+    local REL="${1:-.}" CWD="${2:-$PWD}"
+    case "$REL" in
+        [!/]*) REL="$CWD/$REL" ;;              # relative = prepend base dir
+    esac
+    local PART ABS="" IFS="/"
+    local -; set -f                            # locally disable globbing
+    for PART in $REL; do                       # intentionally unquoted
+        case "$PART" in
+            .|"") :              ;;            #   do nada
+            ..) ABS="${ABS%/*}"  ;;            #   strip last part from result
+            *)  ABS="$ABS/$PART" ;;            #   append to result
+        esac
+    done
+    echo "${ABS:-/}"
+}
+
+# Usage: relpath [PATH [CWD]]
+#
+# Output relative name of PATH. If given, CWD (current working dir) is used
+# instead of the current dir when calculating output. PATH defaults to current
+# dir (`.`) if not specified. Always succeed and return zero exit status.
+#
+# Relies on abspath() to clean up path names before processing. Does not access
+# the file system.
+relpath() {
+    local ABS="${1:-.}" CWD="${2:-.}"
+    seteval ABS abspath "$ABS"; ABS="${ABS%/}/"
+    seteval CWD abspath "$CWD"; CWD="${CWD%/}/"
+    # For each dir part in CWD, except the leading prefix shared with ABSFILE,
+    # add one '..' part to the beginning of the output.
+    local REL=""
+    while [ "${ABS#"$CWD"}" = "$ABS" ]; do     # while CWD not prefix of ABS
+        CWD="${CWD%/*/}/"                      #   remove last part of CWD
+        REL="../$REL"                          #   add '..' to output
+    done
+    REL="${REL:-./}${ABS#"$CWD"}"              # append uniq suffix of ABSFILE
+    echo "${REL%/}"
 }
 
 mkpath() {
@@ -126,7 +196,7 @@ find_work_tree() {
 save_metadata() {
     local STATEFILE="$1" DEPFILE CHECKSUM; shift
     mkpath "$STATEFILE" \
-        || die 7 "Cannot create dir for metadata file '$STATEFILE'"
+        || die 7 "Cannot create dir for metadata file '%s'" - "$STATEFILE"
     while [ "$#" -ge 2 ]; do
         DEPFILE="$1"; CHECKSUM="$2"; shift 2
         printf "%s %s\n" "$CHECKSUM" "$DEPFILE"
@@ -167,14 +237,15 @@ is_mother() {
 # (called `fix`) linking to the currently running executable.
 add_fix_to_path() {
     local DIR="$1" LINK="$1/fix" FIX="$(readlink -f "$0")"
-    mkpath "$LINK" || die 7 "Cannot create dir for executable '$LINK'"
+    mkpath "$LINK" || die 7 "Cannot create dir for executable '%s'" - "$LINK"
     ln -f "$FIX" "$LINK"
     PATH="$DIR:$PATH"
 }
 
 establish_lock() {
     local LOCKFILE="$1" SIG
-    mkpath "$LOCKFILE" || die 7 "Cannot create dir for lockfile '$LOCKFILE'"
+    mkpath "$LOCKFILE" \
+        || die 7 "Cannot create dir for lockfile '%s'" - "$LOCKFILE"
     ({ set -o noclobber; echo "$$" >"$LOCKFILE"; } 2>/dev/null) || return 1
     trap "rm -f '$LOCKFILE'" EXIT
     for SIG in HUP INT TERM; do
@@ -186,14 +257,15 @@ establish_lock() {
 # Run buildscript, write tempfile. React to exit status.
 build_run() {
     local CMD="$1" TARGET="$2" TMPFILE="$3"
-    [ -e "$CMD" ] || die 1 "Buildscript '$CMD' does not exist"
-    [ -r "$CMD" ] || die 1 "No read permission for buildscript '$CMD'"
-    [ -x "$CMD" ] || die 1 "No execute permission for buildscript '$CMD'"
+    [ -e "$CMD" ] || die 1 "Buildscript '%s' does not exist"            - "$CMD"
+    [ -r "$CMD" ] || die 1 "No read permission for buildscript '%s'"    - "$CMD"
+    [ -x "$CMD" ] || die 1 "No execute permission for buildscript '%s'" - "$CMD"
 
     # FIXME: Catch a failure to write to $TMPFILE
     "$CMD" >"$TMPFILE" "$TMPFILE" <&- &        # run buildscript
-    wait "$!" || die 1 "Buildscript '$CMD' returned exit status $?" \
-        "Old target unchanged. New, failed target written to '$TMPFILE'."
+    wait "$!" || die 1 "Buildscript '%s' returned exit status $?" \
+        "Old target unchanged. New, failed target written to '%s'." \
+        "$CMD" "$TMPFILE"
 }
 
 # Overwrite FILE with TMPFILE, if TMPFILE is different. Return true if FILE was
@@ -212,8 +284,9 @@ finalize_tmpfile() {
     elif [ "$FIX_FORCE" ]; then
         debug "$FILE: Target updated + external change, forced overwrite"
     else
-        die 1 "Old target '$FILE' modified by user, won't overwrite" \
-            "Erase old target before rebuild. New target kept in '$TMPFILE'."
+        die 1 "Old target '%s' modified by user, won't overwrite" \
+            "Erase old target before rebuild. New target kept in '%s'." \
+            "$FILE" "$TMPFILE"
     fi
     mv -f -- "$TMPFILE" "$FILE"
 }
@@ -267,7 +340,7 @@ build() {
     local DBFILE="$FIX_DIR/state/$1" \
         SCRIPT="$FIX_SCRIPT_DIR/$1.fix" \
         TARGET="$FIX_TARGET_DIR/$1"
-    mkpath "$TARGET" || die 6 "Cannot create dir for target '$TARGET'"
+    mkpath "$TARGET" || die 6 "Cannot create dir for target '%s'" - "$TARGET"
     build_run "$SCRIPT" "$TARGET" "$TARGET--fixing"
     build_finalize "$DBFILE" TARGET "$TARGET" "$TARGET--fixing" "$SCRIPT"
 }
@@ -319,6 +392,7 @@ if is_mother; then                             # mother process
     export FIX_DIR="$FIX_WORK_TREE/.fix"
     export FIX_LOCK="$FIX_DIR/lock.pid"
     export FIX_PARENT=""
+    export FIX_PWD="$PWD"
     export FIX_SCRIPT_DIR="$FIX_WORK_TREE/fix"
     export FIX_SOURCE_DIR="$FIX_WORK_TREE/src"
     export FIX_TARGET_DIR="$FIX_WORK_TREE/build"
@@ -326,12 +400,12 @@ if is_mother; then                             # mother process
     [ -n "$OPT_SOURCE" ] \
         && die 15 "Option '--source' can only be used inside buildscript"
     [ -d "$FIX_SOURCE_DIR" ] \
-        || die 10 "Source dir '$FIX_SOURCE_DIR' does not exist"
+        || die 10 "Source dir '%s' does not exist" - "$FIX_SOURCE_DIR"
     [ -d "$FIX_SCRIPT_DIR" ] \
-        || die 10 "Script dir '$FIX_SCRIPT_DIR' does not exist"
+        || die 10 "Script dir '%s' does not exist" - "$FIX_SCRIPT_DIR"
     establish_lock "$FIX_LOCK" \
-        || die 8 "Cannot create lockfile '$FIX_LOCK'" \
-        "Is ${0##*/} is already running? Is lockfile dir writeable?"
+        || die 8 "Cannot create lockfile '%s'" \
+        "Is Fix is already running? Is lockfile dir writeable?" "$FIX_LOCK"
 else
     FIX_PARENT="$FIX_TARGET"                   # exported by mother
 fi
@@ -345,14 +419,15 @@ fi
 # Make sure $FIX_SOURCE_DIR is the current dir.
 if [ "$PWD" != "$FIX_SOURCE_DIR" ]; then
     cd "$FIX_SOURCE_DIR" 2>/dev/null \
-        || die 10 "Cannot change current dir to '$FIX_SOURCE_DIR'"
+        || die 10 "Cannot change current dir to '%s'" - "$FIX_SOURCE_DIR"
 fi
 
 if [ "$OPT_SOURCE" ]; then
     for SOURCE; do
         FULL="$FIX_SOURCE_DIR/$SOURCE"
-        [ -e "$FULL" ] || die 1 "Source file '$FULL' does not exist"
-        [ -r "$FULL" ] || die 1 "No read permission for source file '$FULL'"
+        [ -e "$FULL" ] || die 1 "Source file '%s' does not exist" - "$FULL"
+        [ -r "$FULL" ] || die 1 "No read permission for source file '%s'" - \
+            "$FULL"
         DBFILE="$FIX_DIR/state/$FIX_PARENT"
         CHECKSUM="$(file_checksum "$FULL")"
         save_metadata "$DBFILE--fixing" "SOURCE:$SOURCE" "$CHECKSUM"

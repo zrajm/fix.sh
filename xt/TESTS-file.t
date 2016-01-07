@@ -15,7 +15,7 @@ my ($last_pre, $count) = ("", -1);
 LINE: while (<>) {
     chomp;
     my ($state, $pre, $num, $str)
-        = /^[*][*] \s+ (\w+) \s+ ([a-z]) ([0-9#]{2}) [.]\s+ (.*)/x
+        = /^[*][*] \s+ (\w+) \s+ ([a-z]|unit) ([0-9#]{2})? [.]\s+ (.*)/x
         or next LINE;
     $count = 1 if $pre ne $last_pre;           # reset count when prefix changes
     foreach ($str) {                           # process string
@@ -26,7 +26,9 @@ LINE: while (<>) {
         s/-+$//;
     }
 
-    my $file = sprintf "t/%s%02d-%s.t", $pre, $num, $str;
+    my $file = $pre eq "unit"
+        ? sprintf "t/%s-%s.t",     $pre,       $str
+        : sprintf "t/%s%02d-%s.t", $pre, $num, $str;
 
     local $SIG{__WARN__} = sub {
         chomp(my $msg = shift);
@@ -35,7 +37,9 @@ LINE: while (<>) {
 
     my $bad = "";
     like($state, qr/^(TODO|DONE)$/, "Should have TODO or DONE tag") or $bad = 1;
-    is($num+0, $count,              "Test number should be $count") or $bad = 1;
+    if ($pre ne "unit") {
+        is($num+0, $count,          "Test number should be $count") or $bad = 1;
+    }
     if ($state eq "DONE") {
         ok(delete $file{$file}, "DONE line, file should exist: $file") or $bad = 1;
     } elsif ($state eq "TODO") {
