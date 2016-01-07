@@ -1,7 +1,6 @@
 -*- org -*-
 
 * Program
-** TODO Minimize `eval` use -- rewrite `strip_path`
 ** TODO strip_path() should be called from write_metadata() (?)
 ** TODO Options --script-dir, --source-dir, --target-dir              :v0_12:
    For setting $FIX_SCRIPT_DIR, $FIX_SOURCE_DIR, $FIX_TARGET_DIR.
@@ -562,3 +561,6 @@
    Added `seteval` function and rewrote `find_work_tree` to make use of it
    (making `find_work_tree` significantly easier to read, and localizing the
    hard-to-read magic to `seteval`).
+** DONE Minimize `eval` use -- rewrite `strip_path`
+   CLOSED: [2016-01-07 Thu 01:20]
+   Refactored/simplified `strip_path` function using `seteval`.

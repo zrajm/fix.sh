@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.11.14
+VERSION=0.11.15
 
 ##############################################################################
 ##                                                                          ##
@@ -218,17 +218,20 @@ finalize_tmpfile() {
     mv -f -- "$TMPFILE" "$FILE"
 }
 
-# Usage: strip_path VAR TYPE FILE
+# Usage: strip_path TYPE FILE
 #
 # Where TYPE is 'SCRIPT', 'SOURCE' or 'TARGET'. Strip $FIX_[TYPE]_DIR off of
-# FILE, and set VAR to the result.
+# FILE and output the result on standard output.
 strip_path() {
-    case "$2" in
-        SCRIPT|SOURCE|TARGET) :;;
-        *) die 30 "strip_path: Unknown type '$2' for file '$3'"
+    local TYPE="$1" FILE="$2" DIR=""
+    case "$TYPE" in
+        SCRIPT) DIR="$FIX_SCRIPT_DIR" ;;
+        SOURCE) DIR="$FIX_SOURCE_DIR" ;;
+        TARGET) DIR="$FIX_TARGET_DIR" ;;
+        *) die 30 "strip_path: Unknown type '$TYPE' for file '$FILE'"
             "Type must be 'SCRIPT', 'SOURCE' or 'TARGET'." ;;
     esac
-    eval "$1=\"\$2:\${3#\$FIX_${2}_DIR/}\""
+    echo "$TYPE:${FILE#$DIR/}"
 }
 
 # After build: Overwrite target with tempfile, and store result in metadata.
@@ -237,7 +240,7 @@ build_finalize() {
     local TMP_CHECKSUM="$(file_checksum "$TARGET_TMP")"
     local FILE=""
 
-    strip_path FILE "$TYPE" "$TARGET"
+    seteval FILE strip_path "$TYPE" "$TARGET"
 
     # update target
     local OLD_CHECKSUM="$(load_metadata "$DBFILE" "$FILE")"
