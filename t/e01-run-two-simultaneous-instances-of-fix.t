@@ -28,7 +28,7 @@ file_not_exists .fix/state/TARGET    "Before build: Metadata file shouldn't exis
 ## First instance of fix: This is run in the background, and has a buildscript
 ## that reads from a fifo, causing the buildscript to hang until something is
 ## written to that fifo.
-"$TESTCMD" TARGET >stdout1 2>stderr1 &
+"$TESTCMD" build/TARGET >stdout1 2>stderr1 &
 
 PID="$!"                                           # PID of 1st instance
 sleep .1
@@ -38,7 +38,7 @@ timestamp TEMPFILE build/TARGET--fixing
 
 ## Second instance of fix: This should fail immediately since the first
 ## instance should have established a lockfile.
-"$TESTCMD" TARGET >stdout2 2>stderr2 &
+"$TESTCMD" build/TARGET >stdout2 2>stderr2 &
 PID2=$!
 # Set up a background process that will wait for two seconds before killing the
 # second instance of fix.

@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.11.18
+VERSION=0.11.19
 
 ##############################################################################
 ##                                                                          ##
@@ -166,7 +166,8 @@ relpath() {
         REL="../$REL"                          #   add '..' to output
     done
     REL="${REL:-./}${ABS#"$CWD"}"              # append uniq suffix of ABSFILE
-    say "${REL%/}"
+    REL="${REL%/}"                             # strip trailing '/'
+    say "${REL#./}"                            # strip leading './'
 }
 
 mkpath() {
@@ -418,8 +419,8 @@ fi
 
 # Make sure $FIX_SOURCE_DIR is the current dir.
 if [ "$PWD" != "$FIX_SOURCE_DIR" ]; then
-    cd "$FIX_SOURCE_DIR" 2>/dev/null \
-        || die 10 "Cannot change current dir to '%s'" - "$FIX_SOURCE_DIR"
+   cd "$FIX_SOURCE_DIR" 2>/dev/null \
+       || die 10 "Cannot change current dir to '%s'" - "$FIX_SOURCE_DIR"
 fi
 
 if [ "$OPT_SOURCE" ]; then
@@ -433,7 +434,11 @@ if [ "$OPT_SOURCE" ]; then
         save_metadata "$DBFILE--fixing" "SOURCE:$SOURCE" "$CHECKSUM"
     done
 else
+    BASE="$FIX_TARGET_DIR"
+    is_mother && BASE="$FIX_PWD"
     for TARGET; do
+        seteval ABSFILE abspath "$TARGET" "$BASE"
+        seteval TARGET  relpath "$ABSFILE" "$FIX_TARGET_DIR"
         export FIX_TARGET="$TARGET"
         build "$TARGET"
     done

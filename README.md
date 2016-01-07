@@ -35,6 +35,10 @@ that.
 
 `-h`, `--help` Display help information, then exit.
 
+`--init` Initializes a new Fix work tree, setting its root to the current
+directory. This creates a `.fix` dir (where Fix stores its build state) in the
+current directory.
+
 `--source` This is used in buildscripts to declare source dependencies for its
 target. Whenever a source dependency has changed, the target becomes dirty and
 will be rebuild next time Fix is invoked. This option cannot be used on the
@@ -42,6 +46,32 @@ command line.
 
 `-V`, `--version` Display version information and copyright information, then
 exit.
+
+
+On File Names
+=============
+When running Fix your current dir must be inside a Fix work tree (i.e. the
+current dir, or one of its parent directories must contain a `.fix` dir with
+Fix's build state). All targets specified must also reside in that same work
+tree.
+
+On the command line target file names are specified relative to the current
+directory, meaning that the following commands are all equivalent (assuming
+that your target directory is called `build` and that the current dir is the
+Fix worktree root):
+
+    fix build/index.txt
+
+    cd build
+    fix index.tx
+
+    cd build/pages
+    fix ../index.txt
+
+When running Fix from inside a buildscript (to build a dependency), targets
+paths are instead relative to the current `$FIX_TARGET_DIR`, so running `fix
+index.txt` inside a buildscript will build `build/index.txt` regardless of your
+current directory.
 
 
 Exit Status
@@ -163,6 +193,7 @@ a large project these can be quite a few!)
 | `$FIX_LOCK`       | Lock file                         | filename       |
 | `$FIX_PARENT`     | Parent target name                | filename       |
 | `$FIX_PID`        | Mother process PID                | PID            |
+| `$FIX_PWD`        | Invoking user's current dir       | dir name       |
 | `$FIX_SCRIPT_DIR` | Buildscripts dir                  | `fix/`         |
 | `$FIX_SOURCE_DIR` | Source file dir                   | `src/`         |
 | `$FIX_TARGET`     | Current target name               | filename       |

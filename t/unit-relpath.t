@@ -48,7 +48,7 @@ eval "$(get_func relpath <"$TESTCMD")"
 while read FILE CWD WANTED; do
     case "$FILE" in ("#"*|"") continue; esac   # skip comments + blank lines
     GOT="$(relpath "$FILE" "$CWD")"            # run test
-    is "$GOT" "$WANTED" "'$FILE' (in '$CWD') should be '$WANTED'"
+    is "$GOT" "$WANTED" "\"$FILE\" (in \"$CWD\") should be \"$WANTED\" not \"$GOT\""
 done <<END_TESTS
 ###########################################################################
 # FILE  CWD     WANTED
@@ -69,11 +69,11 @@ done <<END_TESTS
 
 /a      /a      .
 /a/b/c  /a/b/c  .
-/a      /       ./a
-/a/b/c  /a/b    ./c
-/a/b    /       ./a/b
-/a/b/c  /a      ./b/c
-/a/b/c  /       ./a/b/c
+/a      /       a
+/a/b/c  /a/b    c
+/a/b    /       a/b
+/a/b/c  /a      b/c
+/a/b/c  /       a/b/c
 
 /       /a      ..
 /a      /a/b    ..

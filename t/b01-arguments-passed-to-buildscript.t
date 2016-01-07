@@ -21,7 +21,7 @@ END_SCRIPT
 
 OUTPUT=">$PWD/build/TARGET--fixing<"
 
-"$TESTCMD" TARGET >stdout 2>stderr; RC="$?"
+"$TESTCMD" build/TARGET >stdout 2>stderr; RC="$?"
 
 is              "$RC"              0             "Exit status"
 file_is         stdout             "$NADA"       "Standard output"

@@ -27,7 +27,7 @@ timestamp TARGET        build/TARGET
 file_exists     build/TARGET         "Before build: Target should exist"
 file_not_exists .fix/state/TARGET    "Before build: Metadata file shouldn't exist"
 
-"$TESTCMD" TARGET >stdout 2>stderr; RC="$?"
+"$TESTCMD" build/TARGET >stdout 2>stderr; RC="$?"
 
 DBDATA="$(
     set -e

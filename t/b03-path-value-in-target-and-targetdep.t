@@ -29,7 +29,7 @@ END_SCRIPT
 OUTPUT="ZERO: $PWD/.fix/bin:$PATH
 ONE: $PWD/.fix/bin:$PATH"
 
-"$TESTCMD" ZERO >stdout 2>stderr; RC="$?"
+"$TESTCMD" build/ZERO >stdout 2>stderr; RC="$?"
 
 is              "$RC"              0             "Exit status"
 file_is         stdout             "$NADA"       "Standard output"

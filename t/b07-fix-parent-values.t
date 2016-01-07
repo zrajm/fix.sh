@@ -37,7 +37,7 @@ OUTPUT="ZERO: ><
 ONE: >ZERO<
 TWO: >ONE<"
 
-"$TESTCMD" ZERO >stdout 2>stderr; RC="$?"
+"$TESTCMD" build/ZERO >stdout 2>stderr; RC="$?"
 
 is              "$RC"              0             "Exit status"
 file_is         stdout             "$NADA"       "Standard output"

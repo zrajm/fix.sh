@@ -29,7 +29,7 @@ OUTPUT="ZERO: $PWD
 ONE: $PWD"
 
 cd SUBDIR || fail "Cannot change current dir to 'SUBDIR'"
-"$TESTCMD" ZERO >"../stdout" 2>"../stderr"; RC="$?"
+"$TESTCMD" ../build/ZERO >"../stdout" 2>"../stderr"; RC="$?"
 cd ..     || fail "Cannot change current dir back to work tree root"
 
 is              "$RC"              0             "Exit status"

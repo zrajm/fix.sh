@@ -6,8 +6,6 @@
    For setting $FIX_SCRIPT_DIR, $FIX_SOURCE_DIR, $FIX_TARGET_DIR.
 
    Expand paths given by user to full absolute paths internally.
-** TODO Specify target relative to current dir, not work tree root    :v0_12:
-   Allow absolute paths as long as they're in the current work tree root.
 ** TODO Milestone: Version 0.12 - Easier use of paths --------------- :v0_12:
 ** TODO Pass more arguments to buildscripts(?)
    Fix passes:
@@ -141,7 +139,18 @@
    Config file should be relative to `$FIX_WORK_TREE`.
 ** TODO Does $FIX_PARENT really need to be exported(?)
    It is set from $FIX_TARGET early on, so does it need to be exported at all?
+** TODO Docs: Small (but realistic) build example
+   + Buildscript should contain lots of comments about how Fix works etc.
+   + This build example should be tested through the system tests.
 * System tests
+** TODO Always error when using `--source` outside buildscript
+   Even if there's no TARGET given, this should always result in the error
+   message:
+
+       ERROR: Option '--source' can only be used inside buildscript
+
+   See test case: c07-using-source-option-outside-buildscript.t
+** TODO Test building from inside subdir
 ** TODO Test `--init` option
    Including error message when attempting to reinitialize already initialized
    work tree.
@@ -188,7 +197,7 @@
 ** TODO Restructure tests
    Want separate directories for the various tests:
    + Dashtap tests
-   + Fix integration tests
+   + Fix system tests
    + Fix unit tests
 ** TODO Profiling the code (using Devel::NYTProf)
 ** TODO Test code coverage (Devel::Cover)
@@ -573,7 +582,21 @@
    Rewrote die() so that it now accept printf style %s sequences, and
    additional filename arguments. Each filename so specified is recalculated by
    die() to that it is relative to $FIX_PWD.
+** DONE Added unit test infrastructure
+   CLOSED: [2016-01-07 Thu 01:47]
+   Added new class of tests (`t/unit-*.t`) which extract one or more functions
+   from Fix, and exercise those specifically. (Previously existing tests are
+   all system tests.)
 ** DONE Rename `echo` -> `say`
    CLOSED: [2016-01-07 Thu 02:17]
    Changed all occurrences of `echo` to `say` wherever the printed content is
    anything but simple hex string, numeric or constants.
+** DONE Specify target relative to current dir, not work tree root    :v0_12:
+   CLOSED: [2016-01-07 Thu 18:49]
+   Target paths given on the command are now expressed relative to the user's
+   current directory, not relative to the work tree root. (This is more
+   intuitive, allows for tab completion and is also what Git does.)
+
+   When Fix is invoked from a buildscript, the target path are instead relative
+   to the fix target directory. (This seems to make intutive sense, but might
+   change in future versions.)

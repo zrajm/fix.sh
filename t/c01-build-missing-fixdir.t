@@ -15,7 +15,7 @@ ERRMSG="ERROR: Not inside a Fix work tree (Have you run 'fix --init'?)"
 file_not_exists build/TARGET         "Before build: Target shouldn't exist"
 file_not_exists .fix/state/TARGET    "Before build: Metadata file shouldn't exist"
 
-"$TESTCMD" TARGET >stdout 2>stderr; RC="$?"
+"$TESTCMD" build/TARGET >stdout 2>stderr; RC="$?"
 
 is              "$RC"                14            "Exit status"
 file_is         stdout               "$NADA"       "Standard output"

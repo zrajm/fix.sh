@@ -69,7 +69,7 @@ file_exists     fix/DEPTARGET.fix    "Dependency buildscript should exist"
 file_exists     .fix/state/DEPTARGET "Dependency metadata should exist"
 end_prefix
 
-"$TESTCMD" TARGET >stdout 2>stderr; RC="$?"
+"$TESTCMD" build/TARGET >stdout 2>stderr; RC="$?"
 
 is              "$RC"                0             "Exit status"
 file_is         stdout               "$NADA"       "Standard output"
