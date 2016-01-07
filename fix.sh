@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.11.17
+VERSION=0.11.18
 
 ##############################################################################
 ##                                                                          ##
@@ -11,12 +11,12 @@ VERSION=0.11.17
 ##                                                                          ##
 ##############################################################################
 
-echo() { printf "%s\n" "$@"; }                 # safe 'echo'
+say() { printf "%s\n" "$@"; }                  # safe 'echo'
 cat() {                                        # 'cat' using shell builtins
     [ -t 0 ] && die "cat: Missing input on stdin"
     local TXT
     while IFS="" read -r TXT; do               # last line must end in <LF>
-        echo "$TXT"
+        say "$TXT"
     done
 }
 reverse() {                                    # reverse lines of a file
@@ -24,7 +24,7 @@ reverse() {                                    # reverse lines of a file
     while IFS="" read -r TXT; do               # last line must end in <LF>
         set -- "$TXT" "$@"
     done <"$FILE"
-    echo "$@" >"$FILE"
+    say "$@" >"$FILE"
 }
 
 usage() {
@@ -65,7 +65,7 @@ init() {
 }
 
 debug() {
-    [ "$FIX_DEBUG" ] && echo "$1" >&2
+    [ "$FIX_DEBUG" ] && say "$1" >&2
     return 0
 }
 
@@ -143,7 +143,7 @@ abspath() {
             *)  ABS="$ABS/$PART" ;;            #   append to result
         esac
     done
-    echo "${ABS:-/}"
+    say "${ABS:-/}"
 }
 
 # Usage: relpath [PATH [CWD]]
@@ -166,7 +166,7 @@ relpath() {
         REL="../$REL"                          #   add '..' to output
     done
     REL="${REL:-./}${ABS#"$CWD"}"              # append uniq suffix of ABSFILE
-    echo "${REL%/}"
+    say "${REL%/}"
 }
 
 mkpath() {
@@ -186,7 +186,7 @@ find_work_tree() {
         [ -z "$DIR"      ] && return 1
         DIR="${DIR%/*}"
     done
-    echo "${DIR:-/}"
+    say "${DIR:-/}"
 }
 
 # Usage: save_metadata STATEFILE ( TYPE:FILE CHECKSUM )...
@@ -304,7 +304,7 @@ strip_path() {
         *) die 30 "strip_path: Unknown type '$TYPE' for file '$FILE'"
             "Type must be 'SCRIPT', 'SOURCE' or 'TARGET'." ;;
     esac
-    echo "$TYPE:${FILE#$DIR/}"
+    say "$TYPE:${FILE#$DIR/}"
 }
 
 # After build: Overwrite target with tempfile, and store result in metadata.

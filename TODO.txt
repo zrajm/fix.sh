@@ -1,7 +1,6 @@
 -*- org -*-
 
 * Program
-** TODO Rename `echo` -> `say`
 ** TODO strip_path() should be called from write_metadata() (?)
 ** TODO Options --script-dir, --source-dir, --target-dir              :v0_12:
    For setting $FIX_SCRIPT_DIR, $FIX_SOURCE_DIR, $FIX_TARGET_DIR.
@@ -574,3 +573,7 @@
    Rewrote die() so that it now accept printf style %s sequences, and
    additional filename arguments. Each filename so specified is recalculated by
    die() to that it is relative to $FIX_PWD.
+** DONE Rename `echo` -> `say`
+   CLOSED: [2016-01-07 Thu 02:17]
+   Changed all occurrences of `echo` to `say` wherever the printed content is
+   anything but simple hex string, numeric or constants.

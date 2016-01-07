@@ -4,9 +4,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 . "t/dashtap.sh"
 title - <<"EOF"
-
-YADDAYADDA
-
+Unit tests for relpath().
 EOF
 
 init_test
@@ -20,14 +18,14 @@ init_test
 # line which starts with an unindented '}'.
 get_func() {
     local FUNC="" FOUND="" IFS="" LINE=""
-    while read LINE; do
+    while read -r LINE; do
         for FUNC in "$@"; do
             case "$LINE" in
                 "$FUNC()"*) FOUND="yes"
             esac
         done
         if [ "$FOUND" ]; then
-            echo "$LINE"
+            printf "%s\n" "$LINE"
             case "$LINE" in
                 '}'*) FOUND=""
             esac
@@ -42,6 +40,7 @@ get_func() {
 # Mock for `seteval` (used by `relpath` function). Just pass through value by
 # setting VARNAME to VALUE.
 seteval() { eval "$1=\$3"; }
+say() { printf "%s\n" "$@"; }
 
 # Get `relpath` function from Fix.
 eval "$(get_func relpath <"$TESTCMD")"
