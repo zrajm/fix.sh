@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.11.16
+VERSION=0.11.17
 
 ##############################################################################
 ##                                                                          ##
@@ -405,7 +405,7 @@ if is_mother; then                             # mother process
         || die 10 "Script dir '%s' does not exist" - "$FIX_SCRIPT_DIR"
     establish_lock "$FIX_LOCK" \
         || die 8 "Cannot create lockfile '%s'" \
-        "Is Fix is already running? Is lockfile dir writeable?" "$FIX_LOCK"
+        "Is Fix already running? Is the lockfile dir writeable?" "$FIX_LOCK"
 else
     FIX_PARENT="$FIX_TARGET"                   # exported by mother
 fi

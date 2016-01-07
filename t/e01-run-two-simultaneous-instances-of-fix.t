@@ -20,7 +20,7 @@ write_file a+x fix/TARGET.fix <<-"END_SCRIPT"
 END_SCRIPT
 
 ERRMSG="ERROR: Cannot create lockfile '.fix/lock.pid'
-    (Is Fix is already running? Is lockfile dir writeable?)"
+    (Is Fix already running? Is the lockfile dir writeable?)"
 
 file_not_exists build/TARGET         "Before build: Target shouldn't exist"
 file_not_exists .fix/state/TARGET    "Before build: Metadata file shouldn't exist"
