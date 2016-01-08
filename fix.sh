@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.11.20
+VERSION=0.11.21
 
 ##############################################################################
 ##                                                                          ##
@@ -310,11 +310,9 @@ strip_path() {
 
 # After build: Overwrite target with tempfile, and store result in metadata.
 build_finalize() {
-    local DBFILE="$1" TYPE="$2" TARGET="$3" TARGET_TMP="$4" SCRIPT="$5"
-    local TMP_CHECKSUM="$(file_checksum "$TARGET_TMP")"
-    local FILE=""
-
-    seteval FILE strip_path "$TYPE" "$TARGET"
+    local DBFILE="$1" TARGET="$2" TARGET_TMP="$3" SCRIPT="$4"
+    local TMP_CHECKSUM="$(file_checksum "$TARGET_TMP")" FILE=""
+    seteval FILE strip_path TARGET "$TARGET"
 
     # update target
     local OLD_CHECKSUM="$(load_metadata "$DBFILE" "$FILE")"
@@ -343,7 +341,7 @@ build() {
         TARGET="$FIX_TARGET_DIR/$1"
     mkpath "$TARGET" || die 6 "Cannot create dir for target '%s'" - "$TARGET"
     build_run "$SCRIPT" "$TARGET" "$TARGET--fixing"
-    build_finalize "$DBFILE" TARGET "$TARGET" "$TARGET--fixing" "$SCRIPT"
+    build_finalize "$DBFILE" "$TARGET" "$TARGET--fixing" "$SCRIPT"
 }
 
 ##############################################################################
