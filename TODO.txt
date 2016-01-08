@@ -7,6 +7,15 @@
 
    Expand paths given by user to full absolute paths internally.
 ** TODO Milestone: Version 0.12 - Easier use of paths --------------- :v0_12:
+** TODO Milestone: Version 0.13 - Config file ----------------------- :v0_13:
+   Config file name: `.fix/config`.
+
+   A default [empty?] config should be created by `--init`.
+** TODO Milestone: Version 0.14 - 'Aliases' ------------------------- :v0_14:
+   + One should be able to define aliases in the config file, so that, for
+     example, `fix all` can be used to build all targets.
+   + There should be a default alias, which should work for the plain 'fix'
+     (without any arguments).
 ** TODO Pass more arguments to buildscripts(?)
    Fix passes:
 
@@ -21,6 +30,11 @@
    Maybe `$FIX_SCRIPT_DIR`, `$FIX_SOURCE_DIR` and/or `$FIX_TARGET_DIR` should
    be passed as arguments to the buildscript?
 ** TODO Buildscript should not run at all if target is unchanged
+   Currently new target built into a tempfile, and existing target will never
+   be overwritten unless the new target has been updated. But the new target
+   does not ever have to be built if we know no changes has been made to any of
+   the dependencies.
+
    When building a target for the second time, the buildscript should not be
    executed at all if neither the target, nor any of the dependencies has
    changed.
@@ -40,31 +54,7 @@
    This build output should without colors, or other fancy terminal stuff.
    (That may be added later.)
 ** TODO Dependencies
-** TODO Add man page
-** TODO Allow target to be specified relative to current dir
-   Currently, if you're rebuilding a target called `build/TARGET`, and
-   $FIX_TARGET_DIR is set to `build`, you'll need to be in the root of the work
-   tree and invoke Fix as:
-
-       fix TARGET
-
-   This should not be the case. Targets should always be specified relative to
-   the users current directory, so that if you were *inside* $FIX_TARGET_DIR,
-   you should use the above command, but at the root of the work tree you
-   should instead name the target dir explicitly and use:
-
-       fix build/TARGET
-
-   And if you were inside a dir called `build/x` you should be able to invoke
-   Fix with:
-
-       fix ../TARGET
-
-   And from inside your $FIX_SCRIPT_DIR, you might use:
-
-       fix ../build/TARGET
-
-   Etc.
+** TODO Docs: Add man page
 ** TODO More thorough is_mother() tests
    Should be able to detect an inconsistent state and abort. I.e. it should
    check *all* parent/child variables, and return true/false if they're all set
@@ -81,11 +71,6 @@
        FIX_TARGET
        FIX_PARENT
 ** TODO Automatic unlocking of stale lockfile
-** TODO Don't build target (at all) if up-to-date target already exists
-   Currently new target built into a tempfile, and existing target will never
-   be overwritten unless the new target has been updated. But the new target
-   does not ever have to be built if we know no changes has been made to any of
-   the dependencies.
 ** TODO Proper signal handling
    Nota bene: Rewrite trapping of lockfile so these traps do not clobber each
    other.
@@ -115,10 +100,7 @@
 ** TODO Mother process should ignore $FIX_FORCE/$FIX_DEBUG, only use options
    Reset $FIX_DEBUG and $FIX_FORCE (if set), and use only --debug and --force.
    Child processes still need to listen to the environment variables, though.
-** TODO Unit testing
-   Currently there are full-fledged integration tests, but no unit tests.
-   Rewrite the code to allow for unit tests, then start adding some unit tests.
-** TODO Fix command to output source file(?)
+** TODO Option to output source file(?)
    With this the buildscript itself wouldn't have to consider
    `$FIX_SOURCE_DIR`, but could simply pipe the output of a `fix --cat FILE`
    (or similar command) into the build process.
@@ -140,9 +122,15 @@
 ** TODO Does $FIX_PARENT really need to be exported(?)
    It is set from $FIX_TARGET early on, so does it need to be exported at all?
 ** TODO Docs: Small (but realistic) build example
+   Google 'sample makefile project' for a good starting point.
+
    + Buildscript should contain lots of comments about how Fix works etc.
    + This build example should be tested through the system tests.
 * System tests
+** TODO Test that compiles are done/not done with incrementor(?)
+   Compiled file could be a number that is incremented by the 'compiling'
+   process, inspection of whether it's been compiled or not does not have to
+   depend on timestamp.
 ** TODO Always error when using `--source` outside buildscript
    Even if there's no TARGET given, this should always result in the error
    message:
@@ -584,6 +572,9 @@
    die() to that it is relative to $FIX_PWD.
 ** DONE Added unit test infrastructure
    CLOSED: [2016-01-07 Thu 01:47]
+   Currently there are full-fledged integration tests, but no unit tests.
+   Rewrite the code to allow for unit tests, then start adding some unit tests.
+
    Added new class of tests (`t/unit-*.t`) which extract one or more functions
    from Fix, and exercise those specifically. (Previously existing tests are
    all system tests.)
@@ -600,3 +591,29 @@
    When Fix is invoked from a buildscript, the target path are instead relative
    to the fix target directory. (This seems to make intutive sense, but might
    change in future versions.)
+   ---------------------------------------------------------------------------
+   Earlier description:
+
+   Currently, if you're rebuilding a target called `build/TARGET`, and
+   $FIX_TARGET_DIR is set to `build`, you'll need to be in the root of the work
+   tree and invoke Fix as:
+
+       fix TARGET
+
+   This should not be the case. Targets should always be specified relative to
+   the users current directory, so that if you were *inside* $FIX_TARGET_DIR,
+   you should use the above command, but at the root of the work tree you
+   should instead name the target dir explicitly and use:
+
+       fix build/TARGET
+
+   And if you were inside a dir called `build/x` you should be able to invoke
+   Fix with:
+
+       fix ../TARGET
+
+   And from inside your $FIX_SCRIPT_DIR, you might use:
+
+       fix ../build/TARGET
+
+   Etc.
