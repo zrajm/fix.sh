@@ -191,7 +191,6 @@ a large project these can be quite a few!)
 | `$FIX_FORCE`      | Set if `--force` option was used  | empty          |
 | `$FIX_LEVEL`      | 0 = mother process, >0 = child    | number >= 1    |
 | `$FIX_LOCK`       | Lock file                         | filename       |
-| `$FIX_PARENT`     | Parent target name                | filename       |
 | `$FIX_PID`        | Mother process PID                | PID            |
 | `$FIX_PWD`        | Invoking user's current dir       | dir name       |
 | `$FIX_SCRIPT_DIR` | Buildscripts dir                  | `fix/`         |

@@ -119,8 +119,6 @@
        echo "$TEXT" | markdown2html
 ** TODO Add config file for default targets
    Config file should be relative to `$FIX_WORK_TREE`.
-** TODO Does $FIX_PARENT really need to be exported(?)
-   It is set from $FIX_TARGET early on, so does it need to be exported at all?
 ** TODO Docs: Small (but realistic) build example
    Google 'sample makefile project' for a good starting point.
 
@@ -617,3 +615,9 @@
        fix ../build/TARGET
 
    Etc.
+** DONE Do not export $FIX_PARENT
+   CLOSED: [2016-01-08 Fri 09:31]
+   $FIX_PARENT does not need to be exported, as it is only used internally by
+   Fix.
+
+   $FIX_TARGET, however, needs to be exported, so added tests for that.

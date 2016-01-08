@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.11.19
+VERSION=0.11.20
 
 ##############################################################################
 ##                                                                          ##
@@ -322,9 +322,9 @@ build_finalize() {
         "$TMP_CHECKSUM" "$OLD_CHECKSUM"
 
     # finalize metadata
-    if [ "$FIX_PARENT" ]; then
+    if [ "$OPT_PARENT" ]; then
         local DBPATH="${DBFILE%/*}"
-        local DBFILE2="$DBPATH/$FIX_PARENT"
+        local DBFILE2="$DBPATH/$OPT_PARENT"
         save_metadata "$DBFILE2--fixing" "$FILE" "$TMP_CHECKSUM"
     fi
 
@@ -392,7 +392,6 @@ if is_mother; then                             # mother process
     export FIX_PID="$$"
     export FIX_DIR="$FIX_WORK_TREE/.fix"
     export FIX_LOCK="$FIX_DIR/lock.pid"
-    export FIX_PARENT=""
     export FIX_PWD="$PWD"
     export FIX_SCRIPT_DIR="$FIX_WORK_TREE/fix"
     export FIX_SOURCE_DIR="$FIX_WORK_TREE/src"
@@ -407,8 +406,6 @@ if is_mother; then                             # mother process
     establish_lock "$FIX_LOCK" \
         || die 8 "Cannot create lockfile '%s'" \
         "Is Fix already running? Is the lockfile dir writeable?" "$FIX_LOCK"
-else
-    FIX_PARENT="$FIX_TARGET"                   # exported by mother
 fi
 
 ##############################################################################
@@ -423,13 +420,14 @@ if [ "$PWD" != "$FIX_SOURCE_DIR" ]; then
        || die 10 "Cannot change current dir to '%s'" - "$FIX_SOURCE_DIR"
 fi
 
+OPT_PARENT="${FIX_TARGET:-}"
 if [ "$OPT_SOURCE" ]; then
     for SOURCE; do
         FULL="$FIX_SOURCE_DIR/$SOURCE"
         [ -e "$FULL" ] || die 1 "Source file '%s' does not exist" - "$FULL"
         [ -r "$FULL" ] || die 1 "No read permission for source file '%s'" - \
             "$FULL"
-        DBFILE="$FIX_DIR/state/$FIX_PARENT"
+        DBFILE="$FIX_DIR/state/$OPT_PARENT"
         CHECKSUM="$(file_checksum "$FULL")"
         save_metadata "$DBFILE--fixing" "SOURCE:$SOURCE" "$CHECKSUM"
     done

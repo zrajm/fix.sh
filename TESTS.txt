@@ -22,8 +22,8 @@
    CLOSED: [2015-12-21 Mon 09:14]
 ** DONE b06. $FIX_LEVEL values
    CLOSED: [2015-11-13 Fri 01:52]
-** DONE b07. $FIX_PARENT values
-   CLOSED: [2015-11-13 Fri 01:52]
+** DONE b07. $FIX_TARGET values
+   CLOSED: [2016-01-08 Fri 09:29]
 ** DONE b08. $FIX_DIR default value
    CLOSED: [2015-12-13 Sun 21:39]
 ** DONE b09. $FIX_SCRIPT_DIR default value

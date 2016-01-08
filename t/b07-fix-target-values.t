@@ -5,7 +5,7 @@
 . "t/dashtap.sh"
 title - <<"EOF"
 Should build target with two levels of dependecies which each output
-$FIX_PARENT.
+$FIX_TARGET.
 EOF
 
 init_test
@@ -14,7 +14,7 @@ mkdir .fix fix src
 write_file a+x fix/ZERO.fix <<-"END_SCRIPT"
 	#!/bin/sh
 	set -eu
-	echo "ZERO: >$FIX_PARENT<"
+	echo "ZERO: >$FIX_TARGET<"
 	fix ONE
 	cat "$FIX_TARGET_DIR/ONE"
 END_SCRIPT
@@ -22,7 +22,7 @@ END_SCRIPT
 write_file a+x fix/ONE.fix <<-"END_SCRIPT"
 	#!/bin/sh
 	set -eu
-	echo "ONE: >$FIX_PARENT<"
+	echo "ONE: >$FIX_TARGET<"
 	fix TWO
 	cat "$FIX_TARGET_DIR/TWO"
 END_SCRIPT
@@ -30,12 +30,12 @@ END_SCRIPT
 write_file a+x fix/TWO.fix <<-"END_SCRIPT"
 	#!/bin/sh
 	set -eu
-	echo "TWO: >$FIX_PARENT<"
+	echo "TWO: >$FIX_TARGET<"
 END_SCRIPT
 
-OUTPUT="ZERO: ><
-ONE: >ZERO<
-TWO: >ONE<"
+OUTPUT="ZERO: >ZERO<
+ONE: >ONE<
+TWO: >TWO<"
 
 "$TESTCMD" build/ZERO >stdout 2>stderr; RC="$?"
 
