@@ -135,6 +135,9 @@ The following exit status values are used:
 
       30 = Internal error: build_finalize() was given an incorrect argument.
 
+      31 = Internal error: file_checksum() failed to calculate a SHA1 sum for
+           the specified file.
+
     >128 = Terminated by 'kill' or ctrl-c (subtract 128 from exit status to
            find out which signal was received). NOTA BENE: When stopping Fix
            with 'kill', use the negated PID of the mother process. The mother

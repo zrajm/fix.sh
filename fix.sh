@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.11.22
+VERSION=0.11.23
 
 ##############################################################################
 ##                                                                          ##
@@ -222,7 +222,11 @@ load_metadata() {
 
 file_checksum() {
     local FILE="$1" CHECKSUM=""
-    [ -e "$FILE" ] && CHECKSUM="$(sha1sum "$FILE")"
+    if [ -e "$FILE" ]; then
+        CHECKSUM="$(sha1sum "$FILE")" || \
+            die 31 "file_checksum: Cannot compute SHA1 sum for file '%s'" - \
+            "$FILE"
+    fi
     echo "${CHECKSUM%% *}"                     # checksum without filename
 }
 
