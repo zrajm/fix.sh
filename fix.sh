@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.11.23
+VERSION=0.11.24
 
 ##############################################################################
 ##                                                                          ##
@@ -314,7 +314,7 @@ strip_path() {
 
 # After build: Overwrite target with tempfile, and store result in metadata.
 build_finalize() {
-    local DBFILE="$1" TARGET="$2" TARGET_TMP="$3" SCRIPT="$4"
+    local DBFILE="$1" TARGET="$2" TARGET_TMP="$3" SCRIPT="$4" PARENT="$5"
     local TMP_CHECKSUM="$(file_checksum "$TARGET_TMP")" FILE=""
     seteval FILE strip_path TARGET "$TARGET"
 
@@ -324,9 +324,9 @@ build_finalize() {
         "$TMP_CHECKSUM" "$OLD_CHECKSUM"
 
     # finalize metadata
-    if [ "$OPT_PARENT" ]; then
+    if [ "$PARENT" ]; then
         local DBPATH="${DBFILE%/*}"
-        local DBFILE2="$DBPATH/$OPT_PARENT"
+        local DBFILE2="$DBPATH/$PARENT"
         save_metadata "$DBFILE2--fixing" "$FILE" "$TMP_CHECKSUM"
     fi
 
@@ -339,13 +339,19 @@ build_finalize() {
         && mv -f -- "$DBFILE--fixing" "$DBFILE" >&2
 }
 
+# Usage: build TARGET [PARENT]
+#
+# Build TARGET (atomically) by executing the corresponding buildscript. If
+# TARGET is a dependency of another target PARENT (the name of the dependant
+# taget) must also be specified.
 build() {
-    local DBFILE="$FIX_DIR/state/$1" \
-        SCRIPT="$FIX_SCRIPT_DIR/$1.fix" \
-        TARGET="$FIX_TARGET_DIR/$1"
+    local FILE="$1" PARENT="${2:-}"
+    local DBFILE="$FIX_DIR/state/$FILE" \
+        SCRIPT="$FIX_SCRIPT_DIR/$FILE.fix" \
+        TARGET="$FIX_TARGET_DIR/$FILE"
     mkpath "$TARGET" || die 6 "Cannot create dir for target '%s'" - "$TARGET"
     build_run "$SCRIPT" "$TARGET" "$TARGET--fixing"
-    build_finalize "$DBFILE" "$TARGET" "$TARGET--fixing" "$SCRIPT"
+    build_finalize "$DBFILE" "$TARGET" "$TARGET--fixing" "$SCRIPT" "$PARENT"
 }
 
 ##############################################################################
@@ -421,14 +427,14 @@ if [ "$PWD" != "$FIX_SOURCE_DIR" ]; then
        || die 10 "Cannot change current dir to '%s'" - "$FIX_SOURCE_DIR"
 fi
 
-OPT_PARENT="${FIX_TARGET:-}"
+PARENT="${FIX_TARGET:-}"
 if [ "$OPT_SOURCE" ]; then
     for SOURCE; do
         FULL="$FIX_SOURCE_DIR/$SOURCE"
         [ -e "$FULL" ] || die 1 "Source file '%s' does not exist" - "$FULL"
         [ -r "$FULL" ] || die 1 "No read permission for source file '%s'" - \
             "$FULL"
-        DBFILE="$FIX_DIR/state/$OPT_PARENT"
+        DBFILE="$FIX_DIR/state/$PARENT"
         CHECKSUM="$(file_checksum "$FULL")"
         save_metadata "$DBFILE--fixing" "SOURCE:$SOURCE" "$CHECKSUM"
     done
@@ -439,7 +445,7 @@ else
         seteval ABSFILE abspath "$TARGET" "$BASE"
         seteval TARGET  relpath "$ABSFILE" "$FIX_TARGET_DIR"
         export FIX_TARGET="$TARGET"
-        build "$TARGET"
+        build "$TARGET" "$PARENT"
     done
 fi
 
