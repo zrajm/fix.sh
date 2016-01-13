@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.11.21
+VERSION=0.11.22
 
 ##############################################################################
 ##                                                                          ##
@@ -94,7 +94,7 @@ die() {
     done
     [ "$EXTRA" = "-" ] && EXTRA=""
     printf "ERROR: $MSG\n${EXTRA:+    ($EXTRA)\n}" "$@" >&2
-    is_mother || kill "$PPID"                  # kill parent buildscript
+    is_mother || kill "$PPID" 2>/dev/null ||:  # kill any parent buildscript
     exit "$STATUS"
 }
 
@@ -229,7 +229,7 @@ file_checksum() {
 # Return true if this Fix process was invoked from command line, false if it
 # was invoked from a buildscript.
 is_mother() {
-    [ "$FIX_LEVEL" -eq 0 ]
+    [ "${FIX_LEVEL:-0}" = "0" ]
 }
 
 # Usage: add_fix_to_path DIR
@@ -352,10 +352,9 @@ build() {
 
 # OPT_* variables are not exported.
 # FIX_* variables are exported and inherited by child processes.
+export FIX_LEVEL="$(( ${FIX_LEVEL:--1} + 1 ))" # 0 = mother, >0 = child
 : ${FIX_DEBUG:=""}                             # --debug  (default off)
 : ${FIX_FORCE:=""}                             # --force  (default off)
-: ${FIX_LEVEL:=-1}                             # 0 = ran from command line
-FIX_LEVEL="$(( FIX_LEVEL + 1 ))"               #   +1 for each invokation
 OPT_INIT=""                                    # --init
 OPT_SOURCE=""                                  # --source
 
@@ -384,7 +383,7 @@ unset COUNT ARG
 
 [ "$#" = 0 ] && die 15 "No target(s) specified"
 if is_mother; then                             # mother process
-    export FIX_DEBUG FIX_FORCE FIX_LEVEL FIX_WORK_TREE
+    export FIX_DEBUG FIX_FORCE FIX_WORK_TREE
     seteval FIX_WORK_TREE find_work_tree \
         || die 14 "Not inside a Fix work tree (Have you run 'fix --init'?)"
     export FIX_PID="$$"
