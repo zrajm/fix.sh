@@ -133,6 +133,10 @@ The following exit status values are used:
       15 = Bad options provided (e.g. using `--source` from the command line
            rather than from inside a buildscript.)
 
+      16 = Bad target file name provided. One or more of the specified targets
+           are outside of the target dir (`$FIX_TARGET_DIR`), and Fix will
+           refuse to build them.
+
       30 = Internal error: build_finalize() was given an incorrect argument.
 
       31 = Internal error: file_checksum() failed to calculate a SHA1 sum for

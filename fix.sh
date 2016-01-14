@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.11.24
+VERSION=0.11.25
 
 ##############################################################################
 ##                                                                          ##
@@ -146,18 +146,24 @@ abspath() {
     say "${ABS:-/}"
 }
 
-# Usage: relpath [PATH [CWD]]
+# Usage: relpath [PATH [CWD [ABSPATH_CWD]]]
 #
 # Output relative name of PATH. If given, CWD (current working dir) is used
 # instead of the current dir when calculating output. PATH defaults to current
-# dir (`.`) if not specified. Always succeed and return zero exit status.
+# dir (`.`) if not specified. If PATH is a relative path, then ABSPATH_CWD is
+# used as the current working dir when first rewriting it into an absolute
+# path. Always succeed and return zero exit status.
 #
 # Relies on abspath() to clean up path names before processing. Does not access
 # the file system.
+#
+# To change PATH from being relative to dir A into being relative to dir B use
+# `relpath PATH B A` (this will expand it relative to A, then rewrite it into
+# being relative to B).
 relpath() {
-    local ABS="${1:-.}" CWD="${2:-.}"
-    seteval ABS abspath "$ABS"; ABS="${ABS%/}/"
-    seteval CWD abspath "$CWD"; CWD="${CWD%/}/"
+    local ABS="${1:-.}" CWD="${2:-.}" ABSCWD="${3:-}"
+    seteval ABS abspath "$ABS" "$ABSCWD"; ABS="${ABS%/}/"
+    seteval CWD abspath "$CWD";           CWD="${CWD%/}/"
     # For each dir part in CWD, except the leading prefix shared with ABSFILE,
     # add one '..' part to the beginning of the output.
     local REL=""
@@ -344,11 +350,20 @@ build_finalize() {
 # Build TARGET (atomically) by executing the corresponding buildscript. If
 # TARGET is a dependency of another target PARENT (the name of the dependant
 # taget) must also be specified.
+#
+# TARGET and PARENT are both filenames which should be either absolute paths,
+# or written relative to $FIX_TARGET_DIR.
 build() {
-    local FILE="$1" PARENT="${2:-}"
-    local DBFILE="$FIX_DIR/state/$FILE" \
-        SCRIPT="$FIX_SCRIPT_DIR/$FILE.fix" \
-        TARGET="$FIX_TARGET_DIR/$FILE"
+    local TARGET="$1" PARENT="${2:-}" FILE SCRIPT DBFILE
+    seteval TARGET abspath "$TARGET"   "$FIX_TARGET_DIR"
+    seteval FILE   relpath "$TARGET"   "$FIX_TARGET_DIR"
+    seteval SCRIPT abspath "$FILE.fix" "$FIX_SCRIPT_DIR"
+    seteval DBFILE abspath "$FILE"     "$FIX_DIR/state"
+    case "$TARGET" in
+        "$FIX_TARGET_DIR"/*) : ;;
+        *) die 16 "Target '%s' must be inside Fix target dir '%s/'" - \
+            "$TARGET" "$FIX_TARGET_DIR" ;;
+    esac
     mkpath "$TARGET" || die 6 "Cannot create dir for target '%s'" - "$TARGET"
     build_run "$SCRIPT" "$TARGET" "$TARGET--fixing"
     build_finalize "$DBFILE" "$TARGET" "$TARGET--fixing" "$SCRIPT" "$PARENT"
@@ -439,13 +454,15 @@ if [ "$OPT_SOURCE" ]; then
         save_metadata "$DBFILE--fixing" "SOURCE:$SOURCE" "$CHECKSUM"
     done
 else
-    BASE="$FIX_TARGET_DIR"
-    is_mother && BASE="$FIX_PWD"
+    if is_mother; then
+        CWD="$FIX_PWD"
+    else
+        CWD="$FIX_TARGET_DIR"
+    fi
     for TARGET; do
-        seteval ABSFILE abspath "$TARGET" "$BASE"
-        seteval TARGET  relpath "$ABSFILE" "$FIX_TARGET_DIR"
-        export FIX_TARGET="$TARGET"
-        build "$TARGET" "$PARENT"
+        export FIX_TARGET
+        seteval FIX_TARGET relpath "$TARGET" "$FIX_TARGET_DIR" "$CWD"
+        build "$FIX_TARGET" "$PARENT"
     done
 fi
 
