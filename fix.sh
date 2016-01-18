@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.11.25
+VERSION=0.11.26
 
 ##############################################################################
 ##                                                                          ##
@@ -12,14 +12,14 @@ VERSION=0.11.25
 ##############################################################################
 
 say() { printf "%s\n" "$@"; }                  # safe 'echo'
-cat() {                                        # 'cat' using shell builtins
-    [ -t 0 ] && die "cat: Missing input on stdin"
+read_stdin() {                                 # 'cat' using shell builtins
+    [ -t 0 ] && die "read_stdin: Missing input on stdin"
     local TXT
     while IFS="" read -r TXT; do               # last line must end in <LF>
         say "$TXT"
     done
 }
-reverse() {                                    # reverse lines of a file
+reverse_file() {                               # reverse lines of a file
     local FILE="$1" TXT; shift
     while IFS="" read -r TXT; do               # last line must end in <LF>
         set -- "$TXT" "$@"
@@ -28,7 +28,7 @@ reverse() {                                    # reverse lines of a file
 }
 
 usage() {
-    cat <<END_USAGE
+    read_stdin <<END_USAGE
 Usage: ${0##*/} [OPTION]... TARGET...
 Build TARGET(s) based on which dependencies has changed.
 
@@ -45,7 +45,7 @@ END_USAGE
 }
 
 version() {
-    cat <<END_VERSION
+    read_stdin <<END_VERSION
 fix.sh (Fix) $VERSION
 Copyright (C) 2015 zrajm <fix@zrajm.org>
 License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
@@ -341,7 +341,7 @@ build_finalize() {
     save_metadata "$DBFILE--fixing" \
         "SCRIPT:${SCRIPT#$FIX_SCRIPT_DIR/}" "$SCRIPT_CHECKSUM" \
         "$FILE"                             "$TMP_CHECKSUM"
-    reverse "$DBFILE--fixing" \
+    reverse_file "$DBFILE--fixing" \
         && mv -f -- "$DBFILE--fixing" "$DBFILE" >&2
 }
 
