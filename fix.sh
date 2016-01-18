@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.11.27
+VERSION=0.11.28
 
 ##############################################################################
 ##                                                                          ##
@@ -369,101 +369,128 @@ build() {
     build_finalize "$DBFILE" "$TARGET" "$TARGET--fixing" "$SCRIPT" "$PARENT"
 }
 
-##############################################################################
-##                                                                          ##
-##  Init                                                                    ##
-##                                                                          ##
-##############################################################################
+parseopts_case_code() {
+    local INNER OUTER
+    seteval INNER read_stdin
+    seteval OUTER read_stdin <<-"END_CODE"
+	case "$ARG" in
+	    --) while [ "$COUNT" -gt 0 ]; do   # no options after '--'
+	            set -- "$@" "$1"; shift    #   keep remaining args
+	            COUNT="$(( COUNT - 1 ))"
+	        done; break ;;                 # stop processing options
+	    %s
+	    -*) die 15 "Unknown option '$ARG'" "$HELP" ;;
+	    *)  set -- "$@" "$ARG" ;;          #   put non-option arg back
+	esac
+	END_CODE
+    printf "$OUTER" "$INNER"
+}
+
+parseopts() {
+    local CMD="$1"; shift
+    local COUNT="$#" ARG OPTARG OPT_CASE \
+        HELP="Try '${0##*/} --help' for more information."
+    seteval OPT_CASE parseopts_case_code
+    while [ "$COUNT" -gt 0 ]; do
+        ARG="$1"; shift
+        case "$ARG" in                         # handle '--opt=ARG'
+            --[a-z]*=*)                        #   if has '=ARG'
+                set -- "${ARG#*=}" "$@"        #     put ARG back into $@
+                ARG="${ARG%%=*}"               #     strip off '=ARG' part
+                OPTARG=unused ;;
+            *)  COUNT="$(( COUNT - 1 ))"
+                OPTARG="" ;;
+        esac
+        eval "$OPT_CASE"
+        case "$OPTARG" in
+            unused) die 15 "Option '$ARG' doesn't allow an argument" "$HELP" ;;
+            used) [ "$COUNT" -eq 0 ] \
+                    && die 15 "Option '$ARG' requires an argument" "$HELP"
+                COUNT="$(( COUNT - 1 ))"; shift ;;
+        esac
+    done
+    set -- "$CMD" "$@"
+    unset ARG CMD COUNT HELP OPTARG OPT_CASE
+    "$@"
+}
+
+main() {
+    [ "$OPT_HELP"    ] && usage
+    [ "$OPT_VERSION" ] && version
+    [ "$OPT_INIT"    ] && init "$PWD/.fix"
+
+    [ "$#" = 0 ] && die 15 "No target(s) specified"
+    if is_mother; then                         # mother process
+        export FIX_DEBUG FIX_FORCE FIX_WORK_TREE
+        seteval FIX_WORK_TREE find_work_tree \
+            || die 14 "Not inside a Fix work tree (Have you run 'fix --init'?)"
+        export FIX_PID="$$"
+        export FIX_DIR="$FIX_WORK_TREE/.fix"
+        export FIX_LOCK="$FIX_DIR/lock.pid"
+        export FIX_PWD="$PWD"
+        export FIX_SCRIPT_DIR="$FIX_WORK_TREE/fix"
+        export FIX_SOURCE_DIR="$FIX_WORK_TREE/src"
+        export FIX_TARGET_DIR="$FIX_WORK_TREE/build"
+        add_fix_to_path "$(readlink -f "$FIX_DIR")/bin"
+        [ -n "$OPT_SOURCE" ] \
+            && die 15 "Option '--source' can only be used inside buildscript"
+        [ -d "$FIX_SOURCE_DIR" ] \
+            || die 10 "Source dir '%s' does not exist" - "$FIX_SOURCE_DIR"
+        [ -d "$FIX_SCRIPT_DIR" ] \
+            || die 10 "Script dir '%s' does not exist" - "$FIX_SCRIPT_DIR"
+        establish_lock "$FIX_LOCK" \
+            || die 8 "Cannot create lockfile '%s'" \
+            "Is Fix already running? Is the lockfile dir writeable?" "$FIX_LOCK"
+    fi
+
+    # Make sure $FIX_SOURCE_DIR is the current dir.
+    if [ "$PWD" != "$FIX_SOURCE_DIR" ]; then
+        cd "$FIX_SOURCE_DIR" 2>/dev/null \
+            || die 10 "Cannot change current dir to '%s'" - "$FIX_SOURCE_DIR"
+    fi
+
+    PARENT="${FIX_TARGET:-}"
+    if [ "$OPT_SOURCE" ]; then
+        for SOURCE; do
+            FULL="$FIX_SOURCE_DIR/$SOURCE"
+            [ -e "$FULL" ] || die 1 "Source file '%s' does not exist" - "$FULL"
+            [ -r "$FULL" ] || die 1 "No read permission for source file '%s'" - \
+                "$FULL"
+            DBFILE="$FIX_DIR/state/$PARENT"
+            CHECKSUM="$(file_checksum "$FULL")"
+            save_metadata "$DBFILE--fixing" "SOURCE:$SOURCE" "$CHECKSUM"
+        done
+    else
+        if is_mother; then
+            CWD="$FIX_PWD"
+        else
+            CWD="$FIX_TARGET_DIR"
+        fi
+        for TARGET; do
+            export FIX_TARGET
+            seteval FIX_TARGET relpath "$TARGET" "$FIX_TARGET_DIR" "$CWD"
+            build "$FIX_TARGET" "$PARENT"
+        done
+    fi
+}
 
 # OPT_* variables are not exported.
 # FIX_* variables are exported and inherited by child processes.
 export FIX_LEVEL="$(( ${FIX_LEVEL:--1} + 1 ))" # 0 = mother, >0 = child
 : ${FIX_DEBUG:=""}                             # --debug  (default off)
 : ${FIX_FORCE:=""}                             # --force  (default off)
+OPT_HELP=""                                    # --help
 OPT_INIT=""                                    # --init
 OPT_SOURCE=""                                  # --source
+OPT_VERSION=""                                 # --version
 
-COUNT="$#"
-while [ "$COUNT" != 0 ]; do                    # read command line options
-    ARG="$1"; shift; COUNT="$(( COUNT - 1 ))"
-    case "$ARG" in
-        -D|--debug) FIX_DEBUG=1  ;;
-        -f|--force) FIX_FORCE=1  ;;
-        -h|--help)  usage        ;;
-        --init)     OPT_INIT=1   ;;
-        --source)   OPT_SOURCE=1 ;;
-        -V|--version) version    ;;
-        --) while [ "$COUNT" != 0 ]; do        #   put remaining args
-                set -- "$@" "$1"               #     last in $@
-                COUNT="$(( COUNT - 1 ))"
-            done; break ;;                     #     and abort
-        -*) die 15 "Unknown option '$ARG'" \
-            "Try '$0 --help' for more information." ;;
-        *)  set -- "$@" "$ARG" ;;              #   put non-option arg back
-    esac
-done
-unset COUNT ARG
-
-[ "$OPT_INIT" ] && init "$PWD/.fix"
-
-[ "$#" = 0 ] && die 15 "No target(s) specified"
-if is_mother; then                             # mother process
-    export FIX_DEBUG FIX_FORCE FIX_WORK_TREE
-    seteval FIX_WORK_TREE find_work_tree \
-        || die 14 "Not inside a Fix work tree (Have you run 'fix --init'?)"
-    export FIX_PID="$$"
-    export FIX_DIR="$FIX_WORK_TREE/.fix"
-    export FIX_LOCK="$FIX_DIR/lock.pid"
-    export FIX_PWD="$PWD"
-    export FIX_SCRIPT_DIR="$FIX_WORK_TREE/fix"
-    export FIX_SOURCE_DIR="$FIX_WORK_TREE/src"
-    export FIX_TARGET_DIR="$FIX_WORK_TREE/build"
-    add_fix_to_path "$(readlink -f "$FIX_DIR")/bin"
-    [ -n "$OPT_SOURCE" ] \
-        && die 15 "Option '--source' can only be used inside buildscript"
-    [ -d "$FIX_SOURCE_DIR" ] \
-        || die 10 "Source dir '%s' does not exist" - "$FIX_SOURCE_DIR"
-    [ -d "$FIX_SCRIPT_DIR" ] \
-        || die 10 "Script dir '%s' does not exist" - "$FIX_SCRIPT_DIR"
-    establish_lock "$FIX_LOCK" \
-        || die 8 "Cannot create lockfile '%s'" \
-        "Is Fix already running? Is the lockfile dir writeable?" "$FIX_LOCK"
-fi
-
-##############################################################################
-##                                                                          ##
-##  Main                                                                    ##
-##                                                                          ##
-##############################################################################
-
-# Make sure $FIX_SOURCE_DIR is the current dir.
-if [ "$PWD" != "$FIX_SOURCE_DIR" ]; then
-   cd "$FIX_SOURCE_DIR" 2>/dev/null \
-       || die 10 "Cannot change current dir to '%s'" - "$FIX_SOURCE_DIR"
-fi
-
-PARENT="${FIX_TARGET:-}"
-if [ "$OPT_SOURCE" ]; then
-    for SOURCE; do
-        FULL="$FIX_SOURCE_DIR/$SOURCE"
-        [ -e "$FULL" ] || die 1 "Source file '%s' does not exist" - "$FULL"
-        [ -r "$FULL" ] || die 1 "No read permission for source file '%s'" - \
-            "$FULL"
-        DBFILE="$FIX_DIR/state/$PARENT"
-        CHECKSUM="$(file_checksum "$FULL")"
-        save_metadata "$DBFILE--fixing" "SOURCE:$SOURCE" "$CHECKSUM"
-    done
-else
-    if is_mother; then
-        CWD="$FIX_PWD"
-    else
-        CWD="$FIX_TARGET_DIR"
-    fi
-    for TARGET; do
-        export FIX_TARGET
-        seteval FIX_TARGET relpath "$TARGET" "$FIX_TARGET_DIR" "$CWD"
-        build "$FIX_TARGET" "$PARENT"
-    done
-fi
+parseopts main "$@" <<-"END_CODE"
+-D|--debug)   FIX_DEBUG=1   ;;
+-f|--force)   FIX_FORCE=1   ;;
+-h|--help)    OPT_HELP=1    ;;
+--init)       OPT_INIT=1    ;;
+--source)     OPT_SOURCE=1  ;;
+-V|--version) OPT_VERSION=1 ;;
+END_CODE
 
 #[eof]
