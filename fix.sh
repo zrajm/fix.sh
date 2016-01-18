@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.11.26
+VERSION=0.11.27
 
 ##############################################################################
 ##                                                                          ##
@@ -86,9 +86,9 @@ debug() {
 die() {
     local STATUS="$1" MSG="$2" EXTRA="${3:-}" # FILE...
     shift "$(( $# < 3 ? $# : 3))"              # remove 1st three args from $@
-    local COUNT="$#" FILE
+    local FILE COUNT="$#"
     while [ "$COUNT" != 0 ]; do                # for each FILE arg
-        seteval FILE relpath "$1" "$FIX_PWD"   #   make relative to $FIX_CWD
+        seteval FILE relpath "$1" "${FIX_PWD:-$PWD}" # make filename relative
         shift; COUNT="$(( COUNT - 1 ))"
         set -- "$@" "${FILE#./}"
     done
