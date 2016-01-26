@@ -11,30 +11,6 @@ init_test
 
 ################################################################################
 
-# Usage: get_func NAME... <FILE
-#
-# Extract one or more shell function(s) with specified NAME(s). Each function
-# must start with the unindented function name followed by '()' and end in a
-# line which starts with an unindented '}'.
-get_func() {
-    local FUNC="" FOUND="" IFS="" LINE=""
-    while read -r LINE; do
-        for FUNC in "$@"; do
-            case "$LINE" in
-                "$FUNC()"*) FOUND="yes"
-            esac
-        done
-        if [ "$FOUND" ]; then
-            printf "%s\n" "$LINE"
-            case "$LINE" in
-                '}'*) FOUND=""
-            esac
-        fi
-    done
-}
-
-################################################################################
-
 # Usage: VARNAME - VALUE
 #
 # Mock for `seteval` (used by `relpath` function). Just pass through value by
@@ -42,8 +18,7 @@ get_func() {
 seteval() { eval "$1=\$3"; }
 say() { printf "%s\n" "$@"; }
 
-# Get `relpath` function from Fix.
-eval "$(get_func relpath <"$TESTCMD")"
+import_function relpath <"$TESTCMD"
 
 while read FILE CWD WANTED; do
     case "$FILE" in ("#"*|"") continue; esac   # skip comments + blank lines

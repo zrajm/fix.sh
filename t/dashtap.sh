@@ -1106,4 +1106,47 @@ write_file() {
     [ -n "$DATE" ] && chtime "$DATE" "$FILE"
 }
 
+# Usage: import_function FUNCTION... <SHELLSCRIPT
+#
+# Import shell FUNCTION from SHELLSCRIPT into the current environment. Each
+# function in SHELLSCRIPT must start with an unindented function name followed
+# by '()', and end in a line which starts with an unindented '}'.
+#
+# Each import will result in a pass() or fail(), depending on whether it worked
+# or not. If a function fails to import the rest of current test script will be
+# skipped. In the event of a failure the preceeding error message gotten from
+# eval will shine through as well.
+import_function() {
+    local NAME="$1"
+    [ "$#" = 1    ] || error "import_function: Bad number of args"
+    varname "$NAME" || error "import_function: Bad FUNCTION name '$NAME'"
+    local LINE CODE="" DESCR="Importing shell function '$NAME'" NL="
+";  local TRAPS="trap - EXIT; $(trap)"         # store original traps
+    while read -r LINE; do                     # read standard input
+        if [ -z "$CODE" ]; then                #   before function found
+            case "$LINE" in                    #     at start of function:
+                "$NAME()"*) CODE="$LINE$NL"    #       remember line
+            esac
+        else                                   #   inside function
+            CODE="$CODE$LINE$NL"               #     remember line
+            case "$LINE" in '}'|'} '*)         #     at end of function:
+                case "$(type "$NAME")" in
+                    "$NAME is a shell function")
+                        fail "$DESCR" \
+                            "Function '$NAME' already exists" <&-
+                        exit 1 ;;
+                esac
+                trap "fail \"$DESCR\" \"Failed to eval function '$NAME'\" <&-" EXIT
+                eval "$CODE"                   #     import read function
+                eval "$TRAPS"                  #     restore original traps
+                pass "$DESCR" <&-
+                return 0
+            esac
+        fi
+    done
+    fail "Importing shell function '$NAME'" \
+        "Function '$NAME' could not be found in source" <&-
+    exit 1
+}
+
 #[eof]
