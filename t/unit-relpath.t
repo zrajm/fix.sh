@@ -13,9 +13,9 @@ init_test
 
 # Usage: VARNAME - VALUE
 #
-# Mock for `seteval` (used by `relpath` function). Just pass through value by
+# Mock for `setrun` (used by `relpath` function). Just pass through value by
 # setting VARNAME to VALUE.
-seteval() { eval "$1=\$3"; }
+setrun() { eval "$1=\$3"; }
 say() { printf "%s\n" "$@"; }
 
 import_function relpath <"$TESTCMD"

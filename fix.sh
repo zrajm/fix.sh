@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.11.29
+VERSION=0.11.30
 
 ##############################################################################
 ##                                                                          ##
@@ -88,7 +88,7 @@ die() {
     shift "$(( $# < 3 ? $# : 3))"              # remove 1st three args from $@
     local FILE COUNT="$#"
     while [ "$COUNT" != 0 ]; do                # for each FILE arg
-        seteval FILE relpath "$1" "${FIX_PWD:-$PWD}" # make filename relative
+        setrun FILE relpath "$1" "${FIX_PWD:-$PWD}" # make filename relative
         shift; COUNT="$(( COUNT - 1 ))"
         set -- "$@" "${FILE#./}"
     done
@@ -98,18 +98,18 @@ die() {
     exit "$STATUS"
 }
 
-# Usage: seteval VARIABLE COMMAND [ARG]...
+# Usage: setrun VARIABLE COMMAND [ARG]...
 #
 # Execute COMMAND (with the ARG(s) provided), capture its standard output into
 # VARIABLE and return with exit status of COMMAND. (Standard error is neither
 # captured nor interferred with.)
-seteval() {
+setrun() {
     # NOTA BENE: Only positional parameters ($1, $2, etc) are used here. This
     # to avoid name collision with VARIABLE. (If named local vars were used
     # here, and user specified one of the same names as VARIABLE, that
     # variable's new content would not be visible outside this function.)
     case "$1" in ""|[0-9]*|*[!a-zA-Z0-9_]*)
-        die 31 "seteval: Bad variable name '$1'"
+        die 31 "setrun: Bad variable name '$1'"
     esac
     # $1=VARIABLE / $2=COMMAND output + ':' + exit code
     set -- "$1" "$(shift; set +e; "$@"; echo ":$?")" # run command
@@ -162,8 +162,8 @@ abspath() {
 # being relative to B).
 relpath() {
     local ABS="${1:-.}" CWD="${2:-.}" ABSCWD="${3:-}"
-    seteval ABS abspath "$ABS" "$ABSCWD"; ABS="${ABS%/}/"
-    seteval CWD abspath "$CWD";           CWD="${CWD%/}/"
+    setrun ABS abspath "$ABS" "$ABSCWD"; ABS="${ABS%/}/"
+    setrun CWD abspath "$CWD";           CWD="${CWD%/}/"
     # For each dir part in CWD, except the leading prefix shared with ABSFILE,
     # add one '..' part to the beginning of the output.
     local REL=""
@@ -322,7 +322,7 @@ strip_path() {
 build_finalize() {
     local DBFILE="$1" TARGET="$2" TARGET_TMP="$3" SCRIPT="$4" PARENT="$5"
     local TMP_CHECKSUM="$(file_checksum "$TARGET_TMP")" FILE=""
-    seteval FILE strip_path TARGET "$TARGET"
+    setrun FILE strip_path TARGET "$TARGET"
 
     # update target
     local OLD_CHECKSUM="$(load_metadata "$DBFILE" "$FILE")"
@@ -355,10 +355,10 @@ build_finalize() {
 # or written relative to $FIX_TARGET_DIR.
 build() {
     local TARGET="$1" PARENT="${2:-}" FILE SCRIPT DBFILE
-    seteval TARGET abspath "$TARGET"   "$FIX_TARGET_DIR"
-    seteval FILE   relpath "$TARGET"   "$FIX_TARGET_DIR"
-    seteval SCRIPT abspath "$FILE.fix" "$FIX_SCRIPT_DIR"
-    seteval DBFILE abspath "$FILE"     "$FIX_DIR/state"
+    setrun TARGET abspath "$TARGET"   "$FIX_TARGET_DIR"
+    setrun FILE   relpath "$TARGET"   "$FIX_TARGET_DIR"
+    setrun SCRIPT abspath "$FILE.fix" "$FIX_SCRIPT_DIR"
+    setrun DBFILE abspath "$FILE"     "$FIX_DIR/state"
     case "$TARGET" in
         "$FIX_TARGET_DIR"/*) : ;;
         *) die 16 "Target '%s' must be inside Fix target dir '%s/'" - \
@@ -371,8 +371,8 @@ build() {
 
 parseopts_case_code() {
     local INNER OUTER
-    seteval INNER read_stdin
-    seteval OUTER read_stdin <<-"END_CODE"
+    setrun INNER read_stdin
+    setrun OUTER read_stdin <<-"END_CODE"
 	case "$ARG" in
 	    --) while [ "$COUNT" -gt 0 ]; do   # no options after '--'
 	            set -- "$@" "$1"; shift    #   keep remaining args
@@ -390,7 +390,7 @@ parseopts() {
     local CMD="$1"; shift
     local COUNT="$#" ARG OPTARG OPT_CASE \
         HELP="Try '${0##*/} --help' for more information."
-    seteval OPT_CASE parseopts_case_code
+    setrun OPT_CASE parseopts_case_code
     while [ "$COUNT" -gt 0 ]; do
         ARG="$1"; shift
         case "$ARG" in                         # handle '--opt=ARG'
@@ -422,7 +422,7 @@ main() {
     [ "$#" = 0 ] && die 15 "No target(s) specified"
     if is_mother; then                         # mother process
         export FIX_DEBUG FIX_FORCE FIX_WORK_TREE
-        seteval FIX_WORK_TREE find_work_tree \
+        setrun FIX_WORK_TREE find_work_tree \
             || die 14 "Not inside a Fix work tree (Have you run 'fix --init'?)"
         export FIX_PID="$$"
         export FIX_DIR="$FIX_WORK_TREE/.fix"
@@ -468,7 +468,7 @@ main() {
         fi
         for TARGET; do
             export FIX_TARGET
-            seteval FIX_TARGET relpath "$TARGET" "$FIX_TARGET_DIR" "$CWD"
+            setrun FIX_TARGET relpath "$TARGET" "$FIX_TARGET_DIR" "$CWD"
             build "$FIX_TARGET" "$PARENT"
         done
     fi
