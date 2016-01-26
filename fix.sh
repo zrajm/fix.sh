@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.11.28
+VERSION=0.11.29
 
 ##############################################################################
 ##                                                                          ##
@@ -383,7 +383,7 @@ parseopts_case_code() {
 	    *)  set -- "$@" "$ARG" ;;          #   put non-option arg back
 	esac
 	END_CODE
-    printf "$OUTER" "$INNER"
+    printf "$OUTER\n" "$INNER"
 }
 
 parseopts() {
