@@ -970,7 +970,7 @@ cpdir() {
 }
 
 # Usage: execute COMMAND TRAPFILE
-#    or: execute TRAPFILE <<-"EOF"
+#    or: execute TRAPFILE 3<<-"EOF"
 #            COMMAND
 #        EOF
 #
@@ -986,7 +986,8 @@ execute() {
     local CMD="$1" TRAPFILE="$2"
     if [ $# = 1 ]; then                        # one arg = read stdin
         TRAPFILE="$1"
-        CMD=""; setread + CMD
+        [ -t 3 ] && error "execute: No input on file descriptor '3'"
+        CMD=""; setread + CMD <&3
     elif [ $# != 2 ]; then
         error "execute: Bad number of args"
     fi
@@ -1118,8 +1119,9 @@ write_file() {
 # eval will shine through as well.
 import_function() {
     local NAME="$1"
+    [     -t 0    ] && error "import_function: No input on stdin"
     [ "$#" = 1    ] || error "import_function: Bad number of args"
-    varname "$NAME" || error "import_function: Bad FUNCTION name '$NAME'"
+    varname "$NAME" || error "import_function: Bad function name '$NAME'"
     local LINE CODE="" DESCR="Importing shell function '$NAME'" NL="
 ";  local TRAPS="trap - EXIT; $(trap)"         # store original traps
     while read -r LINE; do                     # read standard input

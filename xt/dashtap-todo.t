@@ -15,7 +15,7 @@ cd "$(mktemp -d)"
 STDOUT="not ok 1 - descr # TODO with reason"
 title "TODO: Test description + TODO with reason in description"
 
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     dashtap_init
     is 1 2 'descr # TODO with reason'
 EOF
@@ -30,7 +30,7 @@ cd "$(mktemp -d)"
 STDOUT="not ok 1 - descr # TODO"
 title "TODO: Test description + TODO without reason in description"
 
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     dashtap_init
     is 1 2 'descr # TODO'
 EOF
@@ -45,7 +45,7 @@ cd "$(mktemp -d)"
 STDOUT="not ok 1 # TODO with reason"
 title "TODO: No test description + TODO with reason in description"
 
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     dashtap_init
     is 1 2 '# TODO with reason'
 EOF
@@ -60,7 +60,7 @@ cd "$(mktemp -d)"
 STDOUT="not ok 1 # TODO"
 title "TODO: No test description + TODO without reason in description"
 
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     dashtap_init
     is 1 2 '# TODO'
 EOF
@@ -75,7 +75,7 @@ cd "$(mktemp -d)"
 STDOUT="not ok 1 - descr # TODO '\"with reason"
 title "TODO: Test description + TODO with reason as separate function"
 
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     dashtap_init
     TODO "'\"with reason"
     is 1 2 'descr'
@@ -91,7 +91,7 @@ cd "$(mktemp -d)"
 STDOUT="not ok 1 - descr # TODO"
 title "TODO: Test description + TODO without reason as separate function"
 
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     dashtap_init
     TODO
     is 1 2 'descr'
@@ -107,7 +107,7 @@ cd "$(mktemp -d)"
 STDOUT="not ok 1 # TODO with reason"
 title "TODO: No test description + TODO with reason as separate function"
 
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     dashtap_init
     TODO "with reason"
     is 1 2
@@ -123,7 +123,7 @@ cd "$(mktemp -d)"
 STDOUT="not ok 1 # TODO"
 title "TODO: No test description + TODO without reason as separate function"
 
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     dashtap_init
     TODO
     is 1 2
@@ -144,7 +144,7 @@ STDERR="
 #     WANTED: 2"
 title "TODO: Test description + no TODO"
 
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     dashtap_init
     TODO
     END_TODO
@@ -166,7 +166,7 @@ STDERR="
 #     WANTED: 2"
 title "TODO: No test description + no TODO"
 
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     dashtap_init
     TODO
     END_TODO

@@ -14,7 +14,7 @@ function_exists strip_newline  "Function 'strip_newline' exists"
 cd "$(mktemp -d)"
 STDERR="strip_newline: Bad number of args"
 title "strip_newline: Fail when two or more args are used"
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     LINE=""
     strip_newline MANY ARGS
     echo "$LINE"
@@ -29,7 +29,7 @@ file_is   trap      "EXIT"     "Called exit"
 cd "$(mktemp -d)"
 STDERR="strip_newline: Bad VARNAME 'BAD-VAR'"
 title "strip_newline: Fail when bad variable name is used"
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     strip_newline "BAD-VAR"
     echo "$BAD-VAR"
 EOF
@@ -43,7 +43,7 @@ file_is   trap      "EXIT"     "Called exit"
 cd "$(mktemp -d)"
 STDOUT="\\No newline at end"
 title "strip_newline: Zero length string"
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     LINE=""
     strip_newline LINE
     echo "$LINE"
@@ -58,7 +58,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 cd "$(mktemp -d)"
 STDOUT="Hello\\No newline at end"
 title "strip_newline: String with no newline at end"
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     LINE="Hello"
     strip_newline LINE
     echo "$LINE"
@@ -73,7 +73,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 cd "$(mktemp -d)"
 STDOUT="  1  2  spaces  \\No newline at end"
 title "strip_newline: String leading + trailing spaces"
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     LINE="  1  2  spaces  "
     strip_newline LINE
     echo "$LINE"
@@ -88,7 +88,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 cd "$(mktemp -d)"
 STDOUT="Hello"
 title "strip_newline: String ending in newline"
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     LINE="Hello
 "
     strip_newline LINE
@@ -105,7 +105,7 @@ cd "$(mktemp -d)"
 STDOUT="Hello
 "
 title "strip_newline: with string ending in two newlines"
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     LINE="Hello
 
 "

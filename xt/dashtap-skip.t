@@ -15,7 +15,7 @@ cd "$(mktemp -d)"
 STDOUT="ok 1 - descr # SKIP with reason"
 title "SKIP: Test description + SKIP with reason in description"
 
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     dashtap_init
     is 1 2 'descr # SKIP with reason'
 EOF
@@ -30,7 +30,7 @@ cd "$(mktemp -d)"
 STDOUT="ok 1 - descr # SKIP"
 title "SKIP: Test description + SKIP without reason in description"
 
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     dashtap_init
     is 1 2 'descr # SKIP'
 EOF
@@ -45,7 +45,7 @@ cd "$(mktemp -d)"
 STDOUT="ok 1 # SKIP with reason"
 title "SKIP: No test description + SKIP with reason in description"
 
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     dashtap_init
     is 1 2 '# SKIP with reason'
 EOF
@@ -60,7 +60,7 @@ cd "$(mktemp -d)"
 STDOUT="ok 1 # SKIP"
 title "SKIP: No test description + SKIP without reason in description"
 
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     dashtap_init
     is 1 2 '# SKIP'
 EOF
@@ -75,7 +75,7 @@ cd "$(mktemp -d)"
 STDOUT="ok 1 - descr # SKIP with reason"
 title "SKIP: Test description + SKIP with reason as separate function"
 
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     dashtap_init
     SKIP "with reason"
     is 1 2 'descr'
@@ -91,7 +91,7 @@ cd "$(mktemp -d)"
 STDOUT="ok 1 - descr # SKIP"
 title "SKIP: Test description + SKIP without reason as separate function"
 
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     dashtap_init
     SKIP
     is 1 2 'descr'
@@ -107,7 +107,7 @@ cd "$(mktemp -d)"
 STDOUT="ok 1 # SKIP with reason"
 title "SKIP: No test description + SKIP with reason as separate function"
 
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     dashtap_init
     SKIP "with reason"
     is 1 2
@@ -123,7 +123,7 @@ cd "$(mktemp -d)"
 STDOUT="ok 1 # SKIP"
 title "SKIP: No test description + SKIP without reason as separate function"
 
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     dashtap_init
     SKIP
     is 1 2
@@ -144,7 +144,7 @@ STDERR="
 #     WANTED: 2"
 title "SKIP: Test description + no SKIP"
 
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     dashtap_init
     SKIP
     END_SKIP
@@ -166,7 +166,7 @@ STDERR="
 #     WANTED: 2"
 title "SKIP: No test description + no SKIP"
 
-execute <<"EOF" trap >out 2>err
+execute 3<<"EOF" trap >out 2>err
     dashtap_init
     SKIP
     END_SKIP

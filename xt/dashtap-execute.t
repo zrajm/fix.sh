@@ -46,7 +46,7 @@ file_is   trap      "EXIT"     "Called exit"
 cd "$(mktemp -d)"
 title "execute: Ignore STDIN when two args are used"
 (
-    execute 'echo ARG' trap >out 2>err <<-"EOF"
+    execute 'echo ARG' trap >out 2>err 3<<-"EOF"
 	echo STDIN
 	EOF
 )
@@ -60,7 +60,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 cd "$(mktemp -d)"
 title "execute: Process STDIN when one arg is used"
 (
-    execute trap >out 2>err <<-"EOF"
+    execute trap >out 2>err 3<<-"EOF"
 	echo STDIN
 	EOF
 )
@@ -74,7 +74,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 cd "$(mktemp -d)"
 title "execute: Returning false"
 (
-    execute trap >out 2>err <<-"EOF"
+    execute trap >out 2>err 3<<-"EOF"
 	! :
 	EOF
 )
@@ -88,7 +88,7 @@ file_is   trap      "FULL"     "Didn't call exit"
 cd "$(mktemp -d)"
 title "execute: Exiting with true exit status"
 (
-    execute trap >out 2>err <<-"EOF"
+    execute trap >out 2>err 3<<-"EOF"
 	exit 0
 	EOF
 )
@@ -102,7 +102,7 @@ file_is   trap      "EXIT"     "Called exit"
 cd "$(mktemp -d)"
 title "execute: Exiting with false exit status"
 (
-    execute trap >out 2>err <<-"EOF"
+    execute trap >out 2>err 3<<-"EOF"
 	exit 1
 	EOF
 )
