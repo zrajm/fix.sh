@@ -1113,8 +1113,7 @@ write_file() {
 # function in SHELLSCRIPT must start with an unindented function name followed
 # by '()', and end in a line which starts with an unindented '}'.
 #
-# Each import will result in a pass() or fail(), depending on whether it worked
-# or not. If a function fails to import the rest of current test script will be
+# If a function fails to import the rest of current test script will be
 # skipped. In the event of a failure the preceeding error message gotten from
 # eval will shine through as well.
 import_function() {
@@ -1122,8 +1121,8 @@ import_function() {
     [     -t 0    ] && error "import_function: No input on stdin"
     [ "$#" = 1    ] || error "import_function: Bad number of args"
     varname "$NAME" || error "import_function: Bad function name '$NAME'"
-    local LINE CODE="" DESCR="Importing shell function '$NAME'" NL="
-";  local TRAPS="trap - EXIT; $(trap)"         # store original traps
+    local LINE CODE="" ERR PREERR="import_function: Function '$NAME'" NL="
+"
     while read -r LINE; do                     # read standard input
         if [ -z "$CODE" ]; then                #   before function found
             case "$LINE" in                    #     at start of function:
@@ -1134,21 +1133,16 @@ import_function() {
             case "$LINE" in '}'|'} '*)         #     at end of function:
                 case "$(type "$NAME")" in
                     "$NAME is a shell function")
-                        fail "$DESCR" \
-                            "Function '$NAME' already exists" <&-
-                        exit 1 ;;
+                        error "$PREERR already exists"
                 esac
-                trap "fail \"$DESCR\" \"Failed to eval function '$NAME'\" <&-" EXIT
-                eval "$CODE"                   #     import read function
-                eval "$TRAPS"                  #     restore original traps
-                pass "$DESCR" <&-
+                ERR="$(eval "$CODE" 2>&1)"     #     test for errors
+                [ "$ERR" ] && error "$PREERR eval failed:${ERR#*eval:}"
+                eval "$CODE"                   #     re-eval to import function
                 return 0
             esac
         fi
     done
-    fail "Importing shell function '$NAME'" \
-        "Function '$NAME' could not be found in source" <&-
-    exit 1
+    error "$PREERR not found in input"
 }
 
 #[eof]
