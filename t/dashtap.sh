@@ -975,9 +975,9 @@ cpdir() {
 #        EOF
 #
 # Eval shell COMMAND(s) in a subshell, saving to FILE whether the command(s)
-# ran all the way through ('ALL') or exited before that ('SOME'). This can be
-# used to invoke a function and see whether it called exit ('SOME') or return
-# ('ALL').
+# ran all the way through ('FULL') or exited before that ('EXIT'). This can be
+# used to invoke a function and see whether it called exit ('EXIT') or return
+# ('FULL').
 #
 # Return status will be the same as the exit status of the terminating command
 # in COMMAND (if COMMANDS were terminated with 'exit', the return code will be
@@ -992,10 +992,10 @@ execute() {
         error "execute: Bad number of args"
     fi
     (
-        trap "echo EXIT >\"$TRAPFILE\"; trap - 0" 0
+        trap "trap - EXIT; echo EXIT >\"$TRAPFILE\"" EXIT
         eval "$CMD"
         STATUS=$?
-        trap - 0
+        trap - EXIT
         echo FULL >"$TRAPFILE"
         exit $STATUS
     )
