@@ -124,6 +124,7 @@
 
    + Buildscript should contain lots of comments about how Fix works etc.
    + This build example should be tested through the system tests.
+** TODO Options parsing should split bundled shortopts
 * System tests
 ** TODO Test that compiles are done/not done with incrementor(?)
    Compiled file could be a number that is incremented by the 'compiling'

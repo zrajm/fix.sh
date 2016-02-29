@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.11.30
+VERSION=0.11.31
 
 ##############################################################################
 ##                                                                          ##
@@ -386,6 +386,31 @@ parseopts_case_code() {
     printf "$OUTER\n" "$INNER"
 }
 
+# Usage: parseopts CMD ARG... <<-"END_OPTS"
+#            CASES
+#        END_OPTS
+#
+# Process ARG(s) as options, then run CMD, passing all remaining non-option
+# ARG(s) to it. CASES one or more `pattern) list ;;` constructions pased along
+# to a shell `case` statement, and used to determine what counts as an
+# argument.
+#
+# parseopts() processes each ARG in turn, until '--' is encountered, or there
+# are no more ARG(s) to process. As processing is done $@ is shifted around so
+# that $1 contain any option argument (or the next option to be parsed), set
+# $OPTARG to 'used' to indicate that an option argument has been used and
+# should not be processed as a potential option.
+#
+# Any arguments beginning with '-' that is specified in CASES will
+# automatically terminate parsing and result in an error message. For example:
+#
+#     parseopts mainfunc -f ./foo --dir=bar -- -f <<-"END_OPTS"
+#         -f|--force FORCE=1               ;;
+#         -d|--dir)  DIR="$1"; OPTARG=used ;;
+#     END_OPTS
+#
+# Above will parse the command line, set $DIR to 'bar' and $FORCE to '1', then
+# call `mainfunc` with the remaining arguments './foo' and '-f'.
 parseopts() {
     local CMD="$1"; shift
     local COUNT="$#" ARG OPTARG OPT_CASE \
