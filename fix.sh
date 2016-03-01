@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.11.31
+VERSION=0.11.32
 
 ##############################################################################
 ##                                                                          ##
@@ -247,7 +247,7 @@ is_mother() {
 # Creates DIR (which must be an absolute path), and puts a hardlink in DIR
 # (called `fix`) linking to the currently running executable.
 add_fix_to_path() {
-    local DIR="$1" LINK="$1/fix" FIX="$(readlink -f "$0")"
+    local DIR="$1" LINK="$1/fix" FIX="$(abspath "$0")"
     mkpath "$LINK" || die 7 "Cannot create dir for executable '%s'" - "$LINK"
     ln -f "$FIX" "$LINK"
     PATH="$DIR:$PATH"
@@ -456,7 +456,7 @@ main() {
         export FIX_SCRIPT_DIR="$FIX_WORK_TREE/fix"
         export FIX_SOURCE_DIR="$FIX_WORK_TREE/src"
         export FIX_TARGET_DIR="$FIX_WORK_TREE/build"
-        add_fix_to_path "$(readlink -f "$FIX_DIR")/bin"
+        add_fix_to_path "$(abspath "$FIX_DIR")/bin"
         [ -n "$OPT_SOURCE" ] \
             && die 15 "Option '--source' can only be used inside buildscript"
         [ -d "$FIX_SOURCE_DIR" ] \
