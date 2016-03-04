@@ -39,10 +39,22 @@ that.
 directory. This creates a `.fix` dir (where Fix stores its build state) in the
 current directory.
 
+`--script-dir=DIR` Specifies the directory in which Fix looks for buildscripts
+(`.fix` files). Same as the $FIX_SCRIPT_DIR environment variable. (Fix never
+writes to this dir, unless the same dir is also given as the target directory.)
+
 `--source` This is used in buildscripts to declare source dependencies for its
 target. Whenever a source dependency has changed, the target becomes dirty and
 will be rebuild next time Fix is invoked. This option cannot be used on the
 command line.
+
+`--source-dir=DIR` Specifies the directory in which Fix looks for source files.
+Same as the $FIX_SOURCE_DIR environment variable. (Fix never writes to this
+dir, unless the same dir is also given as the target directory.)
+
+`--target-dir=DIR` Specifies the directory in which Fix will write target
+files. Same as the $FIX_TARGET_DIR environment variable. (Fix writes to this
+dir.)
 
 `-V`, `--version` Display version information and copyright information, then
 exit.

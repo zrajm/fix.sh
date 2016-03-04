@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.11.32
+VERSION=0.12.0
 
 ##############################################################################
 ##                                                                          ##
@@ -33,12 +33,15 @@ Usage: ${0##*/} [OPTION]... TARGET...
 Build TARGET(s) based on which dependencies has changed.
 
 Options:
-  -D, --debug    enable debug mode (extra output on standard error)
-  -f, --force    overwrite target files modified by user
-  -h, --help     display this information and exit
-      --init     init metadata and set current dir as work tree root
-      --source   declare source dependency (only allowed in buildscripts)
-  -V, --version  output version information and exit
+  -D, --debug           enable debug mode (extra output on standard error)
+  -f, --force           overwrite target files modified by user
+  -h, --help            display this information and exit
+      --init            init metadata and set current dir as work tree root
+      --script-dir=DIR  where ('.fix') buildscripts resides (default: 'fix')
+      --source          declare source dependency (only allowed in buildscripts)
+      --source-dir=DIR  where to read source files from (default: 'src')
+      --target-dir=DIR  where to write targets (default: 'build')
+  -V, --version         output version information and exit
 
 END_USAGE
     exit
@@ -446,16 +449,17 @@ main() {
 
     [ "$#" = 0 ] && die 15 "No target(s) specified"
     if is_mother; then                         # mother process
-        export FIX_DEBUG FIX_FORCE FIX_WORK_TREE
+        export FIX_DEBUG FIX_FORCE FIX_WORK_TREE \
+            FIX_SCRIPT_DIR FIX_SOURCE_DIR FIX_TARGET_DIR
         setrun FIX_WORK_TREE find_work_tree \
             || die 14 "Not inside a Fix work tree (Have you run 'fix --init'?)"
+        setrun FIX_SCRIPT_DIR abspath "${FIX_SCRIPT_DIR:-$FIX_WORK_TREE/fix}"
+        setrun FIX_SOURCE_DIR abspath "${FIX_SOURCE_DIR:-$FIX_WORK_TREE/src}"
+        setrun FIX_TARGET_DIR abspath "${FIX_TARGET_DIR:-$FIX_WORK_TREE/build}"
         export FIX_PID="$$"
         export FIX_DIR="$FIX_WORK_TREE/.fix"
         export FIX_LOCK="$FIX_DIR/lock.pid"
         export FIX_PWD="$PWD"
-        export FIX_SCRIPT_DIR="$FIX_WORK_TREE/fix"
-        export FIX_SOURCE_DIR="$FIX_WORK_TREE/src"
-        export FIX_TARGET_DIR="$FIX_WORK_TREE/build"
         add_fix_to_path "$(abspath "$FIX_DIR")/bin"
         [ -n "$OPT_SOURCE" ] \
             && die 15 "Option '--source' can only be used inside buildscript"
@@ -515,6 +519,9 @@ parseopts main "$@" <<-"END_CODE"
 -h|--help)    OPT_HELP=1    ;;
 --init)       OPT_INIT=1    ;;
 --source)     OPT_SOURCE=1  ;;
+--script-dir) FIX_SCRIPT_DIR="${1:-}"; OPTARG=used ;;
+--source-dir) FIX_SOURCE_DIR="${1:-}"; OPTARG=used ;;
+--target-dir) FIX_TARGET_DIR="${1:-}"; OPTARG=used ;;
 -V|--version) OPT_VERSION=1 ;;
 END_CODE
 

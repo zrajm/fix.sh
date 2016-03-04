@@ -2,11 +2,6 @@
 
 * Program
 ** TODO strip_path() should be called from write_metadata() (?)
-** TODO Options --script-dir, --source-dir, --target-dir              :v0_12:
-   For setting $FIX_SCRIPT_DIR, $FIX_SOURCE_DIR, $FIX_TARGET_DIR.
-
-   Expand paths given by user to full absolute paths internally.
-** TODO Milestone: Version 0.12 - Easier use of paths --------------- :v0_12:
 ** TODO Milestone: Version 0.13 - Config file ----------------------- :v0_13:
    Config file name: `.fix/config`.
 
@@ -16,6 +11,9 @@
      example, `fix all` can be used to build all targets.
    + There should be a default alias, which should work for the plain 'fix'
      (without any arguments).
+** TODO Absolute paths for script, source and target(?)
+   What should that mean? Should root mean Fix root, or the system root? Should
+   relative paths be relative to Fix root, or to the current user directory?
 ** TODO Pass more arguments to buildscripts(?)
    Fix passes:
 
@@ -622,3 +620,9 @@
    Fix.
 
    $FIX_TARGET, however, needs to be exported, so added tests for that.
+** DONE Options --script-dir, --source-dir, --target-dir              :v0_12:
+   CLOSED: [2016-03-04 Fri 20:09]
+   For setting $FIX_SCRIPT_DIR, $FIX_SOURCE_DIR, $FIX_TARGET_DIR. Expand paths
+   given by user to full absolute paths internally.
+** DONE Milestone: Version 0.12 - Easier use of paths --------------- :v0_12:
+   CLOSED: [2016-03-04 Fri 20:09]
