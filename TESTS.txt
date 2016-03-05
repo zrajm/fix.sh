@@ -99,7 +99,9 @@
      + Target: not existing
      + Metadata: not existing
      + Tempfile: not existing
-** DONE c07. Using '--source' option outside buildscript
+** DONE c07. Build, buildscript outside target dir
+   CLOSED: [2016-03-05 Sat 23:18]
+** DONE c08. Using '--source' option outside buildscript
    CLOSED: [2014-09-11 Thu 08:57]
    Attempt to declare source dependency outside of a buildscript (i.e. using
    '--source' option from the command line).

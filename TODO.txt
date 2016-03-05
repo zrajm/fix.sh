@@ -2,6 +2,7 @@
 
 * Program
 ** TODO strip_path() should be called from write_metadata() (?)
+** TODO Update Fix copyright year to 2016
 ** TODO Milestone: Version 0.13 - Config file ----------------------- :v0_13:
    Config file name: `.fix/config`.
 
@@ -11,6 +12,12 @@
      example, `fix all` can be used to build all targets.
    + There should be a default alias, which should work for the plain 'fix'
      (without any arguments).
+** TODO Don't die on non-existing 'src' dir unless necessary.
+   Currently Fix will die if no source directory exists, even when no source
+   directory is needed. Fix should only die with this error message if the
+   source directory is actually *used* by any of the buildscripts. when using
+
+   Error message: "ERROR: Source dir 'src' does not exist"
 ** TODO Absolute paths for script, source and target(?)
    What should that mean? Should root mean Fix root, or the system root? Should
    relative paths be relative to Fix root, or to the current user directory?

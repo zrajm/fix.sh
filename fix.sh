@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.12.0
+VERSION=0.12.1
 
 ##############################################################################
 ##                                                                          ##
@@ -364,8 +364,16 @@ build() {
     setrun DBFILE abspath "$FILE"     "$FIX_DIR/state"
     case "$TARGET" in
         "$FIX_TARGET_DIR"/*) : ;;
-        *) die 16 "Target '%s' must be inside Fix target dir '%s/'" - \
-            "$TARGET" "$FIX_TARGET_DIR" ;;
+        *)  # This suggestion assumes that user specified the target path
+            # relative to the work tree root, instead of (as expected) relative
+            # to their own current dir.
+            setrun SUGGEST relpath "$TARGET" "$FIX_PWD"
+            while [ "${SUGGEST#../}" != "$SUGGEST" ]; do
+                SUGGEST="${SUGGEST#../}"
+            done
+            die 16 "Your target '%s' must be inside the target dir ('%s/')" \
+                "Perhaps you meant to say '%s'?" \
+                "$TARGET" "$FIX_TARGET_DIR" "$FIX_TARGET_DIR/$SUGGEST" ;;
     esac
     mkpath "$TARGET" || die 6 "Cannot create dir for target '%s'" - "$TARGET"
     build_run "$SCRIPT" "$TARGET" "$TARGET--fixing"
