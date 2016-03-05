@@ -2,7 +2,6 @@
 
 * Program
 ** TODO strip_path() should be called from write_metadata() (?)
-** TODO Update Fix copyright year to 2016
 ** TODO Milestone: Version 0.13 - Config file ----------------------- :v0_13:
    Config file name: `.fix/config`.
 
@@ -158,9 +157,6 @@
    When building a dep1 -> dep2 -> dep3 chain, see that if dep3 has a modified
    buildscript that produces the same output, none of targets should be
    overwritten, but remain exactly as they are.
-** TODO Version test case should check copyright year as well
-   Test that checks output of `--version` should be expanded to enforce the
-   year part of the version message as well, not just the version number.
 ** TODO Tests for reading of command line arguments
 ** TODO Add test for --debug (and -D) option
 ** TODO Add test for --force (and -f) option
@@ -633,3 +629,9 @@
    given by user to full absolute paths internally.
 ** DONE Milestone: Version 0.12 - Easier use of paths --------------- :v0_12:
    CLOSED: [2016-03-04 Fri 20:09]
+** DONE Update Fix copyright year to 2016
+   CLOSED: [2016-03-05 Sat 23:46]
+** DONE Version test case should check copyright year as well
+   CLOSED: [2016-03-05 Sat 23:46]
+   Test that checks output of `--version` should be expanded to enforce the
+   year part of the version message as well, not just the version number.

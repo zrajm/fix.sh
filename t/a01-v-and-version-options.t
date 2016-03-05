@@ -70,24 +70,17 @@ PATCH="$(commits_since_tag "$TAG" fix.sh)"
 if git diff --quiet HEAD "fix.sh"; then
     # 'fix.sh' has NOT been modified since last commit.
     set "$MAJOR.$MINOR.$PATCH"
+    WANTED_YEAR=""
 else
     # 'fix.sh' has been modified since last commit.
     set -- \
         "$MAJOR.$MINOR.$(( PATCH + 1 ))" \
         "$MAJOR.$(( MINOR + 1 )).0" \
         "$(( MAJOR + 1 )).0.0"
+    WANTED_YEAR="$(date +%Y)"
 fi
 
 init_test
-
-# Version output with version number removed (from end of first line).
-OUTPUT="fix.sh (Fix)
-Copyright (C) 2015 zrajm <fix@zrajm.org>
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.
-
-For the latest version of Fix, see <https://github.com/zrajm/fix.sh>."
 
 file_not_exists .fix   "Before build: Metadata dir shouldn't exist"
 file_not_exists build  "Before build: Target dir shouldn't exist"
@@ -104,9 +97,22 @@ file_not_exists src    "Before build: Metadata dir shouldn't exist"
     while read -r LINE; do                     # read remaining lines
         GOT="$GOT$NL$LINE"
     done
+    GOT_YEAR="${GOT#*Copyright (C) }"          # extract copyright year
+    GOT_YEAR="${GOT_YEAR%% *}"
+    WANTED_YEAR="${WANTED_YEAR:-$GOT_YEAR}"    # if Fix hasn't changed
 } <stdout
 
+# Version output with version number removed (from end of first line).
+OUTPUT="fix.sh (Fix)
+Copyright (C) ${WANTED_YEAR:-$GOT_YEAR} zrajm <fix@zrajm.org>
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+For the latest version of Fix, see <https://github.com/zrajm/fix.sh>."
+
 is_one_of "$VER" "Version number" -- "$@"
+is        "$GOT_YEAR" "$WANTED_YEAR" "Copyright year"
 
 is              "$RC"  0             "Exit status"
 file_not_exists .fix   "Metadata dir shouldn't exist"
