@@ -3,19 +3,27 @@
 * VAGUE FUTURE IDEAS
 ** TODO Garbage collecting of metadata files?
 ** TODO Handling of circular dependencies
-* [50%] a. Options
+* [60%] a. Options
 ** DONE a01. -V and --version options
    CLOSED: [2015-11-16 Mon 11:38]
 ** TODO a02. -h and --help options
 ** TODO a03. -D and --debug options
 ** TODO a04. -f and --force options
 ** TODO a05. --init option
-** DONE a06. --script-dir option
+** DONE a06. --script-dir option with empty arg
+   CLOSED: [2016-03-06 Sun 21:04]
+** DONE a07. --script-dir option with invalid arg
+   CLOSED: [2016-03-06 Sun 21:05]
+** DONE a08. --script-dir option
    CLOSED: [2016-03-02 Wed 17:28]
-** DONE a07. --source-dir option
+** DONE a09. --source-dir option
    CLOSED: [2016-03-03 Thu 08:53]
-** DONE a08. --target-dir option
+   No need to retest with empty and invalid args, as it is implemented with the
+   same code as for --script-dir.
+** DONE a10. --target-dir option
    CLOSED: [2016-03-04 Fri 20:08]
+   No need to retest with empty and invalid args, as it is implemented with the
+   same code as for --script-dir.
 * [91%] b. Environment variables
 ** DONE b01. Arguments passed to buildscript
    CLOSED: [2015-12-07 Mon 08:19]

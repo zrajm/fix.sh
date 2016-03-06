@@ -142,8 +142,10 @@ The following exit status values are used:
            invoked Fix from the wrong directory, or that you've forgotten to
            run `fix --init`.)
 
-      15 = Bad options provided (e.g. using `--source` from the command line
-           rather than from inside a buildscript.)
+      15 = Bad options, or arguments to options, provided (e.g. using
+           `--source` from the command line rather than from inside a
+           buildscript, using `--target-dir` with an empty dirname and
+           similar).
 
       16 = Bad target file name provided. One or more of the specified targets
            are outside of the target dir (`$FIX_TARGET_DIR`), and Fix will

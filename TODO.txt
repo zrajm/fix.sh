@@ -33,6 +33,10 @@
 
    Maybe `$FIX_SCRIPT_DIR`, `$FIX_SOURCE_DIR` and/or `$FIX_TARGET_DIR` should
    be passed as arguments to the buildscript?
+
+   If the passed filenames are relative, they should always start with `./` or
+   `../` (so that filenames beginning with `-` are always handled correctly by
+   tools invoked from inside the buildscript.)
 ** TODO Buildscript should not run at all if target is unchanged
    Currently new target built into a tempfile, and existing target will never
    be overwritten unless the new target has been updated. But the new target
@@ -634,4 +638,8 @@
 ** DONE Version test case should check copyright year as well
    CLOSED: [2016-03-05 Sat 23:46]
    Test that checks output of `--version` should be expanded to enforce the
-   year part of the version message as well, not just the version number.
+   year part of the version message as well, not just the version number
+** DONE --script-dir, --source-dir, --target-dir now check their args
+   CLOSED: [2016-03-06 Sun 21:05]
+   If provided the empty string as an arg, or a DIR which name starts with a
+   minus sign Fix will now fail with an error message.

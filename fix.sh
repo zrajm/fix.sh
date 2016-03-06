@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.12.2
+VERSION=0.12.3
 
 ##############################################################################
 ##                                                                          ##
@@ -237,6 +237,27 @@ file_checksum() {
             "$FILE"
     fi
     echo "${CHECKSUM%% *}"                     # checksum without filename
+}
+
+# Usage: set_dir [script|source|target] DIR
+#
+# Sets the specified $FIX_<TYPE>_DIR variable to DIR. Will fail with an error
+# message if DIR is an invalid value (i.e. empty, or if it begins with a minus
+# sign '-').
+set_dir() {
+    local TYPE="$1" DIR="$2"
+    case "$DIR" in
+        "") die 15 "Invalid argument '' for '--$TYPE-dir'" \
+            "You must specify a directory." ;;
+        -*) die 15 "Invalid argument '%s' for '--$TYPE-dir'" \
+            "Use './%s' if your directory name really starts with '-'." \
+            "$DIR" "$DIR" ;;
+    esac
+    case "$TYPE" in
+        script) FIX_SCRIPT_DIR="$DIR" ;;
+        source) FIX_SOURCE_DIR="$DIR" ;;
+        target) FIX_TARGET_DIR="$DIR" ;;
+    esac
 }
 
 # Return true if this Fix process was invoked from command line, false if it
@@ -527,9 +548,9 @@ parseopts main "$@" <<-"END_CODE"
 -h|--help)    OPT_HELP=1    ;;
 --init)       OPT_INIT=1    ;;
 --source)     OPT_SOURCE=1  ;;
---script-dir) FIX_SCRIPT_DIR="${1:-}"; OPTARG=used ;;
---source-dir) FIX_SOURCE_DIR="${1:-}"; OPTARG=used ;;
---target-dir) FIX_TARGET_DIR="${1:-}"; OPTARG=used ;;
+--script-dir) set_dir script "${1:-}"; OPTARG=used ;;
+--source-dir) set_dir source "${1:-}"; OPTARG=used ;;
+--target-dir) set_dir target "${1:-}"; OPTARG=used ;;
 -V|--version) OPT_VERSION=1 ;;
 END_CODE
 
