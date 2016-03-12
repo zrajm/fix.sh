@@ -1,7 +1,6 @@
 -*- org -*-
 
 * Program
-** TODO strip_path() should be called from write_metadata() (?)
 ** TODO Milestone: Version 0.13 - Config file ----------------------- :v0_13:
    Config file name: `.fix/config`.
 
@@ -134,6 +133,12 @@
    + This build example should be tested through the system tests.
 ** TODO Options parsing should split bundled shortopts
 * System tests
+** TODO Version test should work in detached head state
+   Currently, if one checks out a commit older that the last tagged commit this
+   test will fail. (It only looks at the latest tag in the repo, not the latest
+   tag at the time of the commit.)
+
+   Test name: t/a01-v-and-version-options.t
 ** TODO Test that compiles are done/not done with incrementor(?)
    Compiled file could be a number that is incremented by the 'compiling'
    process, inspection of whether it's been compiled or not does not have to

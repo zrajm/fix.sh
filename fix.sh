@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.12.3
+VERSION=0.12.4
 
 ##############################################################################
 ##                                                                          ##
@@ -15,13 +15,13 @@ say() { printf "%s\n" "$@"; }                  # safe 'echo'
 read_stdin() {                                 # 'cat' using shell builtins
     [ -t 0 ] && die "read_stdin: Missing input on stdin"
     local TXT
-    while IFS="" read -r TXT; do               # last line must end in <LF>
+    while IFS="" read -r TXT || [ "$TXT" ]; do
         say "$TXT"
     done
 }
 reverse_file() {                               # reverse lines of a file
     local FILE="$1" TXT; shift
-    while IFS="" read -r TXT; do               # last line must end in <LF>
+    while IFS="" read -r TXT || [ "$TXT" ]; do
         set -- "$TXT" "$@"
     done <"$FILE"
     say "$@" >"$FILE"
