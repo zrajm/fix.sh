@@ -134,6 +134,8 @@ The following exit status values are used:
            of Fix was terminated by 'kill -KILL' or somehow failed to remove
            its lockfile.)
 
+       9 = Failed to parse config file.
+
       10 = Source buildscript or directory is missing.
 
       14 = Couldn't find the root of the Fix work tree. Fix searched for

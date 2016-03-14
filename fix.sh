@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.12.4
+VERSION=0.12.5
 
 ##############################################################################
 ##                                                                          ##
@@ -60,10 +60,64 @@ END_VERSION
     exit
 }
 
+trim_brackets() {
+    local LINE="${1%]}"
+    echo ${LINE#"["}
+}
+
+trim_space() {
+    local X="$1"
+    while [ "$X" != "${X#[$IFS]}" ]; do X="${X#[$IFS]}"; done # leading space
+    while [ "$X" != "${X%[$IFS]}" ]; do X="${X%[$IFS]}"; done # trailing space
+    echo "$X"
+}
+
+default_config() {
+    read_stdin <<-"END_CONF"
+	[core]
+	    scriptdir = fix
+	    sourcedir = src
+	    targetdir = build
+	END_CONF
+}
+
+# Usage: read_config <FILE
+#
+# Reads FILE, and sets the corresponding values.
+read_config() {
+    local LINE SECTION VALUE
+    while read LINE || [ "$LINE" ]; do
+        setrun LINE trim_space "$LINE"
+        case "$LINE" in
+            ["#;"]*) continue ;;               # '# comment' or '; comment'
+            "["*"]")                           # '[section]'
+                setrun SECTION trim_brackets "$LINE"
+                # FIXME: SECTION should be alphanumeric, die if not
+                continue ;;
+        esac
+        setrun NAME  trim_space "${LINE%%=*}"
+        setrun VALUE trim_space "${LINE#*=}"
+        # FIXME: NAME should be alphanumeric, die if not
+        # FIXME: VALUE should be <what>(?), die if not
+        # FIXME: strip double-quoted strings from VALUE(?)
+        case "$SECTION" in
+            core)
+                case "$NAME" in
+                    scriptdir) set_dir script "${FIX_SCRIPT_DIR:-$VALUE}" ;;
+                    sourcedir) set_dir source "${FIX_SOURCE_DIR:-$VALUE}" ;;
+                    targetdir) set_dir target "${FIX_TARGET_DIR:-$VALUE}" ;;
+                    *) die 9 "Unknown config value '$NAME' in section '$SECTION'" ;;
+                esac ;;
+            *)  die 9 "Unknown config section name '$SECTION'" ;;
+        esac
+    done
+}
+
 init() {
     local FIX_DIR="$1"
     [ -e "$FIX_DIR" ]  && die 1 "Fix dir '%s' already exists" - "$FIX_DIR"
     mkpath "$FIX_DIR/" || die 1 "Cannot create fix dir '%s'"  - "$FIX_DIR"
+    [ -e "$FIX_DIR/config" ] || default_config >"$FIX_DIR/config"
     exit
 }
 
@@ -482,11 +536,12 @@ main() {
             FIX_SCRIPT_DIR FIX_SOURCE_DIR FIX_TARGET_DIR
         setrun FIX_WORK_TREE find_work_tree \
             || die 14 "Not inside a Fix work tree (Have you run 'fix --init'?)"
+        export FIX_DIR="$FIX_WORK_TREE/.fix"
+        if [ -e "$FIX_DIR/config" ]; then read_config <"$FIX_DIR/config"; fi
         setrun FIX_SCRIPT_DIR abspath "${FIX_SCRIPT_DIR:-$FIX_WORK_TREE/fix}"
         setrun FIX_SOURCE_DIR abspath "${FIX_SOURCE_DIR:-$FIX_WORK_TREE/src}"
         setrun FIX_TARGET_DIR abspath "${FIX_TARGET_DIR:-$FIX_WORK_TREE/build}"
         export FIX_PID="$$"
-        export FIX_DIR="$FIX_WORK_TREE/.fix"
         export FIX_LOCK="$FIX_DIR/lock.pid"
         export FIX_PWD="$PWD"
         add_fix_to_path "$(abspath "$FIX_DIR")/bin"
