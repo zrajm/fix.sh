@@ -670,7 +670,7 @@
 ** TODO Rebuild target built by default buildscript, now by target
    Rebuild target that was previously build by default.fix, with a new
    TARGET.fix.
-* [8%] u. Unit tests
+* [11%] u. Unit tests
 ** TODO unit. abspath()
 ** TODO unit. add_fix_to_path()
 ** TODO unit. build()
@@ -685,6 +685,8 @@
 ** TODO unit. finalize_tmpfile()
 ** TODO unit. find_work_tree()
 ** TODO unit. init()
+** DONE unit. is_alphanumeric()
+   CLOSED: [2016-03-16 Wed 17:57]
 ** TODO unit. is_mother()
 ** TODO unit. load_metadata()
 ** TODO unit. mkpath()

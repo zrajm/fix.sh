@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.12.5
+VERSION=0.12.6
 
 ##############################################################################
 ##                                                                          ##
@@ -84,20 +84,28 @@ default_config() {
 # Usage: read_config <FILE
 #
 # Reads FILE, and sets the corresponding values.
+#
+# Section names and config variable names must be alphanumeric + '_'. Unknown
+# section names and config variables are ignored (so that you may use newer
+# config files with older versions of Fix).
 read_config() {
-    local LINE SECTION VALUE
+    local FILE="$1" LINE SECTION VALUE
     while read LINE || [ "$LINE" ]; do
         setrun LINE trim_space "$LINE"
         case "$LINE" in
             ["#;"]*) continue ;;               # '# comment' or '; comment'
             "["*"]")                           # '[section]'
                 setrun SECTION trim_brackets "$LINE"
-                # FIXME: SECTION should be alphanumeric, die if not
+                is_alphanumeric "$SECTION" \
+                    || die 9 "Invalid section name '[$SECTION]' in '$FILE'" \
+                        "Must be alphanumeric and start with non-number."
                 continue ;;
         esac
         setrun NAME  trim_space "${LINE%%=*}"
         setrun VALUE trim_space "${LINE#*=}"
-        # FIXME: NAME should be alphanumeric, die if not
+        is_alphanumeric "$NAME" \
+            || die 9 "Invalid config variable name '$NAME' in '$FILE' (in [$SECTION])" \
+                "Must be alphanumeric and start with non-number."
         # FIXME: VALUE should be <what>(?), die if not
         # FIXME: strip double-quoted strings from VALUE(?)
         case "$SECTION" in
@@ -106,11 +114,9 @@ read_config() {
                     scriptdir) set_dir script "${FIX_SCRIPT_DIR:-$VALUE}" ;;
                     sourcedir) set_dir source "${FIX_SOURCE_DIR:-$VALUE}" ;;
                     targetdir) set_dir target "${FIX_TARGET_DIR:-$VALUE}" ;;
-                    *) die 9 "Unknown config value '$NAME' in section '$SECTION'" ;;
                 esac ;;
-            *)  die 9 "Unknown config section name '$SECTION'" ;;
         esac
-    done
+    done <"$FILE"
 }
 
 init() {
@@ -165,9 +171,7 @@ setrun() {
     # to avoid name collision with VARIABLE. (If named local vars were used
     # here, and user specified one of the same names as VARIABLE, that
     # variable's new content would not be visible outside this function.)
-    case "$1" in ""|[0-9]*|*[!a-zA-Z0-9_]*)
-        die 31 "setrun: Bad variable name '$1'"
-    esac
+    is_alphanumeric "$1" || die 31 "setrun: Invalid variable name '$1'"
     # $1=VARIABLE / $2=COMMAND output + ':' + exit code
     set -- "$1" "$(shift; set +e; "$@"; echo ":$?")" # run command
     # $1=VARIABLE / $2=COMMAND exit code / $3=COMMAND output / $4=<newline>
@@ -312,6 +316,16 @@ set_dir() {
         source) FIX_SOURCE_DIR="$DIR" ;;
         target) FIX_TARGET_DIR="$DIR" ;;
     esac
+}
+
+# Usage: is_alphanumeric STR
+#
+# Return true if STR is a valid shell variable name, false otherwise. Must
+# consist of only a-z, A-Z, 0-9, and underscores. The first character may not
+# be 0-9.
+is_alphanumeric() {
+    case "$1" in ""|[0-9]*|*[!a-zA-Z0-9_]*) return 1; esac
+    return 0
 }
 
 # Return true if this Fix process was invoked from command line, false if it
@@ -537,7 +551,7 @@ main() {
         setrun FIX_WORK_TREE find_work_tree \
             || die 14 "Not inside a Fix work tree (Have you run 'fix --init'?)"
         export FIX_DIR="$FIX_WORK_TREE/.fix"
-        if [ -e "$FIX_DIR/config" ]; then read_config <"$FIX_DIR/config"; fi
+        if [ -e "$FIX_DIR/config" ]; then read_config "$FIX_DIR/config"; fi
         setrun FIX_SCRIPT_DIR abspath "${FIX_SCRIPT_DIR:-$FIX_WORK_TREE/fix}"
         setrun FIX_SOURCE_DIR abspath "${FIX_SOURCE_DIR:-$FIX_WORK_TREE/src}"
         setrun FIX_TARGET_DIR abspath "${FIX_TARGET_DIR:-$FIX_WORK_TREE/build}"

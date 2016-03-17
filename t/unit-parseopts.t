@@ -8,7 +8,8 @@ Unit tests for parseopts().
 EOF
 init_test
 
-for FUNC in die is_mother read_stdin setrun parseopts_case_code parseopts; do
+for FUNC in die is_mother read_stdin setrun is_alphanumeric \
+        parseopts_case_code parseopts; do
     import_function "$FUNC" <"$TESTCMD"
 done
 
