@@ -670,7 +670,7 @@
 ** TODO Rebuild target built by default buildscript, now by target
    Rebuild target that was previously build by default.fix, with a new
    TARGET.fix.
-* [11%] u. Unit tests
+* [13%] u. Unit tests
 ** TODO unit. abspath()
 ** TODO unit. add_fix_to_path()
 ** TODO unit. build()
@@ -678,6 +678,7 @@
 ** TODO unit. build_run()
 ** TODO unit. cat()
 ** TODO unit. debug()
+** TODO unit. default_config()
 ** TODO unit. die()
 ** TODO unit. echo()
 ** TODO unit. establish_lock()
@@ -692,12 +693,16 @@
 ** TODO unit. mkpath()
 ** DONE unit. parseopts()
    CLOSED: [2016-02-29 Mon 20:45]
+** TODO unit. read_config()
 ** DONE unit. relpath()
    CLOSED: [2016-01-06 Wed 23:15]
 ** TODO unit. reverse()
 ** TODO unit. save_metadata()
 ** TODO unit. seteval()
 ** TODO unit. strip_path()
+** DONE unit. trim_brackets()
+   CLOSED: [2016-03-18 Fri 09:46]
+** TODO unit. trim_space()
 ** TODO unit. usage()
 ** TODO unit. version()
 * [eof]

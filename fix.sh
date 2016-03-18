@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.12.6
+VERSION=0.12.7
 
 ##############################################################################
 ##                                                                          ##
@@ -89,7 +89,8 @@ default_config() {
 # section names and config variables are ignored (so that you may use newer
 # config files with older versions of Fix).
 read_config() {
-    local FILE="$1" LINE SECTION VALUE
+    local FILE="$1"
+    local LINE SECTION VALUE HERE="in file '%s' (above sections)"
     while read LINE || [ "$LINE" ]; do
         setrun LINE trim_space "$LINE"
         case "$LINE" in
@@ -97,17 +98,20 @@ read_config() {
             "["*"]")                           # '[section]'
                 setrun SECTION trim_brackets "$LINE"
                 is_alphanumeric "$SECTION" \
-                    || die 9 "Invalid section name '[$SECTION]' in '$FILE'" \
-                        "Must be alphanumeric and start with non-number."
+                    || die 9 "Invalid section name '[$SECTION]' $HERE" \
+                        "Must be alphanumeric and start with non-number." \
+                        "$FILE"
+                HERE="in file '%s' (section '[$SECTION]')"
                 continue ;;
+            *"="*) : ;;                        # 'var = value'
+            *)  die 9 "Error $HERE" \
+                "Line '$LINE' must be '[section]' or 'var = value'." "$FILE" ;;
         esac
         setrun NAME  trim_space "${LINE%%=*}"
         setrun VALUE trim_space "${LINE#*=}"
         is_alphanumeric "$NAME" \
-            || die 9 "Invalid config variable name '$NAME' in '$FILE' (in [$SECTION])" \
-                "Must be alphanumeric and start with non-number."
-        # FIXME: VALUE should be <what>(?), die if not
-        # FIXME: strip double-quoted strings from VALUE(?)
+            || die 9 "Invalid config variable name '$NAME' $HERE" \
+                "Must be alphanumeric and start with non-number." "$FILE"
         case "$SECTION" in
             core)
                 case "$NAME" in

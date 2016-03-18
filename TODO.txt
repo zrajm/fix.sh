@@ -141,11 +141,16 @@
    + Buildscript should contain lots of comments about how Fix works etc.
    + This build example should be tested through the system tests.
 ** TODO Options parsing should split bundled shortopts
+** TODO Handle comments in config files
+   Comments should be handled anywhere in a line (see 'git help config' and
+   search for 'comment' to see how it is handled there).
+** TODO Handle double quoted strings in config files
+   See 'git help config' for how its handled in Git. (It's very much like the
+   shell's way of handling stuff.)
 * System tests
 ** TODO Config file tests
 *** TODO Unit tests
 **** TODO default_config()
-**** TODO trim_brackets()
 **** TODO trim_space()
 **** TODO read_config()
 *** TODO Test reading of config file
@@ -680,3 +685,5 @@
    CLOSED: [2016-03-06 Sun 21:05]
    If provided the empty string as an arg, or a DIR which name starts with a
    minus sign Fix will now fail with an error message.
+** DONE trim_brackets() unit tests
+   CLOSED: [2016-03-18 Fri 09:53]
