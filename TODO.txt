@@ -151,7 +151,6 @@
 ** TODO Config file tests
 *** TODO Unit tests
 **** TODO default_config()
-**** TODO trim_space()
 **** TODO read_config()
 *** TODO Test reading of config file
 **** TODO Fix should run fine with no config file present
@@ -687,3 +686,5 @@
    minus sign Fix will now fail with an error message.
 ** DONE trim_brackets() unit tests
    CLOSED: [2016-03-18 Fri 09:53]
+** DONE trim_space() unit tests
+   CLOSED: [2016-03-18 Fri 10:10]
