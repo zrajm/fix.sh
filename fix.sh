@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.12.7
+VERSION=0.12.8
 
 ##############################################################################
 ##                                                                          ##
@@ -72,8 +72,12 @@ trim_space() {
     echo "$X"
 }
 
-default_config() {
-    read_stdin <<-"END_CONF"
+# Usage: save_config FILE
+#
+# Save a default config file.
+save_config() {
+    local FILE="$1"
+    read_stdin <<-END_CONF >"$FILE"
 	[core]
 	    scriptdir = fix
 	    sourcedir = src
@@ -81,14 +85,14 @@ default_config() {
 	END_CONF
 }
 
-# Usage: read_config <FILE
+# Usage: load_config FILE
 #
-# Reads FILE, and sets the corresponding values.
+# Load config from FILE and sets the corresponding values.
 #
 # Section names and config variable names must be alphanumeric + '_'. Unknown
 # section names and config variables are ignored (so that you may use newer
 # config files with older versions of Fix).
-read_config() {
+load_config() {
     local FILE="$1"
     local LINE SECTION VALUE HERE="in file '%s' (above sections)"
     while read LINE || [ "$LINE" ]; do
@@ -127,7 +131,7 @@ init() {
     local FIX_DIR="$1"
     [ -e "$FIX_DIR" ]  && die 1 "Fix dir '%s' already exists" - "$FIX_DIR"
     mkpath "$FIX_DIR/" || die 1 "Cannot create fix dir '%s'"  - "$FIX_DIR"
-    [ -e "$FIX_DIR/config" ] || default_config >"$FIX_DIR/config"
+    [ -e "$FIX_DIR/config" ] || save_config "$FIX_DIR/config"
     exit
 }
 
@@ -555,7 +559,7 @@ main() {
         setrun FIX_WORK_TREE find_work_tree \
             || die 14 "Not inside a Fix work tree (Have you run 'fix --init'?)"
         export FIX_DIR="$FIX_WORK_TREE/.fix"
-        if [ -e "$FIX_DIR/config" ]; then read_config "$FIX_DIR/config"; fi
+        if [ -e "$FIX_DIR/config" ]; then load_config "$FIX_DIR/config"; fi
         setrun FIX_SCRIPT_DIR abspath "${FIX_SCRIPT_DIR:-$FIX_WORK_TREE/fix}"
         setrun FIX_SOURCE_DIR abspath "${FIX_SOURCE_DIR:-$FIX_WORK_TREE/src}"
         setrun FIX_TARGET_DIR abspath "${FIX_TARGET_DIR:-$FIX_WORK_TREE/build}"

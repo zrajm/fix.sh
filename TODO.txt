@@ -4,8 +4,7 @@
 ** TODO Cleanup & testing of config file stuff                        :v0_13:
 *** TODO Testing
 *** TODO Documentation
-    Of read_config() + README return code.
-*** TODO Fix FIXME in read_config()
+    Of load_config() + README return code.
 ** TODO Milestone: Version 0.13 - Config file ----------------------- :v0_13:
    Config file name: `.fix/config`.
 
@@ -146,12 +145,16 @@
    search for 'comment' to see how it is handled there).
 ** TODO Handle double quoted strings in config files
    See 'git help config' for how its handled in Git. (It's very much like the
-   shell's way of handling stuff.)
+   shell's way of handling stuff, concatenating multiple words and inserting
+   spaces.)
+
+   Currently `scriptdir`, `sourcedir` and `targetdir` names cannot contain
+   space (or any other kind of whitespace) because of this limitation.
 * System tests
 ** TODO Config file tests
 *** TODO Unit tests
-**** TODO default_config()
-**** TODO read_config()
+**** TODO save_config()
+**** TODO load_config()
 *** TODO Test reading of config file
 **** TODO Fix should run fine with no config file present
 **** TODO Test ';' comment in config
