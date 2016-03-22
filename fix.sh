@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.12.8
+VERSION=0.12.9
 
 ##############################################################################
 ##                                                                          ##
@@ -79,9 +79,9 @@ save_config() {
     local FILE="$1"
     read_stdin <<-END_CONF >"$FILE"
 	[core]
-	    scriptdir = fix
-	    sourcedir = src
-	    targetdir = build
+	    scriptdir = ${FIX_SCRIPT_DIR:-fix}
+	    sourcedir = ${FIX_SOURCE_DIR:-src}
+	    targetdir = ${FIX_TARGET_DIR:-build}
 	END_CONF
 }
 
@@ -132,7 +132,6 @@ init() {
     [ -e "$FIX_DIR" ]  && die 1 "Fix dir '%s' already exists" - "$FIX_DIR"
     mkpath "$FIX_DIR/" || die 1 "Cannot create fix dir '%s'"  - "$FIX_DIR"
     [ -e "$FIX_DIR/config" ] || save_config "$FIX_DIR/config"
-    exit
 }
 
 debug() {
@@ -550,8 +549,14 @@ parseopts() {
 main() {
     [ "$OPT_HELP"    ] && usage
     [ "$OPT_VERSION" ] && version
-    [ "$OPT_INIT"    ] && init "$PWD/.fix"
-
+    if [ "$OPT_INIT" ]; then                   # --init
+        FIX_WORK_TREE="."
+        setrun FIX_SCRIPT_DIR relpath "${FIX_SCRIPT_DIR:-$FIX_WORK_TREE/fix}"
+        setrun FIX_SOURCE_DIR relpath "${FIX_SOURCE_DIR:-$FIX_WORK_TREE/src}"
+        setrun FIX_TARGET_DIR relpath "${FIX_TARGET_DIR:-$FIX_WORK_TREE/build}"
+        init "$PWD/.fix"
+        exit
+    fi
     [ "$#" = 0 ] && die 15 "No target(s) specified"
     if is_mother; then                         # mother process
         export FIX_DEBUG FIX_FORCE FIX_WORK_TREE \

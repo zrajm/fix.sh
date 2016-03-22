@@ -744,6 +744,23 @@ is_one_of() {
 	END_MESSAGE
 }
 
+# Usage: like GOT WANTED [DESCRIPTION]
+#
+# Test pass if WANTED is a substring of GOT, fail otherwise.
+like() {
+    local GOT="$1" WANTED="$2" DESCR="$3" MSG="$4"
+    case "$CONF" in
+        *"$WANTED"*)
+            pass "$DESCR" "$MSG" ;;
+        *)  seteval GOT    'indent "GOT   :" "$GOT"'
+            seteval WANTED 'indent "WANTED:" ">>*$WANTED*<<"'
+            fail "$DESCR" <<-EOF
+		$GOT
+		$WANTED
+		EOF
+    esac
+}
+
 # Usage: function_exists FUNCTION [DESCRIPTION]
 function_exists() {
     [ $# = 1 -o $# = 2 ] || error "function_exists: Bad number of args"

@@ -1,6 +1,16 @@
 -*- org -*-
 
 * Program
+** TODO Defaults in save_config() AND outside it?
+   Setting defaults to scriptdir = fix, sourcedir = src and targetdir = build
+   should only happen once.
+
+   Right now these are set inside save_config() as well as in the --init if
+   case before init() is being called.
+** TODO Message for successful --init
+   "Initialized empty Fix build state in '.git/'"
+** TODO Exit status 13 on failed --init
+   Document in README.txt.
 ** TODO Cleanup & testing of config file stuff                        :v0_13:
 *** TODO Testing
 *** TODO Documentation
@@ -14,10 +24,6 @@
      example, `fix all` can be used to build all targets.
    + There should be a default alias, which should work for the plain 'fix'
      (without any arguments).
-** TODO --init should listen to --XXXXX-dir=DIR options
-   Using `--script-dir`, `--source-dir` and/or `--target-dir` together with
-   `--init` should result in those parameters being written to the config file
-   instead of the default.
 ** TODO Don't die on non-existing 'src' dir unless necessary.
    Currently Fix will die if no source directory exists, even when no source
    directory is needed. Fix should only die with this error message if the
@@ -152,26 +158,23 @@
    space (or any other kind of whitespace) because of this limitation.
 * System tests
 ** TODO Config file tests
-*** TODO Unit tests
-**** TODO save_config()
-**** TODO load_config()
-*** TODO Test reading of config file
-**** TODO Fix should run fine with no config file present
-**** TODO Test ';' comment in config
-**** TODO Test '#' comment in config
-*** TODO Test writing of config file
-*** TODO Test precedence: --opt over env over config over defaults
-    Priority order (later overriding previous):
-    1. Default value
-    3. Config file: $GIT_DIR/config
-    4. Environment variable
-    5. Option
+*** TODO Fix should run fine with no config file present
+*** TODO Unit tests for save_config()
+*** TODO Unit tests for load_config()
+***** TODO Test ';' comment in config
+***** TODO Test '#' comment in config
+***** TODO Test precedence: --opt over env over config over defaults
+      Priority order (later overriding previous):
+      1. Default value
+      3. Config file: $GIT_DIR/config
+      4. Environment variable
+      5. Option
 
-    In order read in program:
-    1. Environment variable
-    2. Option                          (overwrite all)
-    3. Config file: $GIT_DIR/config    (set if still unset)
-    4. Default value                   (set if still unset)
+      In order read in program:
+      1. Environment variable
+      2. Option                          (overwrite all)
+      3. Config file: $GIT_DIR/config    (set if still unset)
+      4. Default value                   (set if still unset)
 ** TODO Version test should work in detached head state
    Currently, if one checks out a commit older that the last tagged commit this
    test will fail. (It only looks at the latest tag in the repo, not the latest
@@ -691,3 +694,10 @@
    CLOSED: [2016-03-18 Fri 09:53]
 ** DONE trim_space() unit tests
    CLOSED: [2016-03-18 Fri 10:10]
+** DONE --init should accept --{target|source|script}-dir options
+   CLOSED: [2016-03-21 Mon 19:24]
+   Using `--script-dir`, `--source-dir` and/or `--target-dir` together with
+   `--init` should result in those parameters being written to the config file
+   instead of the default.
+** DONE Tests for --init with --{target|source|script}-dir options
+   CLOSED: [2016-03-22 Tue 19:13]
