@@ -7,8 +7,6 @@
 
    Right now these are set inside save_config() as well as in the --init if
    case before init() is being called.
-** TODO Message for successful --init
-   "Initialized empty Fix build state in '.git/'"
 ** TODO Exit status 13 on failed --init
    Document in README.txt.
 ** TODO Cleanup & testing of config file stuff                        :v0_13:
@@ -701,3 +699,6 @@
    instead of the default.
 ** DONE Tests for --init with --{target|source|script}-dir options
    CLOSED: [2016-03-22 Tue 19:13]
+** DONE Message for successful --init
+   CLOSED: [2016-03-22 Tue 23:36]
+   "Initialized empty Fix build state in '.git/'"

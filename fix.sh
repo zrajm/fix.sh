@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.12.9
+VERSION=0.12.10
 
 ##############################################################################
 ##                                                                          ##
@@ -132,6 +132,7 @@ init() {
     [ -e "$FIX_DIR" ]  && die 1 "Fix dir '%s' already exists" - "$FIX_DIR"
     mkpath "$FIX_DIR/" || die 1 "Cannot create fix dir '%s'"  - "$FIX_DIR"
     [ -e "$FIX_DIR/config" ] || save_config "$FIX_DIR/config"
+    say "Initialized empty Fix build state in '$FIX_DIR/'"
 }
 
 debug() {
