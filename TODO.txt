@@ -1,12 +1,6 @@
 -*- org -*-
 
 * Program
-** TODO Defaults in save_config() AND outside it?
-   Setting defaults to scriptdir = fix, sourcedir = src and targetdir = build
-   should only happen once.
-
-   Right now these are set inside save_config() as well as in the --init if
-   case before init() is being called.
 ** TODO Cleanup & testing of config file stuff                        :v0_13:
 *** TODO Testing
 *** TODO Documentation
@@ -20,6 +14,17 @@
      example, `fix all` can be used to build all targets.
    + There should be a default alias, which should work for the plain 'fix'
      (without any arguments).
+** TODO load_config() work even when config file does not exist
+   It should load default values if no config file exists, but still return
+   true.
+** TODO Set FIX_{SCRIPT|SOURCE|TARGET}_DIR default only once
+   Currently defaults are set once when invoking `--init` and once if no config
+   file is found during normal build. Instead they should be set only once.
+
+   Maybe config file should always be read in the mother process (even when
+   --help, --version and --init options are used)?
+
+   is_mother && load_config "$FIX_DIR/config"
 ** TODO Don't die on non-existing 'src' dir unless necessary.
    Currently Fix will die if no source directory exists, even when no source
    directory is needed. Fix should only die with this error message if the
@@ -703,3 +708,10 @@
 ** DONE Exit status 13 on failed --init
    CLOSED: [2016-03-23 Wed 13:15]
    Document in README.txt.
+** DONE Defaults in save_config() AND outside it?
+   CLOSED: [2016-03-23 Wed 17:01]
+   Setting defaults to scriptdir = fix, sourcedir = src and targetdir = build
+   should only happen once.
+
+   Right now these are set inside save_config() as well as in the --init if
+   case before init() is being called.

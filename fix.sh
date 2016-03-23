@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.12.11
+VERSION=0.12.12
 
 ##############################################################################
 ##                                                                          ##
@@ -77,11 +77,15 @@ trim_space() {
 # Save a default config file.
 save_config() {
     local FILE="$1"
+    local SCRIPT_DIR SOURCE_DIR TARGET_DIR WORK_TREE="${FIX_WORK_TREE:-.}"
+    setrun SCRIPT_DIR relpath "${FIX_SCRIPT_DIR:-$WORK_TREE/fix}"
+    setrun SOURCE_DIR relpath "${FIX_SOURCE_DIR:-$WORK_TREE/src}"
+    setrun TARGET_DIR relpath "${FIX_TARGET_DIR:-$WORK_TREE/build}"
     read_stdin <<-END_CONF >"$FILE"
 	[core]
-	    scriptdir = ${FIX_SCRIPT_DIR:-fix}
-	    sourcedir = ${FIX_SOURCE_DIR:-src}
-	    targetdir = ${FIX_TARGET_DIR:-build}
+	    scriptdir = $SCRIPT_DIR
+	    sourcedir = $SOURCE_DIR
+	    targetdir = $TARGET_DIR
 	END_CONF
 }
 
@@ -133,6 +137,7 @@ init() {
     mkpath "$FIX_DIR/" || die 13 "Cannot create fix dir '%s'"  - "$FIX_DIR"
     [ -e "$FIX_DIR/config" ] || save_config "$FIX_DIR/config"
     say "Initialized empty Fix build state in '$FIX_DIR/'"
+    exit
 }
 
 debug() {
@@ -550,14 +555,7 @@ parseopts() {
 main() {
     [ "$OPT_HELP"    ] && usage
     [ "$OPT_VERSION" ] && version
-    if [ "$OPT_INIT" ]; then                   # --init
-        FIX_WORK_TREE="."
-        setrun FIX_SCRIPT_DIR relpath "${FIX_SCRIPT_DIR:-$FIX_WORK_TREE/fix}"
-        setrun FIX_SOURCE_DIR relpath "${FIX_SOURCE_DIR:-$FIX_WORK_TREE/src}"
-        setrun FIX_TARGET_DIR relpath "${FIX_TARGET_DIR:-$FIX_WORK_TREE/build}"
-        init "$PWD/.fix"
-        exit
-    fi
+    [ "$OPT_INIT"    ] && init "$PWD/.fix"     # --init
     [ "$#" = 0 ] && die 15 "No target(s) specified"
     if is_mother; then                         # mother process
         export FIX_DEBUG FIX_FORCE FIX_WORK_TREE \
