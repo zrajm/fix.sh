@@ -138,6 +138,8 @@ The following exit status values are used:
 
       10 = Source buildscript or directory is missing.
 
+      13 = `fix --init` failed.
+
       14 = Couldn't find the root of the Fix work tree. Fix searched for
            searched for the '.fix' dir in current dir and then upwards towards
            '/', but nothing was found. (This usually means that you either

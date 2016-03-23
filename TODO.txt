@@ -7,8 +7,6 @@
 
    Right now these are set inside save_config() as well as in the --init if
    case before init() is being called.
-** TODO Exit status 13 on failed --init
-   Document in README.txt.
 ** TODO Cleanup & testing of config file stuff                        :v0_13:
 *** TODO Testing
 *** TODO Documentation
@@ -702,3 +700,6 @@
 ** DONE Message for successful --init
    CLOSED: [2016-03-22 Tue 23:36]
    "Initialized empty Fix build state in '.git/'"
+** DONE Exit status 13 on failed --init
+   CLOSED: [2016-03-23 Wed 13:15]
+   Document in README.txt.

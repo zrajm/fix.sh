@@ -21,7 +21,7 @@ file_exists     .fix                             "Metadata dir should exist"
 STDOUT="$NADA"
 STDERR="ERROR: Fix dir '.fix' already exists"
 
-is              "$RC"              1             "Exit status"
+is              "$RC"              13            "Exit status"
 file_not_exists build                            "Default target dir shouldn't exist"
 file_not_exists fix                              "Default script dir shouldn't exist"
 file_not_exists src                              "Default source dir shouldn't exist"
