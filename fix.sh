@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.12.12
+VERSION=0.12.13
 
 ##############################################################################
 ##                                                                          ##
@@ -72,15 +72,16 @@ trim_space() {
     echo "$X"
 }
 
-# Usage: save_config FILE
+# Usage: save_config FILE WORKTREE
 #
 # Save a default config file.
 save_config() {
-    local FILE="$1"
-    local SCRIPT_DIR SOURCE_DIR TARGET_DIR WORK_TREE="${FIX_WORK_TREE:-.}"
-    setrun SCRIPT_DIR relpath "${FIX_SCRIPT_DIR:-$WORK_TREE/fix}"
-    setrun SOURCE_DIR relpath "${FIX_SOURCE_DIR:-$WORK_TREE/src}"
-    setrun TARGET_DIR relpath "${FIX_TARGET_DIR:-$WORK_TREE/build}"
+    local FILE="$1" WORK_TREE="$2"
+    load_config "$FILE" "$WORK_TREE"           # set default $FIX_* variables
+    local SCRIPT_DIR SOURCE_DIR TARGET_DIR
+    setrun SCRIPT_DIR relpath "$FIX_SCRIPT_DIR" "$WORK_TREE"
+    setrun SOURCE_DIR relpath "$FIX_SOURCE_DIR" "$WORK_TREE"
+    setrun TARGET_DIR relpath "$FIX_TARGET_DIR" "$WORK_TREE"
     read_stdin <<-END_CONF >"$FILE"
 	[core]
 	    scriptdir = $SCRIPT_DIR
@@ -89,53 +90,65 @@ save_config() {
 	END_CONF
 }
 
-# Usage: load_config FILE
+# Usage: load_config FILE WORKTREE
 #
-# Load config from FILE and sets the corresponding values.
+# Set config values from FILE, or, if FILE does not exist or some values were
+# not set in FILE, using defaults. WORKTREE is the root path of the current Fix
+# work tree. Currently the following Fix variables are set:
+#
+#     $FIX_SCRIPT_DIR
+#     $FIX_SOURCE_DIR
+#     $FIX_TARGET_DIR
 #
 # Section names and config variable names must be alphanumeric + '_'. Unknown
 # section names and config variables are ignored (so that you may use newer
 # config files with older versions of Fix).
 load_config() {
-    local FILE="$1"
-    local LINE SECTION VALUE HERE="in file '%s' (above sections)"
-    while read LINE || [ "$LINE" ]; do
-        setrun LINE trim_space "$LINE"
-        case "$LINE" in
-            ["#;"]*) continue ;;               # '# comment' or '; comment'
-            "["*"]")                           # '[section]'
-                setrun SECTION trim_brackets "$LINE"
-                is_alphanumeric "$SECTION" \
-                    || die 9 "Invalid section name '[$SECTION]' $HERE" \
+    local FILE="$1" WORK_TREE="$2"
+    if [ -e "$FILE" ]; then
+        local LINE SECTION VALUE HERE="in file '%s' (above sections)"
+        while read LINE || [ "$LINE" ]; do
+            setrun LINE trim_space "$LINE"
+            case "$LINE" in
+                ["#;"]*) continue ;;           # '# comment' or '; comment'
+                "["*"]")                       # '[section]'
+                    setrun SECTION trim_brackets "$LINE"
+                    is_alphanumeric "$SECTION" \
+                        || die 9 "Invalid section name '[$SECTION]' $HERE" \
                         "Must be alphanumeric and start with non-number." \
                         "$FILE"
-                HERE="in file '%s' (section '[$SECTION]')"
-                continue ;;
-            *"="*) : ;;                        # 'var = value'
-            *)  die 9 "Error $HERE" \
-                "Line '$LINE' must be '[section]' or 'var = value'." "$FILE" ;;
-        esac
-        setrun NAME  trim_space "${LINE%%=*}"
-        setrun VALUE trim_space "${LINE#*=}"
-        is_alphanumeric "$NAME" \
-            || die 9 "Invalid config variable name '$NAME' $HERE" \
+                    HERE="in file '%s' (section '[$SECTION]')"
+                    continue ;;
+                *"="*) : ;;                        # 'var = value'
+                *)  die 9 "Error $HERE" \
+                    "Line '$LINE' must be '[section]' or 'var = value'." "$FILE" ;;
+            esac
+            setrun NAME  trim_space "${LINE%%=*}"
+            setrun VALUE trim_space "${LINE#*=}"
+            is_alphanumeric "$NAME" \
+                || die 9 "Invalid config variable name '$NAME' $HERE" \
                 "Must be alphanumeric and start with non-number." "$FILE"
-        case "$SECTION" in
-            core)
-                case "$NAME" in
-                    scriptdir) set_dir script "${FIX_SCRIPT_DIR:-$VALUE}" ;;
-                    sourcedir) set_dir source "${FIX_SOURCE_DIR:-$VALUE}" ;;
-                    targetdir) set_dir target "${FIX_TARGET_DIR:-$VALUE}" ;;
-                esac ;;
-        esac
-    done <"$FILE"
+            case "$SECTION" in
+                core)
+                    case "$NAME" in
+                        scriptdir) set_dir script "${FIX_SCRIPT_DIR:-$VALUE}" ;;
+                        sourcedir) set_dir source "${FIX_SOURCE_DIR:-$VALUE}" ;;
+                        targetdir) set_dir target "${FIX_TARGET_DIR:-$VALUE}" ;;
+                    esac ;;
+            esac
+        done <"$FILE"
+    fi
+    setrun FIX_SCRIPT_DIR abspath "${FIX_SCRIPT_DIR:-$WORK_TREE/fix}"
+    setrun FIX_SOURCE_DIR abspath "${FIX_SOURCE_DIR:-$WORK_TREE/src}"
+    setrun FIX_TARGET_DIR abspath "${FIX_TARGET_DIR:-$WORK_TREE/build}"
 }
 
 init() {
-    local FIX_DIR="$1"
+    local WORK_DIR="$1"
+    local FIX_DIR="$WORK_DIR/.fix"
     [ -e "$FIX_DIR" ]  && die 13 "Fix dir '%s' already exists" - "$FIX_DIR"
     mkpath "$FIX_DIR/" || die 13 "Cannot create fix dir '%s'"  - "$FIX_DIR"
-    [ -e "$FIX_DIR/config" ] || save_config "$FIX_DIR/config"
+    [ -e "$FIX_DIR/config" ] || save_config "$FIX_DIR/config" "$WORK_DIR"
     say "Initialized empty Fix build state in '$FIX_DIR/'"
     exit
 }
@@ -555,21 +568,18 @@ parseopts() {
 main() {
     [ "$OPT_HELP"    ] && usage
     [ "$OPT_VERSION" ] && version
-    [ "$OPT_INIT"    ] && init "$PWD/.fix"     # --init
-    [ "$#" = 0 ] && die 15 "No target(s) specified"
+    [ "$OPT_INIT"    ] && init "$PWD"          # --init
+    [ "$#" = 0       ] && die 15 "No target(s) specified"
     if is_mother; then                         # mother process
         export FIX_DEBUG FIX_FORCE FIX_WORK_TREE \
             FIX_SCRIPT_DIR FIX_SOURCE_DIR FIX_TARGET_DIR
         setrun FIX_WORK_TREE find_work_tree \
             || die 14 "Not inside a Fix work tree (Have you run 'fix --init'?)"
         export FIX_DIR="$FIX_WORK_TREE/.fix"
-        if [ -e "$FIX_DIR/config" ]; then load_config "$FIX_DIR/config"; fi
-        setrun FIX_SCRIPT_DIR abspath "${FIX_SCRIPT_DIR:-$FIX_WORK_TREE/fix}"
-        setrun FIX_SOURCE_DIR abspath "${FIX_SOURCE_DIR:-$FIX_WORK_TREE/src}"
-        setrun FIX_TARGET_DIR abspath "${FIX_TARGET_DIR:-$FIX_WORK_TREE/build}"
         export FIX_PID="$$"
         export FIX_LOCK="$FIX_DIR/lock.pid"
         export FIX_PWD="$PWD"
+        load_config "$FIX_DIR/config" "$FIX_WORK_TREE"
         add_fix_to_path "$(abspath "$FIX_DIR")/bin"
         [ -n "$OPT_SOURCE" ] \
             && die 15 "Option '--source' can only be used inside buildscript"
