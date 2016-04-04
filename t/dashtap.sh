@@ -942,6 +942,75 @@ is_unchanged() {
     fi
 }
 
+# Usage: is_same_env IGNORE [DESCR] 3<ENVFILE1 4<ENVFILE2
+#
+# Compare ENVFILE1 and ENVFILE2 (which should contain the output of the `set`
+# command -- a sorted list of all variables and their values), ignoring any
+# variables mentioned in the IGNORE list (a colon separated list of variable
+# names -- easiest way to specify an empty list is to use a single colon, ':').
+#
+# To use this function, first dump your environment to file twice at the points
+# you wish to compare. E.g.
+#
+#     set >before
+#     # do something here that should only set $CLEVER, but no other vars
+#     set >after
+#     is_without_env_leaks before after "$CLEVER"
+#
+# If ENVFILE1 and ENVFILE2 are identical, return 0 (true), otherwise return 1
+# (false).
+is_same_env() {
+    [ $# = 1 -o $# = 2 ] || error "is_same_env: Bad number of args"
+    local IGNORE=":$1:" DESCR="$(descr SKIP "$2")"
+    case "$IGNORE" in
+        *:[0-9]*|*[!a-zA-Z0-9_:]*) error "is_same_env: Bad IGNORE arg '$IGNORE'"
+    esac
+    local CHANGED="" REMOVED="" CREATED="" DIFF="" LINE1 LINE2 NL="
+"
+    #local COL="%-$(( (COLUMNS - 3) / 2 )).$(( (COLUMNS - 3) / 2 ))s"
+    while { read LINE1 <&3; read LINE2 <&4; [ "$LINE1" -o "$LINE2" ]; }; do
+        local VAR1="${LINE1%%=*}" VAR2="${LINE2%%=*}"
+        if [ "$VAR1" != "$VAR2" ]; then
+            if [ \( "$LINE1" \> "$LINE2" -a "$LINE2" \) -o -z "$LINE1" ]; then
+                while [ "$LINE1" \> "$LINE2" -o -z "$LINE1" ]; do
+                    VAR2="${LINE2%%=*}"
+                    match ":$VAR2:" "$IGNORE" || CREATED="$CREATED$NL$LINE2"
+                    #printf "$COL > $COL\n" "" "$LINE2"
+                    read LINE2 <&4 || [ "$LINE2" ] || break
+                done
+                VAR2="${LINE2%%=*}"
+            else
+                while [ "$LINE1" \< "$LINE2" -o -z "$LINE2" ]; do
+                    VAR1="${LINE1%%=*}"
+                    match ":$VAR1:" "$IGNORE" || REMOVED="$REMOVED$NL$LINE1"
+                    #printf "$COL <\n" "$LINE1"
+                    read LINE1 <&3 || [ "$LINE1" ] || break
+                done
+                VAR1="${LINE1%%=*}"
+            fi
+        fi
+        if [ "$VAR1" = "$VAR2" ]; then
+            if [ "$LINE1" != "$LINE2" ]; then
+                match ":$VAR1:" "$IGNORE" \
+                    || CHANGED="$CHANGED$NL$LINE1 --> ${LINE2#*=}"
+                #printf "$COL | $COL\n" "$LINE1" "$LINE2"
+                continue
+            fi
+            #printf "$COL   $COL\n" "$LINE1" "$LINE2"
+        fi
+    done
+    [ "$REMOVED" ] && DIFF="Variable(s) unset/removed:$REMOVED"
+    [ "$CREATED" ] && DIFF="${DIFF:+$DIFF$NL}Variable(s) created:$CREATED"
+    [ "$CHANGED" ] && DIFF="${DIFF:+$DIFF$NL}Variable value(s) changed:$CHANGED"
+    if [ "$DIFF" ]; then
+        fail "$DESCR" <<-EOF
+		$DIFF
+		EOF
+    else
+        pass "$DESCR"
+    fi
+}
+
 ##############################################################################
 ##                                                                          ##
 ##  Test Initialization                                                     ##

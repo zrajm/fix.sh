@@ -1,6 +1,21 @@
 -*- org -*-
 
 * Program
+** TODO Prefix internal dashtap functions with common string ('dt_'?)
+   Ran into problems with seteval() when Fix.sh had a similar but different
+   implementation of the same thing. Dashtap function should probably be called
+   dt_seteval() or somesuch to avoid this.
+
+   The test functions pass(), fail(), ok(), is() etc. should retain their
+   current names however (to retain test file readability).
+** TODO is_same_env() fails on multi-line values
+   If a any variable in the environment contain a newline, then all bets are
+   off and is_same_env() WILL fail in unpredictable ways.
+
+   The easiest fix for this would be keep a small history and make sure that
+   for every value `[ "$PREV" \< "$CURR" ]` is always true, and die() if this
+   is not the case. This wouldn't solve the actual problem, but clue in the
+   user as to the fact that something is wrong, rather than die silently.
 ** TODO Functions that read stdin shouldn't test stdin to determine when
    Functions that read standard input should not determine whether or not to
    read it by testing whether there is anything to read. Instead some other
