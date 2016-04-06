@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.12.13
+VERSION=0.12.14
 
 ##############################################################################
 ##                                                                          ##
@@ -367,7 +367,7 @@ is_mother() {
 add_fix_to_path() {
     local DIR="$1" LINK="$1/fix" FIX="$(abspath "$0")"
     mkpath "$LINK" || die 7 "Cannot create dir for executable '%s'" - "$LINK"
-    ln -f "$FIX" "$LINK"
+    ln -sf "$FIX" "$LINK"
     PATH="$DIR:$PATH"
 }
 
