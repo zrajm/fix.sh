@@ -748,10 +748,10 @@ is_one_of() {
 #
 # Test pass if WANTED is a substring of GOT, fail otherwise.
 like() {
-    local GOT="$1" WANTED="$2" DESCR="$3" MSG="$4"
-    case "$CONF" in
+    local GOT="$1" WANTED="$2" DESCR="$3"
+    case "$GOT" in
         *"$WANTED"*)
-            pass "$DESCR" "$MSG" ;;
+            pass "$DESCR" <&- ;;
         *)  seteval GOT    'indent "GOT   :" "$GOT"'
             seteval WANTED 'indent "WANTED:" ">>*$WANTED*<<"'
             fail "$DESCR" <<-EOF
