@@ -1125,9 +1125,15 @@ first_dep_is() {
     esac
 }
 
+# Usage: mkpath FILE
+#
+# Make sure directory part of FILE exists. Basename is stripped off before dir
+# part is created, use `mkpath DIR/` (with extra slash at end) to create a DIR.
 mkpath() {
-    local DIR="${1%/*}"                        # strip trailing filename
-    [ -d "$DIR" ] || mkdir -p -- "$DIR"
+    local FILE="$1" DIR="${FILE%/*}"
+    if [ "$DIR" != "$FILE" ]; then             # if FILE has DIR component
+        [ -d "$DIR" ] || mkdir -p -- "$DIR"    #   make sure DIR exists
+    fi
 }
 
 # Usage: chtime YYYY-MM-DD FILE
