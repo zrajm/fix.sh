@@ -1055,8 +1055,8 @@ cpdir() {
     done
 }
 
-# Usage: execute COMMAND TRAPFILE
-#    or: execute TRAPFILE 3<<-"EOF"
+# Usage: execute COMMAND TRAPFILE [4>ENVFILE1] [5>ENVFILE2]
+#    or: execute TRAPFILE 3<<-"EOF" [4>ENVFILE1] [5>ENVFILE2]
 #            COMMAND
 #        EOF
 #
@@ -1068,6 +1068,15 @@ cpdir() {
 # Return status will be the same as the exit status of the terminating command
 # in COMMAND (if COMMANDS were terminated with 'exit', the return code will be
 # the same as the exit status).
+#
+# If ENVFILE1 and/or ENVFILE2 are specified, then 'set' will be used to dump
+# out the full invironment before and after running COMMAND. Use this in
+# together with is_same_env() to test for variable leaks.
+#
+# If TRAPFILE contains 'EXIT', then ENVFILE2 will never be written, even if it
+# was specified. This is the result of the shell closing down all but the three
+# standard inputs inside of traps. (This function simply CAN'T output anything
+# when this happens.)
 execute() {
     local CMD="$1" TRAPFILE="$2"
     if [ $# = 1 ]; then                        # one arg = read stdin
@@ -1079,11 +1088,13 @@ execute() {
     fi
     (
         trap "trap - EXIT; echo EXIT >\"$TRAPFILE\"" EXIT
+        { >&4; } 2>/dev/null && set >&4        # if >&4 is connected
         eval "$CMD"
-        STATUS=$?
+        RC="$?"
         trap - EXIT
         echo FULL >"$TRAPFILE"
-        exit $STATUS
+        { >&5; } 2>/dev/null && set >&5        # if >&5 is connected
+        exit "$RC"
     )
 }
 
