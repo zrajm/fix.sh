@@ -66,6 +66,34 @@
    (That may be added later.)
 ** TODO Dependencies
 ** TODO Docs: Add man page
+** TODO Docs: Document variables
+   Internal variables should be reset by mother process, and not affect how Fix
+   will run if set in the invoking shell. Modifying any of these in a
+   buildscript will confuse Fix (so don't do that!)
+**** DONE $FIX_SCRIPT_DIR -- path relative worktree root
+     CLOSED: [2016-04-22 fre 10:26]
+**** DONE $FIX_SOURCE_DIR -- path relative worktree root
+     CLOSED: [2016-04-22 fre 10:27]
+**** DONE $FIX_TARGET_DIR -- path relative worktree root
+     CLOSED: [2016-04-22 fre 10:27]
+**** DONE $FIX_DEBUG      -- boolean
+     CLOSED: [2016-04-22 fre 10:27]
+**** DONE $FIX_FORCE      -- boolean
+     CLOSED: [2016-04-22 fre 10:27]
+**** DONE $FIX_LEVEL      -- INTERNAL
+     CLOSED: [2016-04-22 fre 10:27]
+**** DONE $FIX_LOCK       -- INTERNAL
+     CLOSED: [2016-04-22 fre 10:27]
+**** DONE $FIX_PID        -- INTERNAL
+     CLOSED: [2016-04-22 fre 10:27]
+**** DONE $FIX_PWD        -- INTERNAL
+     CLOSED: [2016-04-22 fre 10:28]
+**** DONE $FIX_TARGET     -- INTERNAL
+     CLOSED: [2016-04-22 fre 10:28]
+**** DONE $FIX_DIR        -- INTERNAL (open up later on)
+     CLOSED: [2016-04-22 fre 10:28]
+**** DONE $FIX_WORK_TREE  -- INTERNAL (open up later on)
+     CLOSED: [2016-04-22 fre 10:28]
 ** TODO More thorough is_mother() tests
    Should be able to detect an inconsistent state and abort. I.e. it should
    check *all* parent/child variables, and return true/false if they're all set
@@ -146,6 +174,14 @@
 
    Currently `scriptdir`, `sourcedir` and `targetdir` names cannot contain
    space (or any other kind of whitespace) because of this limitation.
+** TODO Listen to value of $FIX_DIR
+   $FIX_DIR should be settable in the invoking shell. When implemented, also
+   update docs on this (moving this from an 'internal variable' to
+   'environment'.
+** TODO Listen to value of $FIX_WORK_TREE
+   $FIX_WORK_TREE should be settable in the invoking shell. When implemented,
+   also update docs on this (moving this from an 'internal variable' to
+   'environment'.
 * System tests
 ** TODO Config file tests
 *** TODO Fix should run fine with no config file present
@@ -156,14 +192,14 @@
 ***** TODO Test precedence: --opt over env over config over defaults
       Priority order (later overriding previous):
       1. Default value
-      3. Config file: $GIT_DIR/config
+      3. Config file: $FIX_DIR/config
       4. Environment variable
       5. Option
 
       In order read in program:
       1. Environment variable
       2. Option                          (overwrite all)
-      3. Config file: $GIT_DIR/config    (set if still unset)
+      3. Config file: $FIX_DIR/config    (set if still unset)
       4. Default value                   (set if still unset)
 ** TODO Version test should work in detached head state
    Currently, if one checks out a commit older that the last tagged commit this
@@ -187,8 +223,24 @@
    Including error message when attempting to reinitialize already initialized
    work tree.
 ** TODO Error message paths when invoked from subdir
-** TODO Passing of options as environment variables
-   $OPT_INIT, $OPT_SOURCE should not work. $FIX_FORCE, $FIX_DEBUG should work.
+** TODO Passing in environment variables as options
+   Internal variables should be reset by mother process, and not affect how Fix
+   will run if set in the invoking shell. Modifying any of these in a
+   buildscript will confuse Fix (so don't do that!)
+*** TODO $OPT_INIT       -- INTERNAL
+*** TODO $OPT_SOURCE     -- INTERNAL
+*** TODO $FIX_DEBUG      -- boolean
+*** TODO $FIX_DIR        -- INTERNAL (open up later on)
+*** TODO $FIX_FORCE      -- boolean
+*** TODO $FIX_LEVEL      -- INTERNAL
+*** TODO $FIX_LOCK       -- INTERNAL
+*** TODO $FIX_PID        -- INTERNAL
+*** TODO $FIX_PWD        -- INTERNAL
+*** TODO $FIX_SCRIPT_DIR -- path relative worktree root
+*** TODO $FIX_SOURCE_DIR -- path relative worktree root
+*** TODO $FIX_TARGET     -- INTERNAL
+*** TODO $FIX_TARGET_DIR -- path relative worktree root
+*** TODO $FIX_WORK_TREE  -- INTERNAL (open up later on)
 ** TODO Test setting of $PATH
    Also make sure that subdependencies do not get the leading `$PATH` directory
    added multiple times.

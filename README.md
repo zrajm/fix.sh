@@ -9,12 +9,9 @@ Fix.sh is in no way complete, in fact it is not yet able to figure out
 dependencies properly, it is however maturing slowly, and might some day be
 merged into the the main [Fix] repository.
 
-
-Fix
-===
-Fix is a build system inspired by D.J. Bernstein's [redo], but drawing on [a
-lot of other peoples insights][inspiration]. For more info on that see the [Fix
-wiki].
+Fix, in turn, is a build system inspired by D.J. Bernstein's [redo], but
+drawing on [a lot of other peoples insights][inspiration]. For more info on
+that see the [Fix wiki].
 
 [Fix]: https://github.com/zrajm/fix
 [Dash]: http://gondor.apana.org.au/~herbert/dash/ "Debian Almquist SHell"
@@ -26,38 +23,42 @@ wiki].
 
 Options
 =======
-`-D`, `--debug` Enables debug mode, which causes Fix to output extra messages
-on standard error.
+Options override both environment variable and configuration file settings.
 
-`-f`, `--force` Normally Fix will not overwrite any target files that has been
-manually modified since Fix built the file. This option can be used to override
-that.
+  * `-D`, `--debug`: Enables debug mode, which causes Fix to output extra
+    messages on standard error.
 
-`-h`, `--help` Display help information, then exit.
+  * `-f`, `--force`: Normally Fix will not overwrite any target files that has
+    been manually modified since Fix built the file. This option can be used to
+    override that.
 
-`--init` Initializes a new Fix work tree, setting its root to the current
-directory. This creates a `.fix` dir (where Fix stores its build state) in the
-current directory.
+  * `-h`, `--help`: Display help information, then exit.
 
-`--script-dir=DIR` Specifies the directory in which Fix looks for buildscripts
-(`.fix` files). Same as the $FIX_SCRIPT_DIR environment variable. (Fix never
-writes to this dir, unless the same dir is also given as the target directory.)
+  * `--init`: Initializes a new Fix work tree, setting its root to the current
+    directory. This creates a `.fix` dir (where Fix stores its build state) in
+    the current directory.
 
-`--source` This is used in buildscripts to declare source dependencies for its
-target. Whenever a source dependency has changed, the target becomes dirty and
-will be rebuild next time Fix is invoked. This option cannot be used on the
-command line.
+  * `--script-dir=DIR` Specifies the directory in which Fix looks for
+    buildscripts (`.fix` files). Same as the `$FIX_SCRIPT_DIR` environment
+    variable. (Fix never writes to this dir, unless the same dir is also given
+    as the target directory.)
 
-`--source-dir=DIR` Specifies the directory in which Fix looks for source files.
-Same as the $FIX_SOURCE_DIR environment variable. (Fix never writes to this
-dir, unless the same dir is also given as the target directory.)
+  * `--source`: This is used in buildscripts to declare source dependencies for
+    its target. Whenever a source dependency has changed, the target becomes
+    dirty and will be rebuild next time Fix is invoked. This option cannot be
+    used on the command line.
 
-`--target-dir=DIR` Specifies the directory in which Fix will write target
-files. Same as the $FIX_TARGET_DIR environment variable. (Fix writes to this
-dir.)
+  * `--source-dir=DIR` Specifies the directory in which Fix looks for source
+    files. Same as the `$FIX_SOURCE_DIR` environment variable. (Fix never
+    writes to this dir, unless the same dir is also given as the target
+    directory.)
 
-`-V`, `--version` Display version information and copyright information, then
-exit.
+  * `--target-dir=DIR` Specifies the directory in which Fix will write target
+    files. Same as the `$FIX_TARGET_DIR` environment variable. (Fix writes to
+    this dir.)
+
+  * `-V`, `--version` Display version information and copyright information,
+    then exit.
 
 
 On File Names
@@ -204,25 +205,113 @@ will only be overwritten if Fix they have not been modified since last build
 (or `--force` was used).
 
 
-Environment Variables
-=====================
-Fix uses environment variables to pass information to its child processes (for
-a large project these can be quite a few!)
+Configuration
+=============
 
-| Variable          | Explanation                       | Default        |
-|-------------------|-----------------------------------|----------------|
-| `$FIX_DEBUG`      | Set if `--debug` option was used  | empty          |
-| `$FIX_DIR`        | Dir for build state               | `.fix/`        |
-| `$FIX_FORCE`      | Set if `--force` option was used  | empty          |
-| `$FIX_LEVEL`      | 0 = mother process, >0 = child    | number >= 1    |
-| `$FIX_LOCK`       | Lock file                         | filename       |
-| `$FIX_PID`        | Mother process PID                | PID            |
-| `$FIX_PWD`        | Invoking user's current dir       | dir name       |
-| `$FIX_SCRIPT_DIR` | Buildscripts dir                  | `fix/`         |
-| `$FIX_SOURCE_DIR` | Source file dir                   | `src/`         |
-| `$FIX_TARGET`     | Current target name               | filename       |
-| `$FIX_TARGET_DIR` | Target file dir                   | `build/`       |
-| `$FIX_WORK_TREE`  | Dir in which '.fix' dir resides   |                |
+Precedence
+----------
+
+   1. Command line options will override all other configuration.
+   2. Environment variables will override config file options.
+   3. Config file will override built-in default values.
+
+
+Environment
+===========
+Environment variables override configuration file settings, but they can in
+turn be overridden by command line options.
+
+**Boolean** options (`$FIX_FORCE`, `$FIX_DEBUG`) are considered turned off when
+unset or empty, and enabled otherwise. **Paths** are relative to the worktree
+root.
+
+  * `$FIX_DEBUG` Boolean. See `--debug`.
+
+  * `$FIX_FORCE` Boolean. See `--force`.
+
+  * `$FIX_SCRIPT_DIR`: See `core.scriptdir` and `--script-dir`.
+
+  * `$FIX_SOURCE_DIR` See `core.sourcedir` and `--source-dir`.
+
+  * `$FIX_TARGET_DIR` See `core.targetdir` and `--target-dir`.
+
+See also 'Internal Environment Variables'.
+
+
+Configuration File
+==================
+Fix uses a simple INI style file format for its configuration files. It
+contains [sections], comments, and config variable assignments.
+
+When you run `fix --init` to initialize your build worktree, a config file with
+the default values is created for you in `.fix/config`.
+
+Example:
+
+    #
+    # This a the config file, and
+    # a '#' or ';' character indicates a comment
+    #
+    [core]
+        ; Set the script dir
+        scriptdir = fix
+
+File names in `.fix/config` should be either absolute, or relative to the
+worktree root.
+
+
+Configuration Variables
+-----------------------
+Paths are relative to the worktree root.
+
+  * `core.scriptdir` (default: `fix/`): Buildscript directory (i.e. where the
+    `*.fix` files are located). Can be overridden by the `$FIX_SCRIPT_DIR`
+    environment variable.
+
+  * `core.sourcedir` (default: `src/`): Source file directory. Can be
+    overridden by the `$FIX_SOURCE_DIR` environment variable.
+
+  * `core.targetdir` (default: `build/`): Target file directory (i.e. where the
+    files built by Fix are written). Can be overridden by the `$FIX_TARGET_DIR`
+    environment variable.
+
+
+Internals
+=========
+
+Internal Environment Variables
+------------------------------
+In addition to the environment variables Fix accepts as options, there are also
+a number of environment variables that are used internally.
+
+Setting any of these in the shell before invoking Fix will not affect Fix's
+behavior (as they are all reset by Fix), but care should be taken not to modify
+them inside your buildscripts, as Fix use these variables to communicate with
+the its child processes (which are responsible for building your targets).
+
+If you do wish to invoke Fix as if from the command line, make sure
+`$FIX_LEVEL` is unset, empty or 0 (e.g. `FIX_LEVEL=0 fix`).
+
+  * `$FIX_DIR`: Full path to the `.fix/` directory in your current worktree
+    root. This is the directory where keeps its configuration, build state
+    metadata etc.
+
+  * `$FIX_LEVEL`: Used by Fix to determine whether it was invoked from the
+    command line (if unset, empty or 0), or from within a buildscript (if > 0).
+
+  * `$FIX_LOCK`: Only one instance of Fix started from the command line can be
+    running at the same time in the worktree. This is the lockfile that Fix
+    uses to keep track of that.
+
+  * `$FIX_PID`: System process ID of the mother process.
+
+  * `$FIX_PWD`: Full path to current directory of the user as they invoked Fix.
+    Filenames displayed on screen (in error messages etc) are shown relative to
+    this path.
+
+  * `$FIX_TARGET`: Name of the current target being built.
+
+  * `$FIX_WORK_TREE`: Full path to the root directory of the current worktree.
 
 
 Additional Notes
@@ -235,69 +324,37 @@ Glossary
 These are some, some of which terms used by build systems in general, and some
 of which are specific to Fix.
 
-**child process** - A Fix process started from within a buildscript. When a Fix
-child process fails, it will automatically kill the invoking buildscript (by
-means of a `SIGTERM` signal). In a child process `$FIX_LEVEL` will be non-zero.
+  * **child process**: A Fix process started from within a buildscript. When a
+    Fix child process fails, it will automatically kill the invoking
+    buildscript (by means of a `SIGTERM` signal). In a child process
+    `$FIX_LEVEL` will be non-zero.
 
-**dependency**
+  * **dependency**
 
-**dependency graph** or **dependency tree** - Is a _directed acyclic graph_ (or
-_DAG_ for short) describing all the dependencies for a target. As long as no
-_listdeps_ have been modified we know that the dependency graph will be the
-same as when we last built all dependencies.
+  * **dependency graph** or **dependency tree**: Is a _directed acyclic graph_
+    (or _DAG_ for short) describing all the dependencies for a target. As long
+    as no _listdeps_ have been modified we know that the dependency graph will
+    be the same as when we last built all dependencies.
 
-**clean tree** - A Fix project tree in which all target files have been built
-and are up-to-date. If Fix is invoked to build a clean tree, it will quickly
-determine that nothing needs to be done and exit with exit status 0.
+  * **clean tree**: A Fix project tree in which all target files have been
+    built and are up-to-date. If Fix is invoked to build a clean tree, it will
+    quickly determine that nothing needs to be done and exit with exit
+    status 0.
 
-**dirty tree** - A Fix project tree that contains one or more unbuild or
-unupdated target files.
+  * **dirty tree**: A Fix project tree that contains one or more unbuild or
+    unupdated target files.
 
-**listdep** (or **listing dependency**) - A dependency that defines what other
-dependencies need to be built. Buildscripts (`.fix` files) fall into this
-category since they declare which other files are needed to build their target.
+  * **listdep** (or **listing dependency**): A dependency that defines what
+    other dependencies need to be built. Buildscripts (`.fix` files) fall into
+    this category since they declare which other files are needed to build
+    their target.
 
-**mother process** - The process started from the command line. The mother
-process will invoke one or more buildscripts, which in turn will invoke Fix to
-declare and build dependencies their dependency. In a mother process
-`$FIX_LEVEL` will be zero.
+  * **mother process**: The process started from the command line. The mother
+    process will invoke one or more buildscripts, which in turn will invoke Fix
+    to declare and build dependencies their dependency. In a mother
+    process`$FIX_LEVEL` will be zero.
 
-**sourcedep** (or **source dependency**) - A dependency that isn't built by
-Fix, but is used to produce a target (typically a source file of some kind).
-Whenever a sourcedep has changed, all targets that depend on it will have to be
-rebuilt.
-
-------------------------------------------------------------------------------
-
-Pseudocode
-==========
-
-    if (not exists script) {
-        FAILURE
-    }
-
-    run script (producing tempfile)
-    if (script failed) {
-        FAILURE: script exited non-zero
-    }
-
-    if (targetfile does not exists) {
-        copy tempfile to target
-        SUCCESS
-    } elsif (targetfile == tempfile) {
-        delete tempfile
-        SUCCESS
-    } elsif (
-        targetfile metadata exist and
-        targetfile == targetfile metadata
-    ) {
-        copy tempfile to target
-        SUCCESS
-    } elsif ('--force') {
-        copy tempfile to target
-        SUCCESS
-    } else {
-        FAILURE: target externally modified
-    }
-
-    write metadata
+  * **sourcedep** (or **source dependency**): A dependency that isn't built by
+    Fix, but is used to produce a target (typically a source file of some
+    kind). Whenever a sourcedep has changed, all targets that depend on it will
+    have to be rebuilt.
