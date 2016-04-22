@@ -1,15 +1,8 @@
 -*- org -*-
 
-FIXME Continue with config file tests
-
-FIXME absolute paths in config files?
-FIXME relative paths in environment vars are relative to what?
-
 * Program
 ** TODO Cleanup & testing of config file stuff                        :v0_13:
 *** TODO Testing
-*** TODO Documentation
-    Of load_config() + README return code.
 ** TODO Milestone: Version 0.13 - Config file ----------------------- :v0_13:
    Config file name: `.fix/config`.
 
@@ -165,10 +158,30 @@ FIXME relative paths in environment vars are relative to what?
 ** TODO Config file tests
 *** TODO Fix should run fine with no config file present
 *** TODO Unit tests for save_config()
-*** TODO Unit tests for load_config()
-***** TODO Test ';' comment in config
-***** TODO Test '#' comment in config
-***** TODO Test precedence: --opt over env over config over defaults
+*** DONE Unit tests for load_config()
+    CLOSED: [2016-04-22 Fri 22:38]
+    Added tests for the following
+    + Too few args error
+    + Errors messages both before and after first [section]
+    + Unknown (alphanumeric) section names should pass (future compat.)
+    + Env already set with relpaths should be turned into abspath
+    + Env already set with abspath should be retained
+    + Unknown (alphanumeric) config variables should pass (future compat.)
+    + Having no config file
+    + Config file with missing final newline
+    + Trimming indentation + space at EOL
+    + '#' and ';' comments
+    + Invalid section names
+    + Setting of config variable
+    + Syntax error in line
+    + Trimming of space around config variable name
+    + Trimming of space around config variable value
+    + Non-alphanumeric config variable
+    + Missing [section]
+    + Setting of values
+    + Default values + conversion to abspath
+***** DONE Test precedence: --opt over env over config over defaults
+      CLOSED: [2016-04-22 Fri 22:38]
       Priority order (later overriding previous):
       1. Default value
       3. Config file: $FIX_DIR/config

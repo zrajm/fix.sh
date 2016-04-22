@@ -16,6 +16,26 @@
    for every value `[ "$PREV" \< "$CURR" ]` is always true, and die() if this
    is not the case. This wouldn't solve the actual problem, but clue in the
    user as to the fact that something is wrong, rather than die silently.
+** TODO Create is_in_env() function
+   Should allow one to compare multiple variables at once (so that envdump file
+   only has to be loaded once), so that one can write something like this:
+
+       is_in_env \
+           "FIX_SCRIPT_DIR=/env1" "\$FIX_SCRIPT_DIR should not be changed" \
+           "FIX_SOURCE_DIR=/env2" "\$FIX_SOURCE_DIR should not be changed" \
+           "FIX_TARGET_DIR=/env3" "\$FIX_TARGET_DIR should not be changed"
+
+   Instead of the current:
+
+       seteval + ENV stdin <"env2.txt"
+       like "$ENV" "${NL}FIX_SCRIPT_DIR='/env1'$NL" "\$FIX_SCRIPT_DIR should not be changed"
+       like "$ENV" "${NL}FIX_SOURCE_DIR='/env2'$NL" "\$FIX_SOURCE_DIR should not be changed"
+       like "$ENV" "${NL}FIX_TARGET_DIR='/env3'$NL" "\$FIX_TARGET_DIR should not be changed"
+
+   Error output should not contain a whole dump of the environment, but instead
+   just show the actual value, or alert that it's unset.
+
+   `t/unit-load-config.t` could use some TLC when this is in place.
 ** TODO Functions that read stdin shouldn't test stdin to determine when
    Functions that read standard input should not determine whether or not to
    read it by testing whether there is anything to read. Instead some other

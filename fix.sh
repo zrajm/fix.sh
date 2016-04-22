@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.12.14
+VERSION=0.12.15
 
 ##############################################################################
 ##                                                                          ##
@@ -105,14 +105,16 @@ save_config() {
 # config files with older versions of Fix).
 load_config() {
     local FILE="$1" WORK_TREE="$2"
+    [ "$#" = 2 ] || die 9 "load_config: Bad number of args"
+    local LINE SECTION NAME VALUE HERE="in file '%s' (above sections)"
     if [ -e "$FILE" ]; then
-        local LINE SECTION VALUE HERE="in file '%s' (above sections)"
         while read LINE || [ "$LINE" ]; do
             setrun LINE trim_space "$LINE"
             case "$LINE" in
                 ["#;"]*) continue ;;           # '# comment' or '; comment'
                 "["*"]")                       # '[section]'
                     setrun SECTION trim_brackets "$LINE"
+                    # FIXME: Should [section] allow for spaces inside brackets?
                     is_alphanumeric "$SECTION" \
                         || die 9 "Invalid section name '[$SECTION]' $HERE" \
                         "Must be alphanumeric and start with non-number." \
@@ -120,8 +122,9 @@ load_config() {
                     HERE="in file '%s' (section '[$SECTION]')"
                     continue ;;
                 *"="*) : ;;                        # 'var = value'
-                *)  die 9 "Error $HERE" \
-                    "Line '$LINE' must be '[section]' or 'var = value'." "$FILE" ;;
+                *)  die 9 "Error in '$LINE' $HERE" \
+                    "Must contain '[section]', 'var = value', or '# comment'." \
+                    "$FILE" ;;
             esac
             setrun NAME  trim_space "${LINE%%=*}"
             setrun VALUE trim_space "${LINE#*=}"
@@ -129,6 +132,8 @@ load_config() {
                 || die 9 "Invalid config variable name '$NAME' $HERE" \
                 "Must be alphanumeric and start with non-number." "$FILE"
             case "$SECTION" in
+                "") die 9 "Config variable '$NAME' above section $HERE" \
+                        "Must be under a '[section]' heading." "$FILE" ;;
                 core)
                     case "$NAME" in
                         scriptdir) set_dir script "${FIX_SCRIPT_DIR:-$VALUE}" ;;
