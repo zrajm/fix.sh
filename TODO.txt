@@ -1,5 +1,10 @@
 -*- org -*-
 
+FIXME Continue with config file tests
+
+FIXME absolute paths in config files?
+FIXME relative paths in environment vars are relative to what?
+
 * Program
 ** TODO Cleanup & testing of config file stuff                        :v0_13:
 *** TODO Testing
@@ -66,34 +71,8 @@
    (That may be added later.)
 ** TODO Dependencies
 ** TODO Docs: Add man page
-** TODO Docs: Document variables
-   Internal variables should be reset by mother process, and not affect how Fix
-   will run if set in the invoking shell. Modifying any of these in a
-   buildscript will confuse Fix (so don't do that!)
-**** DONE $FIX_SCRIPT_DIR -- path relative worktree root
-     CLOSED: [2016-04-22 fre 10:26]
-**** DONE $FIX_SOURCE_DIR -- path relative worktree root
-     CLOSED: [2016-04-22 fre 10:27]
-**** DONE $FIX_TARGET_DIR -- path relative worktree root
-     CLOSED: [2016-04-22 fre 10:27]
-**** DONE $FIX_DEBUG      -- boolean
-     CLOSED: [2016-04-22 fre 10:27]
-**** DONE $FIX_FORCE      -- boolean
-     CLOSED: [2016-04-22 fre 10:27]
-**** DONE $FIX_LEVEL      -- INTERNAL
-     CLOSED: [2016-04-22 fre 10:27]
-**** DONE $FIX_LOCK       -- INTERNAL
-     CLOSED: [2016-04-22 fre 10:27]
-**** DONE $FIX_PID        -- INTERNAL
-     CLOSED: [2016-04-22 fre 10:27]
-**** DONE $FIX_PWD        -- INTERNAL
-     CLOSED: [2016-04-22 fre 10:28]
-**** DONE $FIX_TARGET     -- INTERNAL
-     CLOSED: [2016-04-22 fre 10:28]
-**** DONE $FIX_DIR        -- INTERNAL (open up later on)
-     CLOSED: [2016-04-22 fre 10:28]
-**** DONE $FIX_WORK_TREE  -- INTERNAL (open up later on)
-     CLOSED: [2016-04-22 fre 10:28]
+** TODO Docs: Use Ronn for styling the docs?
+   https://rtomayko.github.io/ronn/ronn-format.7.html
 ** TODO More thorough is_mother() tests
    Should be able to detect an inconsistent state and abort. I.e. it should
    check *all* parent/child variables, and return true/false if they're all set
@@ -765,3 +744,32 @@
    file could be found.
 
    save_config() calls load_config() to make sure that the defaults are loaded.
+** DONE Docs: Document variables
+   CLOSED: [2016-04-22 fre 10:34]
+   Internal variables should be reset by mother process, and not affect how Fix
+   will run if set in the invoking shell. Modifying any of these in a
+   buildscript will confuse Fix (so don't do that!)
+**** DONE $FIX_SCRIPT_DIR -- path relative worktree root
+     CLOSED: [2016-04-22 fre 10:26]
+**** DONE $FIX_SOURCE_DIR -- path relative worktree root
+     CLOSED: [2016-04-22 fre 10:27]
+**** DONE $FIX_TARGET_DIR -- path relative worktree root
+     CLOSED: [2016-04-22 fre 10:27]
+**** DONE $FIX_DEBUG      -- boolean
+     CLOSED: [2016-04-22 fre 10:27]
+**** DONE $FIX_FORCE      -- boolean
+     CLOSED: [2016-04-22 fre 10:27]
+**** DONE $FIX_LEVEL      -- INTERNAL
+     CLOSED: [2016-04-22 fre 10:27]
+**** DONE $FIX_LOCK       -- INTERNAL
+     CLOSED: [2016-04-22 fre 10:27]
+**** DONE $FIX_PID        -- INTERNAL
+     CLOSED: [2016-04-22 fre 10:27]
+**** DONE $FIX_PWD        -- INTERNAL
+     CLOSED: [2016-04-22 fre 10:28]
+**** DONE $FIX_TARGET     -- INTERNAL
+     CLOSED: [2016-04-22 fre 10:28]
+**** DONE $FIX_DIR        -- INTERNAL (open up later on)
+     CLOSED: [2016-04-22 fre 10:28]
+**** DONE $FIX_WORK_TREE  -- INTERNAL (open up later on)
+     CLOSED: [2016-04-22 fre 10:28]
