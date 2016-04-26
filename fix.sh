@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.12.15
+VERSION=0.12.16
 
 ##############################################################################
 ##                                                                          ##
@@ -13,7 +13,7 @@ VERSION=0.12.15
 
 say() { printf "%s\n" "$@"; }                  # safe 'echo'
 read_stdin() {                                 # 'cat' using shell builtins
-    [ -t 0 ] && die "read_stdin: Missing input on stdin"
+    [ -t 0 ] && { say "read_stdin: Missing input on stdin" >&2; return 1; }
     local TXT
     while IFS="" read -r TXT || [ "$TXT" ]; do
         say "$TXT"
