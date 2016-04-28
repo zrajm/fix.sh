@@ -1226,7 +1226,7 @@ import_function() {
     varname "$NAME" || error "import_function: Bad function name '$NAME'"
     local LINE CODE="" ERR PREERR="import_function: Function '$NAME'" NL="
 "
-    while read -r LINE; do                     # read standard input
+    while IFS="" read -r LINE; do              # read standard input
         if [ -z "$CODE" ]; then                #   before function found
             case "$LINE" in                    #     at start of function:
                 "$NAME()"*) CODE="$LINE$NL"    #       remember line
