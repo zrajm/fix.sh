@@ -1,12 +1,6 @@
 -*- org -*-
 
 * Program
-** TODO Cleanup & testing of config file stuff                        :v0_13:
-*** TODO Testing
-** TODO Milestone: Version 0.13 - Config file ----------------------- :v0_13:
-   Config file name: `.fix/config`.
-
-   A default [empty?] config should be created by `--init`.
 ** TODO Milestone: Version 0.14 - 'Aliases' ------------------------- :v0_14:
    + One should be able to define aliases in the config file, so that, for
      example, `fix all` can be used to build all targets.
@@ -154,45 +148,11 @@
    $FIX_WORK_TREE should be settable in the invoking shell. When implemented,
    also update docs on this (moving this from an 'internal variable' to
    'environment'.
+** TODO Rethink error handling?
+   Functions like save_config() and read_stdin() should maybe fail by returning
+   a non-zero exit status, rather than invoking die()?
 * System tests
 ** TODO Config file tests
-*** TODO Fix should run fine with no config file present
-*** TODO Unit tests for save_config()
-*** DONE Unit tests for load_config()
-    CLOSED: [2016-04-22 Fri 22:38]
-    Added tests for the following
-    + Too few args error
-    + Errors messages both before and after first [section]
-    + Unknown (alphanumeric) section names should pass (future compat.)
-    + Env already set with relpaths should be turned into abspath
-    + Env already set with abspath should be retained
-    + Unknown (alphanumeric) config variables should pass (future compat.)
-    + Having no config file
-    + Config file with missing final newline
-    + Trimming indentation + space at EOL
-    + '#' and ';' comments
-    + Invalid section names
-    + Setting of config variable
-    + Syntax error in line
-    + Trimming of space around config variable name
-    + Trimming of space around config variable value
-    + Non-alphanumeric config variable
-    + Missing [section]
-    + Setting of values
-    + Default values + conversion to abspath
-***** DONE Test precedence: --opt over env over config over defaults
-      CLOSED: [2016-04-22 Fri 22:38]
-      Priority order (later overriding previous):
-      1. Default value
-      3. Config file: $FIX_DIR/config
-      4. Environment variable
-      5. Option
-
-      In order read in program:
-      1. Environment variable
-      2. Option                          (overwrite all)
-      3. Config file: $FIX_DIR/config    (set if still unset)
-      4. Default value                   (set if still unset)
 ** TODO Version test should work in detached head state
    Currently, if one checks out a commit older that the last tagged commit this
    test will fail. (It only looks at the latest tag in the repo, not the latest
@@ -758,31 +718,59 @@
 
    save_config() calls load_config() to make sure that the defaults are loaded.
 ** DONE Docs: Document variables
-   CLOSED: [2016-04-22 fre 10:34]
+   CLOSED: [2016-04-22 Fri 10:34]
    Internal variables should be reset by mother process, and not affect how Fix
    will run if set in the invoking shell. Modifying any of these in a
    buildscript will confuse Fix (so don't do that!)
-**** DONE $FIX_SCRIPT_DIR -- path relative worktree root
-     CLOSED: [2016-04-22 fre 10:26]
-**** DONE $FIX_SOURCE_DIR -- path relative worktree root
-     CLOSED: [2016-04-22 fre 10:27]
-**** DONE $FIX_TARGET_DIR -- path relative worktree root
-     CLOSED: [2016-04-22 fre 10:27]
-**** DONE $FIX_DEBUG      -- boolean
-     CLOSED: [2016-04-22 fre 10:27]
-**** DONE $FIX_FORCE      -- boolean
-     CLOSED: [2016-04-22 fre 10:27]
-**** DONE $FIX_LEVEL      -- INTERNAL
-     CLOSED: [2016-04-22 fre 10:27]
-**** DONE $FIX_LOCK       -- INTERNAL
-     CLOSED: [2016-04-22 fre 10:27]
-**** DONE $FIX_PID        -- INTERNAL
-     CLOSED: [2016-04-22 fre 10:27]
-**** DONE $FIX_PWD        -- INTERNAL
-     CLOSED: [2016-04-22 fre 10:28]
-**** DONE $FIX_TARGET     -- INTERNAL
-     CLOSED: [2016-04-22 fre 10:28]
-**** DONE $FIX_DIR        -- INTERNAL (open up later on)
-     CLOSED: [2016-04-22 fre 10:28]
-**** DONE $FIX_WORK_TREE  -- INTERNAL (open up later on)
-     CLOSED: [2016-04-22 fre 10:28]
+   + $FIX_SCRIPT_DIR -- path relative worktree root
+   + $FIX_SOURCE_DIR -- path relative worktree root
+   + $FIX_TARGET_DIR -- path relative worktree root
+   + $FIX_DEBUG      -- boolean
+   + $FIX_FORCE      -- boolean
+   + $FIX_LEVEL      -- INTERNAL
+   + $FIX_LOCK       -- INTERNAL
+   + $FIX_PID        -- INTERNAL
+   + $FIX_PWD        -- INTERNAL
+   + $FIX_TARGET     -- INTERNAL
+   + $FIX_DIR        -- INTERNAL (open up later on)
+   + $FIX_WORK_TREE  -- INTERNAL (open up later on)
+** DONE Unit tests for load_config()
+   CLOSED: [2016-04-22 Fri 22:38]
+   Added tests for the following
+   + Too few args error
+   + Errors messages both before and after first [section]
+   + Unknown (alphanumeric) section names should pass (future compat.)
+   + Env already set with relpaths should be turned into abspath
+   + Env already set with abspath should be retained
+   + Unknown (alphanumeric) config variables should pass (future compat.)
+   + Having no config file
+   + Config file with missing final newline
+   + Trimming indentation + space at EOL
+   + '#' and ';' comments
+   + Invalid section names
+   + Setting of config variable
+   + Syntax error in line
+   + Trimming of space around config variable name
+   + Trimming of space around config variable value
+   + Non-alphanumeric config variable
+   + Missing [section]
+   + Setting of values
+   + Default values + conversion to abspath
+   + Environment should take precedence over config file
+** DONE Milestone: Version 0.13 - Config file ----------------------- :v0_13:
+   CLOSED: [2016-04-29 Fri 21:50]
+
+   A default config file (`.fix/config` -- containing the default settings) is
+   created when running `fix --init`. Currently only three options are
+   supported (each can be overridden by the corresponding environment
+   variable):
+
+     + scriptdir = $FIX_SCRIPT_DIR
+     + sourcedir = $FIX_SOURCE_DIR
+     + targetdir = $FIX_TARGET_DIR
+
+   The `--force` and `--debug` options cannot be set through the config file.
+** DONE Unit tests for save_config()
+   CLOSED: [2016-04-29 Fri 21:50]
+** DONE Cleanup & testing of config file stuff                        :v0_13:
+   CLOSED: [2016-05-02 Mon 12:44]

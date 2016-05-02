@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.12.16
+VERSION=0.13.0
 
 ##############################################################################
 ##                                                                          ##
@@ -77,6 +77,7 @@ trim_space() {
 # Save a default config file.
 save_config() {
     local FILE="$1" WORK_TREE="$2"
+    [ "$#" = 2 ] || die 13 "save_config: Bad number of args"
     load_config "$FILE" "$WORK_TREE"           # set default $FIX_* variables
     local SCRIPT_DIR SOURCE_DIR TARGET_DIR
     setrun SCRIPT_DIR relpath "$FIX_SCRIPT_DIR" "$WORK_TREE"
