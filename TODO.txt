@@ -6,6 +6,37 @@
      example, `fix all` can be used to build all targets.
    + There should be a default alias, which should work for the plain 'fix'
      (without any arguments).
+** TODO Add 'default' buildscripts
+   When building a target Fix first looks for a buildscript with the same name
+   as the target (plus the `.fix` extension, and in the scriptdir), if no
+   buildscript is found by that name, Fix will instead look for a buildscript
+   `default` with the same file extension as the target, if this to fail, Fix
+   will try the process again in the parent directory, all the way up to the
+   worktree root dir.
+
+   That is, assuming your currently in the worktree root and execute the
+   following command:
+
+       fix hello/world.tar.gz
+
+   Fix would look for the following buildscripts, in order, and use the first
+   one found.
+
+       + hello/world.tar.gz.fix
+       + hello/default.tar.gz.fix
+       + hello/default.gz.fix
+       + hello/default.fix
+       + [world.tar.gz.fix] <-- Yes/no? Should this be in here?
+       + default.tar.gz.fix
+       + default.gz.fix
+       + default.fix
+
+   If an earlier buildscript, that was previously missing, suddenly appear in a
+   later rebuild, then the target will be considered dirty and be rebuilt, in
+   the same way it would if its buildscript (or any other dependency) had been
+   rebuilt.
+
+   See also: https://cr.yp.to/redo/honest-nonfile.html
 ** TODO Don't die on non-existing 'src' dir unless necessary.
    Currently Fix will die if no source directory exists, even when no source
    directory is needed. Fix should only die with this error message if the
