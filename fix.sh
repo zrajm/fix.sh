@@ -3,7 +3,7 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.13.0
+VERSION=0.13.1
 
 ##############################################################################
 ##                                                                          ##
@@ -112,6 +112,7 @@ load_config() {
         while read LINE || [ "$LINE" ]; do
             setrun LINE trim_space "$LINE"
             case "$LINE" in
+                "")      continue ;;           # blank lines
                 ["#;"]*) continue ;;           # '# comment' or '; comment'
                 "["*"]")                       # '[section]'
                     setrun SECTION trim_brackets "$LINE"

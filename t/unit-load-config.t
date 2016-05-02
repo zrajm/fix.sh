@@ -44,13 +44,15 @@ cd ..
 
 ################################################################################
 
-title "02. Inifile with hash + semicolon comments should work"
+title "02. Inifile with hash & semicolon comments, and blank lines should work"
 mkdir "02" && cd "02" && note "DIR: $PWD"
 
 write_file ini_file <<-"END_CONF"
 	# hash comment
 	; semi-colon comment
+
 	[core]
+
 	    # indented hash comment
 	    ; semi-colon comment
 	    scriptdir = script-y
@@ -111,10 +113,10 @@ cd ..
 
 ################################################################################
 
-# This behaviour differs from Git, but its probably a common enough error, to
-# warrant an error. (And allowing unknown section names + config variables
-# gives future compatibility, whilst allowing config variables outside sections
-# does not improve future compatibility.)
+# This behaviour differs from Git, but its probably a common enough error to
+# warrant an error message. (And allowing unknown section names + config
+# variables gives future compatibility, whilst allowing config variables
+# outside sections does not improve future compatibility.)
 
 title "04. Config variables in inifile before any '[section]' should fail"
 mkdir "04" && cd "04" && note "DIR: $PWD"
