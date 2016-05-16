@@ -601,7 +601,7 @@ setread() {
         set -- "$@" "$(stdin; echo .)"
         eval $2'="${3%.}"'
     fi
-    [ -z "$1" ] && strip_newline $2
+    [ -z "$1" ] && strip_newline "$2"
 }
 
 # Usage: seteval [+] VARNAME STATEMENTS
@@ -632,7 +632,7 @@ seteval() {
     [ $# = 2 ] && set -- "$@" "$(stdin)"        # read STDIN
     set -- "$1" "$2" "$(eval "$3"; echo ":$?")" # append return value
     eval $2'="${3%:*}"'
-    [ -z "$1" ] && strip_newline $2
+    [ -z "$1" ] && strip_newline "$2"
     return "${3##*:}"
 }
 
