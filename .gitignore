@@ -7,7 +7,6 @@
 
 # Fix files in working tree root.
 /.fix
-/.fixrc
 /build
 /fix
 
