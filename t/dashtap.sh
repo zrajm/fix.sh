@@ -553,7 +553,7 @@ ok() {
 stdin() {
     local LINE=""
     [ -t 0 ] || while IFS="" read -r LINE; do
-        echo "$LINE"
+        printf "%s\n" "$LINE"
     done
     printf "%s" "$LINE"
 }

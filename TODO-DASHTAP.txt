@@ -255,3 +255,5 @@
    CLOSED: [2014-07-28 Mon 02:19]
 ** DONE Test 'import_function'
    CLOSED: [2016-02-28 Sun 15:35]
+** DONE Test 'stdin'
+   CLOSED: [2016-05-30 Mon 09:40]
