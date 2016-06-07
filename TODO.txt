@@ -182,6 +182,16 @@
 ** TODO Rethink error handling?
    Functions like save_config() and read_stdin() should maybe fail by returning
    a non-zero exit status, rather than invoking die()?
+** TODO Error when buildscript output both to stdout AND tempfile?
+   Could be solved by having the tempfile name given to buildscript as arg `$1`
+   be a different name that the file its stdout is connected to.
+
+   Fix could then check to see that the stdout file is zero in length, if the
+   secondary tempfile exists after the buildscript has run, and die with an
+   appropriate error message if this is not the case.
+
+       TARGET--fixtmp   # `$1` file
+       TARGET--fixout   # stdout file
 * System tests
 ** TODO Test unsetting of CDPATH
 ** TODO Version test should work in detached head state
