@@ -3,7 +3,8 @@
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
 
 set -eu
-VERSION=0.13.1
+unset CDPATH
+VERSION=0.13.2
 
 ##############################################################################
 ##                                                                          ##

@@ -183,7 +183,7 @@
    Functions like save_config() and read_stdin() should maybe fail by returning
    a non-zero exit status, rather than invoking die()?
 * System tests
-** TODO Config file tests
+** TODO Test unsetting of CDPATH
 ** TODO Version test should work in detached head state
    Currently, if one checks out a commit older that the last tagged commit this
    test will fail. (It only looks at the latest tag in the repo, not the latest
@@ -805,3 +805,19 @@
    CLOSED: [2016-04-29 Fri 21:50]
 ** DONE Cleanup & testing of config file stuff                        :v0_13:
    CLOSED: [2016-05-02 Mon 12:44]
+** DONE Unsetting of CDPATH before running buildscript
+   CLOSED: [2016-06-07 Tue 09:33]
+   The environment variable CDPATH (mandated by POSIX) affects the way `cd`
+   works with relative paths, causing unpredictability for buildscripts. It
+   should therefore be unset by Fix, before running buildscript.
+
+   The `dash` shell documentation for `cd`:
+
+       If an entry for CDPATH appears in the environment of the cd command or
+       the shell variable CDPATH is set and the directory name does not begin
+       with a slash, then the directories listed in CDPATH will be searched for
+       the specified directory. The format of CDPATH is the same as that of
+       PATH. If a single dash is specified as the argument, it will be replaced
+       by the value of OLDPWD. The cd command will print out the name of the
+       directory that it actually switched to if this is different from the
+       name that the user gave.
