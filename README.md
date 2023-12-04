@@ -307,6 +307,26 @@ If you do wish to invoke Fix as if from the command line, make sure
   * `$FIX_WORK_TREE`: Full path to the root directory of the current worktree.
 
 
+Tests
+=====
+The Fix test suite (found in the directory `t/`) can be run using:
+
+    prove
+
+Fix comes with a test suite, with tests written using the [Dash] shell. (Dash
+was chosen for its small file size and fast execution time, something that
+really matters when you're invoking it multiple times like in a test suite.)
+The tests use a a home-brewed test framework called Dashtap (included in this
+repo and found in the file `t/dashtap.sh`).
+
+Dashtap's output uses the [TAP] (*Test Anything Protocol*) format, allowing you
+run and process the test result with any compatible set of tools (e.g. `prove`
+above). There's also a set of tests for Dashtap, which can be found in the
+author test directory `xt/` directory. To run these tests, use:
+
+    prove xt/
+
+
 Additional Notes
 ================
 Fix uses [semantic versioning][SemVer] (also known as SemVer).
@@ -360,5 +380,6 @@ of which are specific to Fix.
                "Inspiration and References"
 [Redo]: //cr.yp.to/redo.html "D.J. Bernstein's redo"
 [SemVer]: //semver.org/ "Semantic Versioning"
+[TAP]: https://testanything.org "Test Anything Protocol"
 
 <!--[eof]-->
