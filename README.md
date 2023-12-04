@@ -9,7 +9,7 @@ Fix.sh is in no way complete, in fact it is not yet able to figure out
 dependencies properly, it is however maturing slowly, and might some day be
 merged into the the main [Fix] repository.
 
-Fix, in turn, is a build system inspired by D.J. Bernstein's [redo], but
+Fix, in turn, is a build system inspired by D.J. Bernstein's [Redo], but
 drawing on [a lot of other peoples insights][inspiration]. For more info on
 that see the [Fix wiki].
 
@@ -309,7 +309,7 @@ If you do wish to invoke Fix as if from the command line, make sure
 
 Additional Notes
 ================
-Fix uses [semantic versioning][semver].
+Fix uses [semantic versioning][SemVer] (also known as SemVer).
 
 
 Glossary
@@ -354,11 +354,11 @@ of which are specific to Fix.
 
 
 [Dash]: http://gondor.apana.org.au/~herbert/dash/ "Debian Almquist SHell"
-[Fix]: https://github.com/zrajm/fix
-[Fix wiki]: https://github.com/zrajm/fix/wiki "Fix Wiki (on GitHub)"
-[inspiration]: https://github.com/zrajm/fix/wiki/Inspiration-and-References
+[Fix]: //github.com/zrajm/fix
+[Fix wiki]: //github.com/zrajm/fix/wiki "Fix Wiki (on GitHub)"
+[inspiration]: //github.com/zrajm/fix/wiki/Inspiration-and-References
                "Inspiration and References"
-[redo]: http://cr.yp.to/redo.html "D.J. Bernstein's redo"
-[semver]: http://semver.org/ "Semantic Versioning"
+[Redo]: //cr.yp.to/redo.html "D.J. Bernstein's redo"
+[SemVer]: //semver.org/ "Semantic Versioning"
 
 <!--[eof]-->
