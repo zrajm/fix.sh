@@ -13,13 +13,6 @@ Fix, in turn, is a build system inspired by D.J. Bernstein's [redo], but
 drawing on [a lot of other peoples insights][inspiration]. For more info on
 that see the [Fix wiki].
 
-[Fix]: https://github.com/zrajm/fix
-[Dash]: http://gondor.apana.org.au/~herbert/dash/ "Debian Almquist SHell"
-[redo]: http://cr.yp.to/redo.html "D.J. Bernstein's redo"
-[inspiration]: https://github.com/zrajm/fix/wiki/Inspiration-and-References
-               "Inspiration and References"
-[Fix wiki]: https://github.com/zrajm/fix/wiki "Fix Wiki (on GitHub)"
-
 
 Options
 =======
@@ -316,7 +309,7 @@ If you do wish to invoke Fix as if from the command line, make sure
 
 Additional Notes
 ================
-Fix uses [semantic versioning](http://semver.org/).
+Fix uses [semantic versioning][semver].
 
 
 Glossary
@@ -358,3 +351,14 @@ of which are specific to Fix.
     Fix, but is used to produce a target (typically a source file of some
     kind). Whenever a sourcedep has changed, all targets that depend on it will
     have to be rebuilt.
+
+
+[Dash]: http://gondor.apana.org.au/~herbert/dash/ "Debian Almquist SHell"
+[Fix]: https://github.com/zrajm/fix
+[Fix wiki]: https://github.com/zrajm/fix/wiki "Fix Wiki (on GitHub)"
+[inspiration]: https://github.com/zrajm/fix/wiki/Inspiration-and-References
+               "Inspiration and References"
+[redo]: http://cr.yp.to/redo.html "D.J. Bernstein's redo"
+[semver]: http://semver.org/ "Semantic Versioning"
+
+<!--[eof]-->
