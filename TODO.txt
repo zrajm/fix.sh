@@ -831,3 +831,4 @@
        by the value of OLDPWD. The cd command will print out the name of the
        directory that it actually switched to if this is different from the
        name that the user gave.
+* [eof]
