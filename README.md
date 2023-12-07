@@ -14,6 +14,28 @@ drawing on [a lot of other peoples insights][inspiration]. For more info on
 that see the [Fix wiki].
 
 
+# Installing & Updating
+
+Fix.sh uses the Dashtap test framework which is included as a Git submodule, so
+if you want to run the tests, you'll need to clone the submodules as well:
+
+    git clone --recurse-submodules git@github.com:zrajm/fix.sh.git
+
+The same goes for when you're pulling the latest changes:
+
+    git pull --recurse-submodules
+
+NOTE: If a submodule is in a 'detach HEAD' state (using Git v2.34.1) when you
+invoke `git pull --recurse-submodules`, the submodule will remain in detached
+HEAD state, but in the main repository `git status` will report that the
+submodule as unmodified. :(
+
+The following command will output the names of all submodules that are in a
+detached HEAD state:
+
+    git submodule -q foreach 'git symbolic-ref -q HEAD || echo "$sm_path"'
+
+
 # Options
 
 Options override both environment variable and configuration file settings.
