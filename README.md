@@ -1,5 +1,5 @@
-Fix.sh
-======
+# Fix.sh
+
 Fix.sh is a small prototype implementation of [Fix], written for POSIX
 compatible shells (using [Dash]). I use it to play around with Fix features,
 and to create end-to-end tests. In the end it'll probably become a
@@ -14,8 +14,8 @@ drawing on [a lot of other peoples insights][inspiration]. For more info on
 that see the [Fix wiki].
 
 
-Options
-=======
+# Options
+
 Options override both environment variable and configuration file settings.
 
   * `-D`, `--debug`: Enables debug mode, which causes Fix to output extra
@@ -54,8 +54,8 @@ Options override both environment variable and configuration file settings.
     then exit.
 
 
-On File Names
-=============
+# On File Names
+
 When running Fix your current dir must be inside a Fix work tree (i.e. the
 current dir, or one of its parent directories must contain a `.fix` dir with
 Fix's build state). All targets specified must also reside in that same work
@@ -80,8 +80,8 @@ index.txt` inside a buildscript will build `build/index.txt` regardless of your
 current directory.
 
 
-Exit Status
-===========
+# Exit Status
+
 The exit status reflects whether Fix failed or succeeded with its build. More
 'severe' errors result in higher exit status value (though the scale is
 somewhat arbitrary). Notably, exit status 1 indicate that the build can be
@@ -161,8 +161,8 @@ The following exit status values are used:
            the signal to all process group members, thereby making sure all
            child processes are signaled too (ctrl-c does this automatically).
 
-Failure
--------
+## Failure
+
 Any exit status except 0 indicates a build failure. You should not trust the
 state of your target directory after a failed build -- dependencies are built
 first, and one or more of the dependencies may have been successfully built
@@ -179,8 +179,8 @@ modified since being built, however this behaviour can be overridden using the
 `--force` option.
 
 
-Success
--------
+## Success
+
 A successful build means that your target and all its dependencies were fully
 built.
 
@@ -190,27 +190,26 @@ built.
   * The current state of all build files stored in metadata.
 
 
-Writing Files
-=============
+# Writing Files
+
 Script and source files are never overwritten by Fix (only target, tempfiles
 and metadata files are written to) -- and in the case of target files, those
 will only be overwritten if Fix they have not been modified since last build
 (or `--force` was used).
 
 
-Configuration
-=============
+# Configuration
 
-Precedence
-----------
+
+## Precedence
 
    1. Command line options will override all other configuration.
    2. Environment variables will override config file options.
    3. Config file will override built-in default values.
 
 
-Environment
-===========
+# Environment
+
 Environment variables override configuration file settings, but they can in
 turn be overridden by command line options.
 
@@ -231,8 +230,8 @@ root.
 See also 'Internal Environment Variables'.
 
 
-Configuration File
-==================
+# Configuration File
+
 Fix uses a simple INI style file format for its configuration files. It
 contains [sections], comments, and config variable assignments.
 
@@ -253,8 +252,8 @@ File names in `.fix/config` should be either absolute, or relative to the
 worktree root.
 
 
-Configuration Variables
------------------------
+## Configuration Variables
+
 Paths are relative to the worktree root.
 
   * `core.scriptdir` (default: `fix/`): Buildscript directory (i.e. where the
@@ -269,11 +268,11 @@ Paths are relative to the worktree root.
     environment variable.
 
 
-Internals
-=========
+# Internals
 
-Internal Environment Variables
-------------------------------
+
+## Internal Environment Variables
+
 In addition to the environment variables Fix accepts as options, there are also
 a number of environment variables that are used internally.
 
@@ -307,8 +306,8 @@ If you do wish to invoke Fix as if from the command line, make sure
   * `$FIX_WORK_TREE`: Full path to the root directory of the current worktree.
 
 
-Tests
-=====
+# Tests
+
 The Fix test suite (found in the directory `t/`) can be run using:
 
     prove
@@ -327,13 +326,13 @@ TAP protocol allow you to use any testing tool build for TAP (e.g. the `prove`
 command used above).
 
 
-Additional Notes
-================
+# Additional Notes
+
 Fix uses [semantic versioning][SemVer] (also known as SemVer).
 
 
-Glossary
-========
+# Glossary
+
 These are some, some of which terms used by build systems in general, and some
 of which are specific to Fix.
 
