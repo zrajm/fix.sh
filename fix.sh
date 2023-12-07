@@ -1,10 +1,10 @@
 #!/usr/bin/env dash
-# Copyright (C) 2016 zrajm <fix@zrajm.org>
-# License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
+# Copyright (C) 2014-2023 zrajm <fix@zrajm.org>
+# License: GPLv2 [https://gnu.org/licenses/gpl-2.0.txt]
 
 set -eu
 unset CDPATH
-VERSION=0.13.2
+VERSION=0.13.3
 
 ##############################################################################
 ##                                                                          ##
@@ -51,8 +51,8 @@ END_USAGE
 version() {
     read_stdin <<END_VERSION
 fix.sh (Fix) $VERSION
-Copyright (C) 2016 zrajm <fix@zrajm.org>
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+Copyright (C) 2014-2023 zrajm <fix@zrajm.org>
+License GPLv2: GNU GPL version 2 <https://gnu.org/licenses/gpl-2.0.txt>.
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 

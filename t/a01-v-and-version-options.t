@@ -1,7 +1,7 @@
 #!/usr/bin/env dash
 # -*- sh -*-
 # Copyright (C) 2015 zrajm <fix@zrajm.org>
-# License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
+# License: GPLv2 [https://gnu.org/licenses/gpl-2.0.txt]
 . "dashtap/dashtap.sh"
 title - <<"EOF"
 Should return correct version information. (Dirs required for normal build
@@ -77,7 +77,7 @@ else
         "$MAJOR.$MINOR.$(( PATCH + 1 ))" \
         "$MAJOR.$(( MINOR + 1 )).0" \
         "$(( MAJOR + 1 )).0.0"
-    WANTED_YEAR="$(date +%Y)"
+    WANTED_YEAR="2014-$(date +%Y)"
 fi
 
 init_test
@@ -105,7 +105,7 @@ file_not_exists src    "Before build: Metadata dir shouldn't exist"
 # Version output with version number removed (from end of first line).
 OUTPUT="fix.sh (Fix)
 Copyright (C) ${WANTED_YEAR:-$GOT_YEAR} zrajm <fix@zrajm.org>
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+License GPLv2: GNU GPL version 2 <https://gnu.org/licenses/gpl-2.0.txt>.
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 

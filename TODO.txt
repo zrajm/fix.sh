@@ -336,6 +336,14 @@
             above.txt--fixing.3 >above.txt--fixing
         mv above.txt--fixing above.text
 * DONE
+** DONE Switched license to GPLv2 (from GPLv3+)
+   CLOSED: [2023-12-07 Thu 10:48]
+   See:
+   + "Linus Torvalds says GPL v3 violates everything that GPLv2 stood for"
+     https://youtu.be/PaKIZ7gJlRU
+   + "What exactly is Tivoization and why didn't Linus Torvalds like it in
+     GPLv3?"
+     https://opensource.stackexchange.com/a/7028/14725
 ** DONE Tests should be run in tempdir
    CLOSED: [2014-07-07 Mon 00:28]
 ** DONE BUGFIX: Eliminate name collision with lockfile

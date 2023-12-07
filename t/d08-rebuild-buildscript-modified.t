@@ -1,7 +1,7 @@
 #!/usr/bin/env dash
 # -*- sh -*-
 # Copyright (C) 2015 zrajm <fix@zrajm.org>
-# License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
+# License: GPLv2 [https://gnu.org/licenses/gpl-2.0.txt]
 . "dashtap/dashtap.sh"
 title - <<"EOF"
 Rebuild target when previous target exists, but the buildscript has been
