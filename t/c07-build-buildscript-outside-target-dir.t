@@ -2,7 +2,7 @@
 # -*- sh -*-
 # Copyright (C) 2016 zrajm <fix@zrajm.org>
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
-. "t/dashtap.sh"
+. "dashtap/dashtap.sh"
 title - <<"EOF"
 Test that specifying a target with a path outside the $FIX_TARGET_DIR results
 in an error message, and that it suggests a new path.

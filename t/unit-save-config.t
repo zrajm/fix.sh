@@ -3,7 +3,7 @@
 # -*- sh -*-
 # Copyright (C) 2016 zrajm <fix@zrajm.org>
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
-. "t/dashtap.sh"
+. "dashtap/dashtap.sh"
 title - <<"EOF"
 Unit tests for save_config().
 EOF

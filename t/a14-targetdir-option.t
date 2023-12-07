@@ -2,7 +2,7 @@
 # -*- sh -*-
 # Copyright (C) 2016 zrajm <fix@zrajm.org>
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
-. "t/dashtap.sh"
+. "dashtap/dashtap.sh"
 title - <<"EOF"
 Test that the --target-dir option sets $FIX_TARGET_DIR value for the
 buildscripts.

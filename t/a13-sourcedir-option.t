@@ -2,7 +2,7 @@
 # -*- sh -*-
 # Copyright (C) 2016 zrajm <fix@zrajm.org>
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
-. "t/dashtap.sh"
+. "dashtap/dashtap.sh"
 title - <<"EOF"
 Test that the --source-dir option sets $FIX_SOURCE_DIR value for the
 buildscripts.

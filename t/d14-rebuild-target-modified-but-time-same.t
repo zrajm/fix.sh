@@ -2,7 +2,7 @@
 # -*- sh -*-
 # Copyright (C) 2015 zrajm <fix@zrajm.org>
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
-. "t/dashtap.sh"
+. "dashtap/dashtap.sh"
 title - <<"EOF"
 Attempt to rebuild target when previous target exist and is modified, but its
 timestamp and size is the same as last time. (Based on b02.)

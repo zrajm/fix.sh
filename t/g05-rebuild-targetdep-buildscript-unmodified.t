@@ -2,7 +2,7 @@
 # -*- sh -*-
 # Copyright (C) 2015 zrajm <fix@zrajm.org>
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
-. "t/dashtap.sh"
+. "dashtap/dashtap.sh"
 title - <<"EOF"
 Should successfully build target with target dependency, when built after
 having been previously built, and with no modifications done.

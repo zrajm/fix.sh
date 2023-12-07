@@ -1,0 +1,3 @@
+[submodule "dashtap"]
+	path = dashtap
+	url = git@github.com:zrajm/dashtap.git

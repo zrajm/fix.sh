@@ -2,7 +2,7 @@
 # -*- sh -*-
 # Copyright (C) 2015 zrajm <fix@zrajm.org>
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
-. "t/dashtap.sh"
+. "dashtap/dashtap.sh"
 title - <<"EOF"
 Rebuild target with a target dependency when previous target exists, after the
 dependency target buildscript has been modified.

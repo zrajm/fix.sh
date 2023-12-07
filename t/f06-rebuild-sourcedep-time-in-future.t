@@ -2,7 +2,7 @@
 # -*- sh -*-
 # Copyright (C) 2015 zrajm <fix@zrajm.org>
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
-. "t/dashtap.sh"
+. "dashtap/dashtap.sh"
 title - <<"EOF"
 Rebuild target with source dependency that has already been built after source
 dependency file's timestamp have been moved into the future. (Based on e03.)

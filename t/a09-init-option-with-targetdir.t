@@ -2,7 +2,7 @@
 # -*- sh -*-
 # Copyright (C) 2016 zrajm <fix@zrajm.org>
 # License: GPLv3+ [https://github.com/zrajm/fix.sh/blob/master/LICENSE.txt]
-. "t/dashtap.sh"
+. "dashtap/dashtap.sh"
 title - <<"EOF"
 Test that --target-dir, when used with --init, writes the specified targetdir
 to the config file.

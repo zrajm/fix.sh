@@ -270,7 +270,6 @@
 ** TODO Mooooaaar test cases!
 ** TODO Restructure tests
    Want separate directories for the various tests:
-   + Dashtap tests
    + Fix system tests
    + Fix unit tests
 ** TODO Profiling the code (using Devel::NYTProf)

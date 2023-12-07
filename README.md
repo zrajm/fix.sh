@@ -313,18 +313,18 @@ The Fix test suite (found in the directory `t/`) can be run using:
 
     prove
 
-Fix comes with a test suite, with tests written using the [Dash] shell. (Dash
-was chosen for its small file size and fast execution time, something that
-really matters when you're invoking it multiple times like in a test suite.)
-The tests use a a home-brewed test framework called Dashtap (included in this
-repo and found in the file `t/dashtap.sh`).
-
-Dashtap's output uses the [TAP] (*Test Anything Protocol*) format, allowing you
-run and process the test result with any compatible set of tools (e.g. `prove`
-above). There's also a set of tests for Dashtap, which can be found in the
-author test directory `xt/` directory. To run these tests, use:
+Author tests can be run using:
 
     prove xt/
+
+Fix comes with a test suite written using the small [Dashtap] testing
+framework.
+
+Dashtap was originally created for this project. It is written using the [Dash]
+shell and the [TAP] (*Test Anything Protocol*) output format. The small Dash
+shell file size and fast execution format help deliver fast testing, while the
+TAP protocol allow you to use any testing tool build for TAP (e.g. the `prove`
+command used above).
 
 
 Additional Notes
@@ -374,6 +374,7 @@ of which are specific to Fix.
 
 
 [Dash]: http://gondor.apana.org.au/~herbert/dash/ "Debian Almquist SHell"
+[Dashtap]: //github.com/zrajm/dashtap "Dashtap Testing Framework"
 [Fix]: //github.com/zrajm/fix
 [Fix wiki]: //github.com/zrajm/fix/wiki "Fix Wiki (on GitHub)"
 [inspiration]: //github.com/zrajm/fix/wiki/Inspiration-and-References
