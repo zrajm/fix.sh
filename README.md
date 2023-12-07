@@ -373,14 +373,14 @@ of which are specific to Fix.
     have to be rebuilt.
 
 
-[Dash]: http://gondor.apana.org.au/~herbert/dash/ "Debian Almquist SHell"
+[Dash]: http://gondor.apana.org.au/~herbert/dash "Debian Almquist SHell"
 [Dashtap]: //github.com/zrajm/dashtap "Dashtap Testing Framework"
 [Fix]: //github.com/zrajm/fix
 [Fix wiki]: //github.com/zrajm/fix/wiki "Fix Wiki (on GitHub)"
 [inspiration]: //github.com/zrajm/fix/wiki/Inspiration-and-References
                "Inspiration and References"
 [Redo]: //cr.yp.to/redo.html "D.J. Bernstein's redo"
-[SemVer]: //semver.org/ "Semantic Versioning"
-[TAP]: https://testanything.org "Test Anything Protocol"
+[SemVer]: //semver.org "Semantic Versioning"
+[TAP]: //testanything.org "Test Anything Protocol"
 
 <!--[eof]-->
